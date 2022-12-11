@@ -204,6 +204,7 @@
               <th>SPLIT CASH TRANSACTIONS</th>
               <th>SPLIT TRANSFER TRANSACTIONS</th>
               <th>SPLIT CARD TRANSACTIONS</th>
+              <th>COMPLEMENTARY TRANSACTIONS</th>
             </tr>
           </thead>
           <tbody :key="tableKey">
@@ -218,6 +219,7 @@
               <td>{{all_sales.split_payments_cash.toLocaleString()}}</td>
               <td>{{all_sales.split_payments_transfer.toLocaleString()}}</td>
               <td>{{all_sales.split_payments_card.toLocaleString()}}</td>
+              <td>{{all_sales.complementary.toLocaleString()}}</td>
             </tr>
           </tbody>
         </table>
