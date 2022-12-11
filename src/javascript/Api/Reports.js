@@ -5,7 +5,7 @@ export default {
         return Api.post('/report', form)
     },
 
-    cancelled_receipts(form) {
-        return Api.post('/report/deleted', form)
+    generate_report(form) {
+        return Api.post('/transaction-report', form)
     }
 }

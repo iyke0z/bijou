@@ -79,7 +79,7 @@
               <p class="lead">&#8358; {{ this.subtotal.toLocaleString() }}</p>
             </div>
           </div>
-          <div class="row">
+          <!-- <div class="row">
             <div class="col-4">
               <p class="lead">Discount:</p>
             </div>
@@ -87,7 +87,7 @@
               <input autocomplete="off" type="number" v-model="discount_pctge" step="any" class="form-control" placeholder="0">
             </div>
             <b><span class="col">%</span></b>
-          </div>
+          </div> -->
           <div class="row" v-show="update">
             <div class="col-4">
               <p class="lead">Customer:</p>

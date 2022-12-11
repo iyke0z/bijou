@@ -75,8 +75,10 @@
               <th>Ref No</th>
               <th>Transaction Type</th>
               <th>Transaction Status</th>
+              <th>payment method</th>
               <th>Amount</th>
               <th>Customer</th>
+              <th>Waiter</th>
               <th>date</th>
               <th>actions</th>
             </tr>
@@ -85,10 +87,13 @@
             <tr v-for="transaction in transactions" :key="transaction">
               <td>{{String(transaction.id).padStart(9,0)}}</td>
               <td>{{transaction.type}}</td>
+              <td>{{transaction.payment_method }}</td>
+
               <td>{{transaction.status}}</td>
               <td>{{transaction.amount.toLocaleString()}}</td>
               <td v-if="transaction.customer != null">{{transaction.customer.fullname}}</td>
-              <td v-else>null</td>
+              <td v-else>null</td><td>{{transaction.user.fullname}}</td>
+
               <td>{{dateTime(transaction.created_at)}}</td>
               <td>
                 <button @click.prevent="details(transaction.id)" class="btn btn-info mr-2" title="View Details" >
@@ -114,7 +119,6 @@
               <th>qty</th>
               <th>price</th>
               <th>amount payable</th>
-              <th>payment method</th>
               <th>status</th>
               <th>ref</th>
               <th>discount</th>
@@ -127,7 +131,6 @@
               <td>{{sale.qty}}</td>
               <td>{{sale.price.toLocaleString()}}</td>
               <td>{{(sale.price * sale.qty).toLocaleString()}}</td>
-              <td>{{sale.payment_method}}</td>
               <td>{{sale.status}}</td>
               <td>{{sale.ref}}</td>
               <td>{{sale.discount}}</td>

@@ -21,6 +21,9 @@ export default {
     },
     auth() {
         return Api.get('/me')
+    },
+    user_repot(form) {
+        return Api.post('/user-sales-report', form)
     }
 
 }

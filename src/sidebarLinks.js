@@ -99,7 +99,7 @@ export default [{
         icon: 'fa fa-book',
         collapsed: true,
         children: [{
-                name: 'Sales Report',
+                name: 'Report',
                 path: '/report/sales'
             },
             {

@@ -1,8 +1,13 @@
 <template>
   <div>
     <div class="card">
+      <center>
+        <button @click="printReceipt" v-show="all_sales != null" class="btn btn-dark">
+          <i class="fa fa-print    "></i>
+        </button>
+      </center>
       <div class="card-body">
-        <h5 class="card-title">Sales Report</h5>
+        <h5 class="card-title">Sales Report <br/> from {{form.start_date}} - {{form.end_date}}</h5>
         <h6>Filter</h6>
         <form action="" @submit.prevent="sales">
           <div class="form-group">
@@ -23,39 +28,34 @@
           </div>
           <button class="btn btn-success" type="submit">Generate</button>
         </form>
-        <div>
-          <h4>total sales</h4>
-          <h5>	&#8358; {{this.total.toLocaleString()}}</h5>
-        </div>
-        <table id="table" class="table table-striped">
+
+        <table id="table" class="table table-striped" v-if="all_sales != null">
           <thead>
             <tr>
               <th></th>
-              <th>product</th>
-              <th>qty</th>
-              <th>price</th>
-              <th>amount payable</th>
-              <th>payment method</th>
-              <th>status</th>
-              <th>ref</th>
-              <th>discount</th>
-              <th>date</th>
-              <th>Logged By</th>
+              <th>EXPECTED AMOUNT</th>
+              <th>PAID AMOUNT</th>
+              <th>CASH TRANSACTIONS</th>
+              <th>TRANSFER TRANSACTIONS</th>
+              <th>CARD TRANSACTIONS</th>
+              <th>SPLIT TRANSACTIONS</th>
+              <th>SPLIT CASH TRANSACTIONS</th>
+              <th>SPLIT TRANSFER TRANSACTIONS</th>
+              <th>SPLIT CARD TRANSACTIONS</th>
             </tr>
           </thead>
           <tbody :key="tableKey">
-            <tr v-for="(sale, index) in all_sales" :key="sale.id">
-              <td>{{index+1}}</td>
-              <td>{{sale.product.name}}</td>
-              <td>{{sale.qty}}</td>
-              <td>{{sale.price.toLocaleString()}}</td>
-              <td>{{(sale.price * sale.qty).toLocaleString()}}</td>
-              <td>{{sale.payment_method}}</td>
-              <td>{{sale.status}}</td>
-              <td>{{sale.ref}}</td>
-              <td>{{sale.discount}}</td>
-              <td>{{dateTime(sale.created_at)}}</td>
-              <td>{{sale.user.fullname}}</td>
+            <tr>
+              <td>{{1}}</td>
+              <td>{{all_sales.expected_amount.toLocaleString()}}</td>
+              <td>{{all_sales.paid_amount.toLocaleString()}}</td>
+              <td>{{all_sales.cash.toLocaleString()}}</td>
+              <td>{{all_sales.transfer.toLocaleString()}}</td>
+              <td>{{all_sales.card.toLocaleString()}}</td>
+              <td>{{all_sales.split_payments.toLocaleString()}}</td>
+              <td>{{all_sales.split_payments_cash.toLocaleString()}}</td>
+              <td>{{all_sales.split_payments_transfer.toLocaleString()}}</td>
+              <td>{{all_sales.split_payments_card.toLocaleString()}}</td>
             </tr>
           </tbody>
         </table>
@@ -67,11 +67,10 @@
 <script>
 import { Button, Modal } from '@/components/UIComponents'
 import Sales from '@/javascript/Api/Sales'
+import Reports from '@/javascript/Api/Reports'
 import helpers from '@/javascript/helpers'
   export default{
-    components: {
-      Modal
-    },
+
     data() {
       return {
         form:{start_date:null, end_date:null, platform:'all'},
@@ -81,28 +80,26 @@ import helpers from '@/javascript/helpers'
       }
     },
     methods: {
+      printReceipt(){
+        this.$router.push('/report-print')
+      },
       sales(){
-        Sales.periodic_report(this.form).then((result) => {
+        Reports.generate_report(this.form).then((result) => {
           this.all_sales = result.data.data
           this.tableKey++
+          localStorage.setItem('sales', JSON.stringify(result.data.data))
+          localStorage.setItem('form', JSON.stringify(this.form))
           this.datatable()
-          this.calculateTotal()
         })
-      },
-      calculateTotal(){
-        var total = 0
-        for (let index = 0; index < this.all_sales.length; index++) {
-          total = total + this.all_sales[index].price * this.all_sales[index].qty
-        }
-        this.total = total
-      },
-      dateTime(date){
-        return helpers.dateTime(date)
       },
       datatable(){
         $(function() {
           $('#table').DataTable({
-            "bDestroy": true,
+            dom: 'Bfrtip',
+            buttons: [
+                'pdf', 'print'
+            ],
+
                 pageLength: 5,
                 lengthMenu: [[5,10,20], [5, 10, 20]],
             });

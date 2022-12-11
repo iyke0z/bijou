@@ -37,6 +37,7 @@ import Receipt from '../components/Dashboard/Views/Waiter/Receipt.vue'
 import Waiter from '../components/Dashboard/Views/Waiter/Index.vue'
 import Kitchen from '../components/Dashboard/Views/Kitchen/Index.vue'
 import Bar from '../components/Dashboard/Views/Bar/Index.vue'
+import ReportPrint from '../components/Dashboard/Views/Report/PrintReport.vue'
 
 
 let loginPage = {
@@ -64,7 +65,11 @@ let receipt = {
     name: 'receipt',
     component: Receipt
 }
-
+let reporprint = {
+    path: '/report-print',
+    name: 'print',
+    component: ReportPrint
+}
 let lockPage = {
     path: '/lock',
     name: 'Lock',
@@ -299,6 +304,7 @@ const routes = [
     kitchen,
     waiter,
     bar,
+    reporprint,
     lockPage,
     {
         path: '/admin',

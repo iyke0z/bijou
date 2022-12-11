@@ -1,31 +1,6 @@
 <template>
   <div>
-    <!--Stats cards-->
-    <center><h1>DAILY SUMMARY {{this.toggle.toUpperCase()}}</h1>
-      <br/>
-      <select name="" id="" v-model="toggle" class="form-control col-4" @change="sales_today">
-        <option value="all">All</option>
-        <option value="online">Online</option>
-        <option value="offline">Offline</option>
-      </select>
-    </center>
-
-    <br />
-
-
-    <div class="row">
-      <div class="col-lg-3 col-md-6 col-sm-6" v-for="stats in statsCards" :key="stats">
-        <stats-card :type="stats.type"
-                    :icon="stats.icon"
-                    :small-title="stats.title"
-                    :title="stats.value">
-          <div class="stats" slot="footer">
-            <i :class="stats.footerIcon"></i>
-            Today
-          </div>
-        </stats-card>
-      </div>
-    </div>
+      <h1>BIJOU CAFE</h1>
   </div>
 </template>
 <script>
