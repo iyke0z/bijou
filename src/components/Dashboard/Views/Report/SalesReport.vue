@@ -61,6 +61,20 @@
             </tr>
           </tbody>
         </table>
+        <table id="table" class="table table-striped" v-if="all_sales != null">
+          <thead>
+            <tr>
+              <th>BANK NAME</th>
+              <th>AMOUNT</th>
+            </tr>
+          </thead>
+          <tbody :key="tableKey">
+            <tr v-for="(bank, index) in all_sales.banks" :key="bank.id">
+              <td>{{bank.bank_name}}</td>
+              <td>{{bank.amount.toLocaleString()}}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
