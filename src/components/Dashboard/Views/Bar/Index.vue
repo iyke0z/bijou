@@ -62,7 +62,7 @@ export default {
           }
         });
         this.datatable()
-        this.barOrders()
+        this.tableKey++
       })
     },
 

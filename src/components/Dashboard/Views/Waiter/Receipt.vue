@@ -25,8 +25,8 @@
           <tr v-for="item in products" :key="item">
             <td>{{item.name}}</td>
             <td>{{item.qty}}</td>
-            <td>{{item.price}}</td>
-            <td>{{item.price * item.qty}}</td>
+            <td>{{item.price.toLocaleString()}}</td>
+            <td>{{(item.price * item.qty).toLocaleString()}}</td>
           </tr>
         </tbody>
       </table>
@@ -34,7 +34,7 @@
     <div class="TotalCalc" v-if="summary != null">
       <div class="row">
         <div class="col-4">Subotal:</div>
-        <div class="col-4"><b>&#8358; {{summary.amount}}</b></div>
+        <div class="col-4"><b>&#8358; {{(summary.amount).toLocaleString()}}</b></div>
       </div>
       <div class="row">
         <div class="col-4">Discount</div>
@@ -46,7 +46,7 @@
       </div>
       <div class="row">
         <div class="col-4">Total</div>
-        <div class="col-4"> <b>&#8358; {{Math.ceil(summary.total)}}</b></div>
+        <div class="col-4"> <b>&#8358; {{Math.ceil(summary.total).toLocaleString()}}</b></div>
       </div>
     </div>
   </div>
