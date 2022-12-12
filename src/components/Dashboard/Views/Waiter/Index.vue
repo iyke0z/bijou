@@ -144,7 +144,7 @@
                 <option v-if="customer_id != null " value="on_credit">On Credit</option>
                 <option v-if="total <= customerWallet_balance && customer_id != null " value="wallet">Wallet</option>
                 <option value="split">Split</option>
-                <option value="complementary">Split</option>
+                <option value="complementary">Complementary</option>
               </select>
             </div>
             <div class="ml-3 form-group" v-if="payment_method == 'card'">
