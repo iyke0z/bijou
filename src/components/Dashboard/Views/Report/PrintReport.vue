@@ -11,6 +11,7 @@
                     <th></th>
                     <th>EXPECTED AMOUNT</th>
                     <th>PAID AMOUNT</th>
+                    <th>COMPLEMENTARY TRANSACTIONS</th>
                     <th>CASH TRANSACTIONS</th>
                     <th>TRANSFER TRANSACTIONS</th>
                     <th>CARD TRANSACTIONS</th>
@@ -18,7 +19,6 @@
                     <th>SPLIT CASH TRANSACTIONS</th>
                     <th>SPLIT TRANSFER TRANSACTIONS</th>
                     <th>SPLIT CARD TRANSACTIONS</th>
-                    <th>COMPLEMENTARY TRANSACTIONS</th>
                   </tr>
                 </thead>
                 <tbody :key="tableKey">
@@ -26,6 +26,7 @@
                     <td>{{1}}</td>
                     <td>{{all_sales.expected_amount.toLocaleString()}}</td>
                     <td>{{all_sales.paid_amount.toLocaleString()}}</td>
+                    <td>{{all_sales.complementary.toLocaleString()}}</td>
                     <td>{{all_sales.cash.toLocaleString()}}</td>
                     <td>{{all_sales.transfer.toLocaleString()}}</td>
                     <td>{{all_sales.card.toLocaleString()}}</td>
@@ -33,7 +34,6 @@
                     <td>{{all_sales.split_payments_cash.toLocaleString()}}</td>
                     <td>{{all_sales.split_payments_transfer.toLocaleString()}}</td>
                     <td>{{all_sales.split_payments_card.toLocaleString()}}</td>
-                    <td>{{all_sales.complementary.toLocaleString()}}</td>
                   </tr>
                 </tbody>
               </table>

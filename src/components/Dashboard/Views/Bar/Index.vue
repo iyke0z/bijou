@@ -5,7 +5,7 @@
         <h2 class="bg-dark text-light p-2 pr-5 pl-5">Bar</h2>
       </header>
     </div>
-    <table :key="tableKey" class="table" id="myTable">
+    <table class="table" id="myTable">
       <thead>
         <tr>
           <th scope="col">Product</th>
@@ -15,7 +15,7 @@
           <th scope="col">Action</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody :key="tableKey">
         <tr v-for="item in orders" :key="item.id">
           <td>{{ item.product.name }}</td>
           <td>{{ item.prep_status }}</td>
@@ -61,8 +61,8 @@ export default {
             this.orders.push(element)
           }
         });
-        this.tableKey++
         this.datatable()
+        this.barOrders()
       })
     },
 
@@ -76,7 +76,8 @@ export default {
             showConfirmButton: false,
             timer: 3000
           })
-          this.barOrders()
+          this.datatable()
+          this.tableKey++
       }).catch((err) => {
         console.log(err)
       });

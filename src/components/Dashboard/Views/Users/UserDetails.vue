@@ -191,7 +191,7 @@
           <button class="btn btn-success" type="submit">Generate</button>
         </form>
 
-        <table id="table" class="table table-striped" v-if="all_sales != null">
+        <table id="table" class="table-responsive table-striped" v-if="all_sales != null">
           <thead>
             <tr>
               <th></th>
@@ -245,6 +245,7 @@ import Purchases from '@/javascript/Api/Purchases';
     },
     methods: {
       sales(){
+        this.all_sales = null
         this.form.user_id = this.$route.params.id
         User.user_repot(this.form).then((result) => {
           this.all_sales = result.data.data

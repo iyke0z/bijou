@@ -37,15 +37,18 @@
             <p-button class="mr-2" title="details" type="warning" size="sm" icon @click.prevent="goToRoute(user)">
               <i class="fa fa-eye"></i>
             </p-button>
+            <p-button class="mr-2" title="gen code" type="primary" size="sm" icon @click.prevent="generateCode(user.id)">
+              <i class="fa fa-user"></i>
+            </p-button>
             <p-button class="mr-2" title="update" type="info" size="sm" icon @click.prevent="goToUpdate(user)">
               <i class="fa fa-edit"></i>
             </p-button>
             <p-button class="mr-2" title="delete" type="danger" size="sm" icon @click.prevent="delete_user(user)">
               <i class="fa fa-trash"></i>
             </p-button>
-            <p-button class="mr-2" title="assign priviledge" type="secondary" size="sm" icon @click.prevent="assign_priviledge(user)">
+            <!-- <p-button class="mr-2" title="assign priviledge" type="secondary" size="sm" icon @click.prevent="assign_priviledge(user)">
               <i class="fa fa-refresh"></i>
-            </p-button>
+            </p-button> -->
           </td>
         </tr>
       </tbody>
@@ -101,6 +104,30 @@
       },
       goToUpdate(user){
         this.$router.push('/user/update/'+user.id)
+      },
+      generateCode(user){
+        var post = {"user_id":user}
+        User.generate_code(post).then(result => {
+          Swal.fire({
+            position: 'top-end',
+            icon: 'success',
+            title: "Code Generated",
+            customClass: 'Swal-wide',
+            showConfirmButton: false,
+            timer: 3000
+          })
+          this.allUsers()
+        }).catch((err) => {
+          Swal.fire({
+            position: 'top-end',
+            icon: 'error',
+            title: result.data.message,
+            customClass: 'Swal-wide',
+            showConfirmButton: false,
+            timer: 3000
+          })
+        });
+        
       },
       delete_user(user){
         User.delete(user.id).then((result) => {

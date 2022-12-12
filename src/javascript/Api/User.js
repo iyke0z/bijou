@@ -24,6 +24,9 @@ export default {
     },
     user_repot(form) {
         return Api.post('/user-sales-report', form)
+    },
+    generate_code(form){
+        return Api.post('/generate-code', form)
     }
 
 }

@@ -41,7 +41,7 @@
       </center>
       <div class="row mt-5 ">
         <div class="col-12">
-          <table :key="orderKey" class="table table-bordered">
+          <table class="table table-bordered">
             <thead class="thead thead-dark">
               <tr>
                 <th>#</th>
@@ -52,13 +52,13 @@
                 <th>Action</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody :key="orderKey" >
               <tr v-for="(order, index) in products" :key="order.id">
                 <td>{{index+1}}</td>
                 <td>{{order.name}}</td>
                 <td>
-                   <input autocomplete="off" v-if="!update" type="number" min="1" :max="order.stock" step="any" v-model="order.qty" @input="updateOrder(order.qty, index, true)" class="form-control col-3">
-                   <input autocomplete="off" v-if="update" type="number" min="1" :max="order.max" step="any" v-model="order.qty" @input="updateOrder(order.qty, index, true)" class="form-control col-3">
+                   <input autocomplete="off" v-if="!update" type="number" min="1" :max="order.stock" step="any" v-model="order.qty" @input="updateOrder(order.qty, index, true)" class="form-control col-12">
+                   <input autocomplete="off" v-if="update" type="number" min="1" :max="order.max" step="any" v-model="order.qty" @input="updateOrder(order.qty, index, true)" class="form-control col-12">
                 </td>
                 <td>&#8358; <input autocomplete="off" readonly type="number" v-model="order.price" step="any" @input="updateOrder(order.price, index, false)" style="border: 1px solid white"></td>
                 <td>&#8358; {{(order.price * order.qty).toLocaleString()}}</td>
@@ -178,7 +178,7 @@
             <button class="btn btn-dark">View Active Orders</button>
           </form>
           <div v-show="all_active_orders != null">
-            <table :key="tableKey" class="table" id="myTable" >
+            <table class="table" id="myTable" >
               <thead class="thead thead-dark">
                 <tr>
                   <th>ref</th>
@@ -187,7 +187,7 @@
                   <th>Action</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody :key="tableKey">
                 <tr v-for="order in all_active_orders" :key="order.id">
                   <td>{{ order.id }}</td>
                   <td v-if="order.table_description != null">{{ order.table_description }}</td>
@@ -201,7 +201,7 @@
                 </tr>
               </tbody>
             </table>
-            <table :key="detailKey" class="table" v-if="details != null">
+            <table class="table" v-if="details != null">
               <thead class="thead thead-dark">
                 <tr>
                   <th>product</th>
@@ -211,7 +211,7 @@
                   <th>status</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody :key="detailKey">
                 <tr v-for="order in details[0]" :key="order">
                   <td>{{ order.product.name }}</td>
                   <td>{{ order.ref }}</td>
@@ -334,8 +334,6 @@ import { Button, Modal } from '@/components/UIComponents'
         update:false,
         ref:null,
         rows: {split:[{split_playment_method:null, split_payment_amount:null,bank_id:null}]}
-
-
       }
     },
 
@@ -374,6 +372,7 @@ import { Button, Modal } from '@/components/UIComponents'
 
         this.orderKey++
         this.update = true
+        this.details = []
         this.cache()
       },
 
@@ -771,9 +770,17 @@ import { Button, Modal } from '@/components/UIComponents'
       }
     },
     computed:{
-
+      classic(){
+        return this.modals.classic
+      }
     },
+    
     watch:{
+      classic(){
+        if(this.modals.classic == false){
+          this.payment_method == 'cash'
+        }
+      },
 
       auth_code(){
         if(this.auth_code != null){
