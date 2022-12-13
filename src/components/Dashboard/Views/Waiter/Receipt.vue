@@ -1,13 +1,9 @@
 <template>
 <!-- START RECEIPT -->
 <div class="receipt">
-  <div >
-    <center></center>
-    <center></center>
-    </div>
   <div class="orderNo">
-    <b>{{ this.details }}</b>
-    {{getDate()}}
+    <b>{{ this.details }}</b><br/>
+    {{getDate()}} <br/>
     Customer Receipt ID# <span id="Order #">{{ String(summary.ref_no).padStart(7, 0)}}</span>
   </div>
   <div class="body">

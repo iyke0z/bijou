@@ -194,7 +194,6 @@
         <table id="table" class="table-responsive table-striped" v-if="all_sales != null">
           <thead>
             <tr>
-              <th></th>
               <th>EXPECTED AMOUNT</th>
               <th>PAID AMOUNT</th>
               <th>CASH TRANSACTIONS</th>
@@ -209,7 +208,6 @@
           </thead>
           <tbody :key="tableKey">
             <tr>
-              <td>{{1}}</td>
               <td>{{all_sales.expected_amount.toLocaleString()}}</td>
               <td>{{all_sales.paid_amount.toLocaleString()}}</td>
               <td>{{all_sales.cash.toLocaleString()}}</td>
