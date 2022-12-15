@@ -80,6 +80,7 @@
               <th>Customer</th>
               <th>Waiter</th>
               <th>date</th>
+              <th>Description</th>
               <th>actions</th>
             </tr>
           </thead>
@@ -95,6 +96,7 @@
               <td v-else>null</td><td>{{transaction.user.fullname}}</td>
 
               <td>{{dateTime(transaction.created_at)}}</td>
+              <td>{{transaction.table_description}}</td>
               <td>
                 <button @click.prevent="details(transaction.id)" class="btn btn-info mr-2" title="View Details" >
                   <i class="fa fa-eye" aria-hidden="true"></i>

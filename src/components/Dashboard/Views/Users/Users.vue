@@ -32,7 +32,8 @@
           <td>{{user.phone}}</td>
           <td>{{user.email}}</td>
           <td>{{user.role.name}}</td>
-          <td>{{user.access_code.code}}</td>
+          <td v-if="user.access_code != null">{{user.access_code.code}}</td>
+          <td v-else>null</td>
           <td>
             <p-button class="mr-2" title="details" type="warning" size="sm" icon @click.prevent="goToRoute(user)">
               <i class="fa fa-eye"></i>
