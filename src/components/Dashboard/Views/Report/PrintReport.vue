@@ -37,8 +37,8 @@
                   </tr>
                 </tbody>
               </table>
+              <h3 v-if="all_sales != null">BANK TRANSACTION REMITANCE</h3>
               <table id="table" class="table table-striped" v-if="all_sales != null">
-                <h3>BANK TRANSACTION REMITANCE</h3>
                 <thead>
                   <tr>
                     <th>BANK NAME</th>
@@ -49,6 +49,26 @@
                   <tr v-for="(bank, index) in all_sales.banks" :key="bank.id">
                     <td>{{bank.bank_name}}</td>
                     <td>{{bank.amount.toLocaleString()}}</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h3 v-if="oustanding != null">Outstanding Orders</h3>
+              <table id="table" class="table table-striped" v-if="all_sales != null">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Payable</th>
+                    <th>Waiter</th>
+                  </tr>
+                </thead>
+                <tbody :key="tableKey">
+                  <tr v-for="oustanding in oustanding" :key="oustanding.id">
+                    <td>{{oustanding.product}}</td>
+                    <td>{{oustanding.price.toLocaleString()}}</td>
+                    <td>{{oustanding.quantity.toLocaleString()}}</td><td>{{(oustanding.price*oustanding.quantity).toLocaleString()}}</td>
+                    <td>{{oustanding.waiter}}</td>
                   </tr>
                 </tbody>
               </table>
@@ -65,20 +85,24 @@
         form:{start_date:null, end_date:null, platform:'all'},
         all_sales:null,
         tableKey:0,
-        total:0
+        total:0,
+        oustanding:0
       }
     },
     methods: {
       getData(){
         var all_sales = localStorage.getItem('sales')
         var form = localStorage.getItem('form')
+        var outstanding = localStorage.getItem('outstanding')
         this.all_sales = JSON.parse(all_sales)
         this.form = JSON.parse(form)
+        this.oustanding = JSON.parse(outstanding)
 
         setTimeout(()=> {
         window.print()
           localStorage.removeItem('sales')
           localStorage.removeItem('form')
+          localStorage.removeItem('outstanding')
         this.$router.push('/report/sales')
         }, 2000)
       },

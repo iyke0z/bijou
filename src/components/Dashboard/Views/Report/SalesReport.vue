@@ -73,6 +73,26 @@
             </tr>
           </tbody>
         </table>
+        <table id="table" class="table table-striped" v-if="all_sales != null">
+          <h5>Outstanding Orders</h5>
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Price</th>
+              <th>Quantity</th>
+              <th>Payable</th>
+              <th>Waiter</th>
+            </tr>
+          </thead>
+          <tbody :key="tableKey">
+            <tr v-for="oustanding in oustanding" :key="oustanding.id">
+              <td>{{oustanding.product}}</td>
+              <td>{{oustanding.price.toLocaleString()}}</td>
+              <td>{{oustanding.quantity.toLocaleString()}}</td><td>{{(oustanding.price*oustanding.quantity).toLocaleString()}}</td>
+              <td>{{oustanding.waiter}}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
@@ -90,7 +110,9 @@ import helpers from '@/javascript/helpers'
         form:{start_date:null, end_date:null, platform:'all'},
         all_sales:null,
         tableKey:0,
-        total:0
+        total:0,
+        oustanding:[]
+
       }
     },
     methods: {
@@ -100,11 +122,38 @@ import helpers from '@/javascript/helpers'
       sales(){
         Reports.generate_report(this.form).then((result) => {
           this.all_sales = result.data.data
+          var res = []
+          res.push(result.data.data)
+
+          var outstanding = []
+
+          for (let index = 0; index < res.length; index++) {
+            if(res[index].oustanding.length > 0){
+              outstanding.push(res[index].oustanding)
+            }
+          }
+          this.getOutstanding(outstanding)
           this.tableKey++
           localStorage.setItem('sales', JSON.stringify(result.data.data))
           localStorage.setItem('form', JSON.stringify(this.form))
           this.datatable()
         })
+      },
+      getOutstanding(data){
+        this.oustanding = []
+        data[0].forEach(element => {
+          console.log(element)
+          element.sales.forEach(sale => {
+            this.oustanding.push({
+              product: sale.product.name,
+              quantity: sale.qty,
+              price: (sale.price*0.075) + sale.price,
+              waiter:element.user.fullname
+            })
+          })
+        });
+        localStorage.setItem('outstanding', JSON.stringify(this.oustanding))
+
       },
       datatable(){
         $(function() {
