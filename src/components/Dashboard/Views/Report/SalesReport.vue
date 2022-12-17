@@ -141,17 +141,19 @@ import helpers from '@/javascript/helpers'
       },
       getOutstanding(data){
         this.oustanding = []
-        data[0].forEach(element => {
-          console.log(element)
-          element.sales.forEach(sale => {
-            this.oustanding.push({
-              product: sale.product.name,
-              quantity: sale.qty,
-              price: (sale.price*0.075) + sale.price,
-              waiter:element.user.fullname
+        if(data.length > 0){
+          data[0].forEach(element => {
+            console.log(element)
+            element.sales.forEach(sale => {
+              this.oustanding.push({
+                product: sale.product.name,
+                quantity: sale.qty,
+                price: (sale.price*0.075) + sale.price,
+                waiter:element.user.fullname
+              })
             })
-          })
-        });
+          });
+        }
         localStorage.setItem('outstanding', JSON.stringify(this.oustanding))
 
       },

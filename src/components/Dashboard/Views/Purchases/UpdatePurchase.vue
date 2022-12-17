@@ -115,6 +115,9 @@ import Purchases from '@/javascript/Api/Purchases';
         });
       },
       submit(){
+        if(this.rows.new_purchase.length ==1 && this.rows.new_purchase[0].qty == null && this.rows.new_purchase[0].cost == null){
+            this.rows.new_purchase = []        
+          }
         Purchases.update(this.rows, this.$route.params.id).then((result) => {
           Swal.fire({
             position: 'top-end',

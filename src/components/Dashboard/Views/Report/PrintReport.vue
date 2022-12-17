@@ -82,11 +82,10 @@
 
     data() {
       return {
-        form:{start_date:null, end_date:null, platform:'all'},
         all_sales:null,
         tableKey:0,
         total:0,
-        oustanding:0
+        oustanding:null
       }
     },
     methods: {

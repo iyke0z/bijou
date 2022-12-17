@@ -283,8 +283,9 @@ import Sales from '@/javascript/Api/Sales'
       },
 
       deleteSale(id){
-        Sales.cancel_sale(id).then((result) => {
+        Sales.cancel_sale({ref:id}).then((result) => {
           this.filter()
+          this.sales_details = null
         })
       }
 

@@ -62,7 +62,7 @@
                   </div>
                   <div class="form-group">
                     <label for="">Stock</label>
-                    <input type="text" readonly v-model="form.stock" class="form-control">
+                    <input type="text" v-model="form.stock" class="form-control">
                   </div>
                   <div class="form-group">
                     <label for="">Product Code</label>
