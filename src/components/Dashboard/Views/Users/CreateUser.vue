@@ -19,7 +19,7 @@
         </div>
         <div class="form-group">
           <label for="">address</label>
-          <textarea name="" class="form-control" id="" cols="30" rows="10" v-model="form.dob" required></textarea>
+          <textarea name="" class="form-control" id="" cols="30" rows="10" v-model="form.address" required></textarea>
         </div>
         <div class="form-group">
           <label for="">Role</label>
@@ -35,7 +35,7 @@
           <select v-model="form.gender" class="form-control" required>
             <option value="null">Select</option>
             <option value="male">Male</option>
-            <option value="male">Female</option>
+            <option value="female">Female</option>
           </select>
         </div>
         <div class="form-group">
