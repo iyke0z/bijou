@@ -1,4 +1,4 @@
-# nes-app
+# Bijou Cafe 
 
 ## Project setup
 ```
