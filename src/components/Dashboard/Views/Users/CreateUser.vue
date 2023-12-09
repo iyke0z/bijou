@@ -33,7 +33,7 @@
         <div class="form-group">
           <label for="">Gender</label>
           <select v-model="form.gender" class="form-control" required>
-            <option value="null">Select</option>
+            <option value="">Select</option>
             <option value="male">Male</option>
             <option value="female">Female</option>
           </select>
