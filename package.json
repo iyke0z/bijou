@@ -9,10 +9,6 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "dev": "vue-cli-service serve --open",
-    "electron:build": "vue-cli-service electron:build",
-    "electron:serve": "vue-cli-service electron:serve",
-    "postinstall": "electron-builder install-app-deps",
-    "postuninstall": "electron-builder install-app-deps",
     "start": "node server.js"
   },
   "main": "background.js",
@@ -23,6 +19,7 @@
     "@fullcalendar/interaction": "4.4.2",
     "@fullcalendar/timegrid": "4.4.2",
     "@fullcalendar/vue": "4.4.0",
+    "axios": "^1.6.2",
     "bootstrap": "^4.2.1",
     "chart.js": "^2.9.3",
     "core-js": "^3.6.5",
@@ -31,7 +28,6 @@
     "datatables": "^1.10.18",
     "datatables-buttons": "^1.0.3",
     "datatables.net-dt": "^1.12.1",
-    "electron-unhandled": "^4.0.1",
     "element-ui": "^2.13.2",
     "firebase": "^9.9.2",
     "fontawesome-4.7": "^4.7.0",
@@ -62,11 +58,8 @@
     "@vue/cli-plugin-pwa": "^4.3.1",
     "@vue/cli-service": "^4.3.1",
     "babel-plugin-component": "^1.1.1",
-    "electron": "^13.0.0",
-    "electron-devtools-installer": "^3.1.0",
     "node-sass": "^4.14.1",
     "sass-loader": "^8.0.2",
-    "vue-cli-plugin-electron-builder": "~2.1.1",
     "vue-template-compiler": "^2.6.11"
   },
   "browserslist": [

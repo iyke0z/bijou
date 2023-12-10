@@ -108,8 +108,8 @@
         if(this.form.phone != null && this.form.password != null){
           Auth.login(this.form).then((result) =>{
             localStorage.setItem("token", result.data.data['access_token'])
-            // window.location.href = "/admin/overview"
-            this.$router.push({name:'dashboard'})
+            window.location.href = "/admin/overview"
+            // this.$router.push({name:'dashboard'})
           }).catch((err) => {
             Swal.fire({
               position: 'top-end',
