@@ -1,7 +1,7 @@
 <template>
   <div>
 
-    <div class="card">
+    <div class="card table-responsive">
       <div class="card-body">
         <h5 class="card-title">General Report</h5>
         <div class="row">
@@ -27,7 +27,7 @@
               <button class="btn btn-success" type="submit">Generate</button>
             </form>
           </div>
-          <div class="col-4">
+          <div class="col-4 table-responsive">
             <h6>Summary Report from <br> {{form.start_date}} - {{form.end_date}}</h6>
             <table class="table">
               <tr>
@@ -48,7 +48,7 @@
               </tr>
             </table>
           </div>
-          <div class="col-4">
+          <div class="col-4 table-responsive">
             <h6>Product Trend</h6>
             <table id="trendtable" class="table">
               <thead>
@@ -110,7 +110,7 @@
         </table>
       </div>
     </div>
-    <div class="card col-12 mr-3">
+    <div class="card col-12 mr-3 table-responsive">
       <div class="card-body">
         <h5 class="card-title">Sales Details</h5>
         <table id="purchase" class="table table-stripped">

@@ -99,11 +99,11 @@ export default [{
         icon: 'fa fa-book',
         collapsed: true,
         children: [{
-                name: 'Report',
+                name: 'Daily Report',
                 path: '/report/sales'
             },
             {
-                name: 'General Report',
+                name: 'Periodic Report',
                 path: '/report/general'
             },
 
