@@ -52,7 +52,7 @@
                   </tr>
                 </tbody>
               </table>
-              <h3 v-if="oustanding != null">Outstanding Orders</h3>
+              <h3 v-if="oustanding != null">Unpaid Orders</h3>
               <table id="table" class="table table-striped" v-if="all_sales != null">
                 <thead>
                   <tr>

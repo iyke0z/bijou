@@ -33,7 +33,7 @@
           </tr>
         </thead>
       </table>
-      <button class="btn btn-success" type="submit">Submit</button>
+      <button class="btn btn-success" type="submit">Submit <span v-if="loading" class="loader"></span></button>
     </form>
   </div>
 </template>
@@ -49,6 +49,7 @@ import Purchases from '@/javascript/Api/Purchases';
                 qty:null,
                 cost:null
           }]},
+        loading:false,
         products:null
       }
     },
@@ -69,6 +70,7 @@ import Purchases from '@/javascript/Api/Purchases';
         this.rows.purchase.splice(index, 1)
       },
       submit(){
+        this.loading = true
         Purchases.create(this.rows).then((result) => {
           Swal.fire({
             position: 'top-end',
@@ -83,11 +85,14 @@ import Purchases from '@/javascript/Api/Purchases';
                 qty:null,
                 cost:null
             }]
+          this.loading = false
+
         }).catch((err) => {
+          this.loading = false
           Swal.fire({
             position: 'top-end',
             icon: 'error',
-            title: err.data.message,
+            title: err.response.data.message,
             customClass: 'Swal-wide',
             showConfirmButton: false,
             timer: 3000

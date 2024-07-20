@@ -157,7 +157,7 @@
             <div class="form-group ml-5">
               <label for=""></label><br />
               <button class="btn btn-info mr-2" v-if="!update" :disabled="auth_code == '' && products.length == 0 " @click.prevent="place_order">
-                Place Order <i class="fa fa-plus" aria-hidden="true"></i>
+                Place Order <span v-if="loadingOrder" class="loader"></span> <i class="fa fa-plus" aria-hidden="true"></i>
               </button>
               <button class="btn btn-warning mr-2" v-if="update" :disabled="auth_code == '' " @click.prevent="updateSaleOrder">
                 Update Order <i class="fa fa-plus" aria-hidden="true"></i>
@@ -175,7 +175,7 @@
       <div class="row mt-5">
           <form @submit.prevent="active_orders">
             <input autocomplete="off" type="text" class="form-control" placeholder="input auth code" v-model="auth_code" required>
-            <button class="btn btn-dark">View Active Orders</button>
+            <button class="btn btn-dark">View Active Orders <span v-if="loading" class="loader"></span></button>
           </form>
           <div v-show="all_active_orders != null">
             <table class="table" id="myTable" >
@@ -291,6 +291,8 @@ import { Button, Modal } from '@/components/UIComponents'
     components:{Receipt, Modal},
     data() {
       return {
+        loading: false,
+        loadingOrder: false,
         customer_id: null,
         discount_pctge:0,
         from_wallet:false,
@@ -382,6 +384,8 @@ import { Button, Modal } from '@/components/UIComponents'
           "products": this.products,
           "description": this.description
         }
+          this.loadingOrder = true
+
         Sales.new_sale(post).then((result) => {
           this.receiptKey++
           this.reset()
@@ -398,7 +402,10 @@ import { Button, Modal } from '@/components/UIComponents'
             timer: 3000
           })
           this.cache()
+          this.loadingOrder = false
         }).catch((err) => {
+          this.loadingOrder = false
+
           Swal.fire({
             position: 'top-end',
             icon: 'error',
@@ -455,10 +462,18 @@ import { Button, Modal } from '@/components/UIComponents'
         this.rows.split.splice(id, 1)
       },
       active_orders(){
-        Orders.get_active_orders({"auth_code":this.auth_code}).then((result) => {
-          this.all_active_orders = result.data.data
-          this.tableKey++
-        })
+        this.loading = true
+          Orders.get_active_orders({"auth_code":this.auth_code}).then((result) => {
+            this.all_active_orders = result.data.data
+            this.tableKey++
+            this.datatable()
+            this.loading = false
+
+          }).catch(() => {
+            this.loading = false
+          })
+        
+        
       },
       updateOrder(qty, index, isQty){
           if(isQty){
@@ -658,6 +673,15 @@ import { Button, Modal } from '@/components/UIComponents'
           })
           });
       },
+      datatable(){
+        $(function() {
+          $('#myTable').DataTable({
+            "bDestroy": true,
+                pageLength: 5,
+                lengthMenu: [[5,10,20], [5, 10, 20]],
+            });
+        });
+      },
       pay(){
         if(this.payment_method == "card" && this.bank_id == null) {
           Swal.fire({
@@ -797,7 +821,7 @@ import { Button, Modal } from '@/components/UIComponents'
           this.searchResult = []
         }
       },
-
+      
       searchCustomer(){
         if(this.searchCustomer == ""){
           this.customer_id = null

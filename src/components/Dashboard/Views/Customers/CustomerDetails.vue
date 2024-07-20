@@ -10,19 +10,19 @@
               <input readonly type="text" class="form-control" v-model="form.fullname" required>
             </div>
 
-            <div class="form-group">
+            <!-- <div class="form-group">
               <label for="">Email</label>
               <input readonly type="email" class="form-control" v-model="form.email" required>
-            </div>
+            </div> -->
 
             <div class="form-group">
               <label for="">Phone</label>
               <input readonly type="text" class="form-control" v-model="form.phone" required>
             </div>
-            <div class="form-group">
+            <!-- <div class="form-group">
               <label for="">address</label>
               <textarea readonly name="" class="form-control" id="" cols="30" rows="10" v-model="form.address" required></textarea>
-            </div>
+            </div> -->
             <div class="form-group">
               <label for="">Wallet Balance</label>
               <input readonly type="text" class="form-control" v-model="form.wallet_balance" required>
@@ -31,7 +31,6 @@
         </section>
       </div>
     </div>
-
     <div class="card">
       <div class="card-body">
         <h5 class="card-title">Transactions</h5>
@@ -42,17 +41,17 @@
               <th>Type</th>
               <th>Amount</th>
               <th>Ref</th>
-              <th>Platform</th>
+              <th>Payment Status</th>
               <th>Date</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(transaction, index) in transactions" :key="index">
-              <td>{{index+1}}</td>
+              <td>{{ index+1 }}</td>
               <td>{{transaction.type}}</td>
               <td>{{transaction.amount.toLocaleString()}}</td>
-              <td>{{transaction.sales_ref}}</td>
-              <td>{{transaction.platform}}</td>
+              <td>{{transaction.id}}</td>
+              <td>{{transaction.payment_method ?? "walllet funding"}} </td>
               <td>{{dateTime(transaction.created_at)}}</td>
             </tr>
           </tbody>
@@ -97,7 +96,7 @@ import helpers from '@/javascript/helpers';
           Swal.fire({
             position: 'top-end',
             icon: 'error',
-            title: err.data.message,
+            title: err.response.data.message,
             customClass: 'Swal-wide',
             showConfirmButton: false,
             timer: 3000

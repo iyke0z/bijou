@@ -1,7 +1,7 @@
 <template>
   <div>
     <h3>Products</h3>
-     <div>
+     <div v-if="!loading">
        <table id="table" class="table table-striped">
          <thead>
            <tr>
@@ -15,28 +15,31 @@
            </tr>
          </thead>
          <tbody :key="tableKey">
-           <tr v-for="(product, index) in products" :key="product.id">
-             <td>{{index+1}}</td>
-             <td>{{product.name}}</td>
-             <td>{{product.code}}</td>
-             <td>{{product.category.name}}</td>
-             <td>{{product.stock}}</td>
-             <td v-if="product.stock < 1" class="bg-danger">Out of Stock</td>
-             <td v-else class="bg-success">Available</td>
-             <td>
-               <p-button class="mr-2" title="details" type="warning" size="sm" icon @click.prevent="goToRoute(product)">
-                 <i class="fa fa-eye"></i>
-               </p-button>
-               <p-button class="mr-2" title="update" type="info" size="sm" icon @click.native="openModal('classic', 'Update Product', 'update', product)">
-                 <i class="fa fa-edit"></i>
-               </p-button>
-               <p-button class="mr-2" title="delete" type="danger" size="sm" icon @click.prevent="delete_user(product)">
-                 <i class="fa fa-trash"></i>
-               </p-button>
-             </td>
-           </tr>
+            <tr v-for="(product, index) in products" :key="product.id" >
+              <td>{{index+1}}</td>
+              <td>{{product.name}}</td>
+              <td>{{product.code}}</td>
+              <td>{{product.category.name}}</td>
+              <td>{{product.stock}}</td>
+              <td v-if="product.stock < 1" class="bg-danger">Out of Stock</td>
+              <td v-else class="bg-success">Available</td>
+              <td>
+                <p-button class="mr-2" title="details" type="warning" size="sm" icon @click.prevent="goToRoute(product)">
+                  <i class="fa fa-eye"></i>
+                </p-button>
+                <p-button class="mr-2" title="update" type="info" size="sm" icon @click.native="openModal('classic', 'Update Product', 'update', product)">
+                  <i class="fa fa-edit"></i>
+                </p-button>
+                <p-button class="mr-2" title="delete" type="danger" size="sm" icon @click.prevent="delete_user(product)">
+                  <i class="fa fa-trash"></i>
+                </p-button>
+              </td>
+            </tr>
          </tbody>
        </table>
+    </div>
+    <div v-else>
+      <span class="loader"></span>
     </div>
          <!-- update modal -->
          <modal :show.sync="modals.classic" headerClasses="justify-content-center">
@@ -62,7 +65,7 @@
                   </div>
                   <div class="form-group">
                     <label for="">Stock</label>
-                    <input type="text" v-model="form.stock" class="form-control">
+                    <input type="text" v-model="form.stock" class="form-control" readonly>
                   </div>
                   <div class="form-group">
                     <label for="">Product Code</label>
@@ -95,6 +98,7 @@
   import Category from '@/javascript/Api/Categories'
   import Swal from 'sweetalert2'
 
+
   export default{
      components: {
       Modal
@@ -110,6 +114,7 @@
         modalTitle:null,
         products: null,
         img:null,
+        loading:false,
         modals: {
           classic: false,
           notice: false,
@@ -201,9 +206,11 @@
       },
 
       get_product(){
+        this.loading = true
         Product.products().then((result) => {
           this.products = result.data.data
           this.datatable()
+          this.loading = false
         })
       },
 

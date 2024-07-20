@@ -74,7 +74,7 @@
           </tbody>
         </table>
         <table id="table" class="table table-striped" v-if="all_sales != null">
-          <h5>Outstanding Orders</h5>
+          <h5>Unpaid Orders</h5>
           <thead>
             <tr>
               <th>Product</th>
