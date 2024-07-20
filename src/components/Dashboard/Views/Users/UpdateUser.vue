@@ -52,7 +52,8 @@
              </div>
              </div>
         </div>
-        <button class="btn btn-success col-8" type="submit">Update</button>
+        <button class="btn btn-success col-8" type="submit">Update
+        <span class="loader text-black" v-if="loading"></span></button>
       </form>
     </section>
   </div>
@@ -74,6 +75,7 @@ import Swal from 'sweetalert2';
           role_id:null,
           password:null,
           dob:null,
+          loading: false,
           gender:null,
           picture:null
         },
@@ -114,6 +116,7 @@ import Swal from 'sweetalert2';
           };
       },
       submit(){
+        this.loading = true
         var formData = new FormData()
         formData.append('fullname', this.form.fullname)
         formData.append('email', this.form.email)
@@ -134,11 +137,14 @@ import Swal from 'sweetalert2';
             showConfirmButton: false,
             timer: 3000
           })
+          this.loading = false
+
         }).catch((err) => {
+          this.loading = false
           Swal.fire({
             position: 'top-end',
             icon: 'error',
-            title: err,
+            title: err.response.data.message,
             customClass: 'Swal-wide',
             showConfirmButton: false,
             timer: 3000

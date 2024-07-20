@@ -3,6 +3,9 @@
     <p-button type="success" size="lg" icon @click.native="openModal('classic', 'New Category', 'create')">
       Add New
     </p-button>
+    <div>
+      <span class="loader" v-if="loading"></span>
+    </div>
     <div class="card">
       <div class="card-body">
         <h5 class="card-title">Purchases</h5>
@@ -114,6 +117,7 @@ import helpers from '@/javascript/helpers'
           notice: false,
           mini: false
         },
+        loading: false,
         purchase_details:null,
         all_purchases: null,
         modalTitle:null,
@@ -136,6 +140,7 @@ import helpers from '@/javascript/helpers'
         this.$router.push('/purchase/update/'+purchase.id)
       },
       delete_purchase(purchase){
+        this.loading = true
         Purchases.delete_purchase(purchase.id).then((result) => {
           Swal.fire({
             position: 'top-end',
@@ -147,11 +152,13 @@ import helpers from '@/javascript/helpers'
           })
           this.allpurchases()
           this.purchase_details = null
+          this.loading = false
         }).catch((err) => {
+          this.loading = false
           Swal.fire({
             position: 'top-end',
             icon: 'error',
-            title: result.data.message,
+            title: err.response.data.message,
             customClass: 'Swal-wide',
             showConfirmButton: false,
             timer: 3000
@@ -199,7 +206,7 @@ import helpers from '@/javascript/helpers'
           Swal.fire({
             position: 'top-end',
             icon: 'error',
-            title: err.data.message,
+            title: err.response.data.message,
             customClass: 'Swal-wide',
             showConfirmButton: false,
             timer: 3000

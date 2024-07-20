@@ -24,7 +24,7 @@
                   <option value="all">All</option>
                 </select>
               </div>
-              <button class="btn btn-success" type="submit">Generate</button>
+              <button class="btn btn-success" type="submit">Generate <span class="loader" v-if="loading"></span></button>
             </form>
           </div>
           <div class="col-4 table-responsive">
@@ -87,10 +87,10 @@
           <tbody :key="tableKey">
             <tr v-for="transaction in transactions" :key="transaction">
               <td>{{String(transaction.id).padStart(9,0)}}</td>
-              <td>{{transaction.type}}</td>
-              <td>{{transaction.payment_method }}</td>
-
+              <td>{{transaction.type ?? "awaiting staff closing transaction"}}</td>
+              
               <td>{{transaction.status}}</td>
+              <td>{{transaction.payment_method ?? "--" }}</td>
               <td>{{transaction.amount.toLocaleString()}}</td>
               <td v-if="transaction.customer != null">{{transaction.customer.fullname}}</td>
               <td v-else>null</td><td>{{transaction.user.fullname}}</td>
@@ -169,7 +169,8 @@ import Sales from '@/javascript/Api/Sales'
         totalexp:0,
         totalsales:0,
         productTrend:null,
-        trendKey:0
+        trendKey:0,
+        loading: false
 
 
       }
@@ -249,7 +250,9 @@ import Sales from '@/javascript/Api/Sales'
 
       getSummary(){
         // getCost
+        this.loading = true
         Purchases.purchases().then((result) => {
+          this.loading = false
           var totalsales = 0
           var totalcost = 0
           var expenditure = 0
@@ -279,6 +282,8 @@ import Sales from '@/javascript/Api/Sales'
           this.totalsales = totalsales
 
           this.getProductTrend()
+        }).catch(() => {
+          this.loading = false
         })
       },
 

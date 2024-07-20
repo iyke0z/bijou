@@ -158,7 +158,7 @@ import helpers from '@/javascript/helpers'
           Swal.fire({
             position: 'top-end',
             icon: 'error',
-            title: err.data.message,
+            title: err.response.data.message,
             customClass: 'Swal-wide',
             showConfirmButton: false,
             timer: 3000
@@ -183,7 +183,7 @@ import helpers from '@/javascript/helpers'
           Swal.fire({
             position: 'top-end',
             icon: 'error',
-            title: err.data.message,
+            title: err.response.data.message,
             customClass: 'Swal-wide',
             showConfirmButton: false,
             timer: 3000

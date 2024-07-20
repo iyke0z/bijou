@@ -1,7 +1,8 @@
 <template>
   <div>
-    <h3>Users</h3>
-     <div>
+    <h3>Users </h3>
+    <span v-if="loading" class="loader"></span>
+    <div v-if="!loading">
       <center>
         <label class="mr-2">Filter Table </label>
         <select @change="filter_table()" v-model="filter">
@@ -74,6 +75,7 @@
         tableKey:0,
         user:null,
         all_users: null,
+        loading: false
       }
     },
     methods: {
@@ -154,11 +156,13 @@
       },
 
       allUsers(){
+        this.loading = false
         User.all_users().then((result) => {
             this.all_users = result.data.data
             this.tableKey++
             this.datatable()
-        })
+            this.loading = false
+        }).catch(() => {this.loading = false})
       },
 
       datatable(){

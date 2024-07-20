@@ -33,7 +33,7 @@
           </tr>
         </thead>
       </table>
-      <button class="btn btn-success" type="submit">Submit</button>
+      <button class="btn btn-success" type="submit">Submit <span v-if="loading" class="loader"></span></button>
     </form>
   </div>
 </template>
@@ -51,7 +51,8 @@
             price:null,
             code:null
           }]},
-        categories:null
+          loading: false,
+          categories:null
       }
     },
     methods: {
@@ -73,11 +74,12 @@
         this.rows.products.splice(index, 1)
       },
       submit(){
+        this.loading = true
         Product.create(this.rows).then((result) => {
           Swal.fire({
             position: 'top-end',
             icon: 'success',
-            title: result.data.message,
+            title: result.response.data.message,
             customClass: 'Swal-wide',
             showConfirmButton: false,
             timer: 3000
@@ -89,16 +91,19 @@
               price:null,
               code:null
           }]
+        this.loading = false
         }).catch((err) => {
           Swal.fire({
             position: 'top-end',
             icon: 'error',
-            title: err.data.message,
+            title: err.response.data.message,
             customClass: 'Swal-wide',
             showConfirmButton: false,
             timer: 3000
           })
         });
+        this.loading = false
+
       }
     },
     created(){

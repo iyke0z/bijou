@@ -5,8 +5,9 @@
       Add New
     </p-button>
     <div>
+      <span class="loader" v-if="loading"></span>
     </div>
-    <table id="table" class="table table-striped">
+    <table id="table" class="table table-striped" v-if="!loading">
       <thead>
         <tr>
           <th></th>
@@ -102,6 +103,7 @@ import helpers from '@/javascript/helpers'
         all_categories: null,
         modalTitle:null,
         modalAction:null,
+        loading:false,
         modalContent:null,
         rows:{category:[{name:null}]}
       }
@@ -143,6 +145,7 @@ import helpers from '@/javascript/helpers'
         });
       },
       submit(){
+        this.loading = true
         Category.create(this.rows).then((result) => {
           Swal.fire({
             position: 'top-end',
@@ -154,11 +157,13 @@ import helpers from '@/javascript/helpers'
           })
           this.rows.category = [{name:null}]
           this.allcategories()
+          this.loading = false
         }).catch((err) => {
+          this.loading = false
           Swal.fire({
             position: 'top-end',
             icon: 'error',
-            title: err.data.message,
+            title: err.response.data.message,
             customClass: 'Swal-wide',
             showConfirmButton: false,
             timer: 3000
@@ -166,6 +171,7 @@ import helpers from '@/javascript/helpers'
         });
       },
       update(){
+        this.loading = true
         Category.update(this.form, this.category).then((result) => {
           Swal.fire({
             position: 'top-end',
@@ -175,15 +181,17 @@ import helpers from '@/javascript/helpers'
             showConfirmButton: false,
             timer: 3000
           })
+          this.allcategories()
           this.updateMode = false
           this.form = {name:null}
           this.modals.classic = false
-          this.allcategories()
+          this.loading = false
         }).catch((err) => {
+        this.loading = false
           Swal.fire({
             position: 'top-end',
             icon: 'error',
-            title: err.data.message,
+            title: err.response.data.message,
             customClass: 'Swal-wide',
             showConfirmButton: false,
             timer: 3000
@@ -191,10 +199,14 @@ import helpers from '@/javascript/helpers'
         });
       },
       allcategories(){
+        this.loading = true
         Category.categories().then((result) => {
             this.all_categories = result.data.data
+            this.loading = false
             this.tableKey++
             this.datatable()
+        }).catch(()=>{
+          this.loading = false
         })
       },
       new_row(){

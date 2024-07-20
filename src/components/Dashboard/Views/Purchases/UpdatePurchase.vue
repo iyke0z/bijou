@@ -57,7 +57,7 @@
           </tr>
         </thead>
       </table>
-      <button class="btn btn-success" type="submit">Submit</button>
+      <button class="btn btn-success" type="submit">Submit <span v-if="loading" class="loader"></span></button>
     </form>
   </div>
 </template>
@@ -82,6 +82,7 @@ import Purchases from '@/javascript/Api/Purchases';
               qty:null,
               cost:null
           }]},
+          loading:false,
         products:null
       }
     },
@@ -115,10 +116,13 @@ import Purchases from '@/javascript/Api/Purchases';
         });
       },
       submit(){
+        this.loading = true
+
         if(this.rows.new_purchase.length ==1 && this.rows.new_purchase[0].qty == null && this.rows.new_purchase[0].cost == null){
             this.rows.new_purchase = []        
           }
         Purchases.update(this.rows, this.$route.params.id).then((result) => {
+          
           Swal.fire({
             position: 'top-end',
             icon: 'success',
@@ -127,12 +131,16 @@ import Purchases from '@/javascript/Api/Purchases';
             showConfirmButton: false,
             timer: 3000
           })
+          this.loading = false
+
           this.$router.push({name:'all_purchases'})
         }).catch((err) => {
+          this.loading = false
+
           Swal.fire({
             position: 'top-end',
             icon: 'error',
-            title: err.data.message,
+            title: err.response.data.message,
             customClass: 'Swal-wide',
             showConfirmButton: false,
             timer: 3000
