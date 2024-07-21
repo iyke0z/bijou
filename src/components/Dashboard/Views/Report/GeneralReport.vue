@@ -10,11 +10,11 @@
             <form action="" @submit.prevent="filter">
               <div class="form-group">
                 <label for="">Start Date</label>
-              <input type="date" v-model="form.start_date" class="form-control col-6"  required>
+              <input type="datetime-local" v-model="form.start_date" class="form-control col-6"  required>
               </div>
               <div class="form-group">
                 <label for="">End Date</label>
-                <input type="date" v-model="form.end_date" class="form-control col-6" required>
+                <input type="datetime-local" v-model="form.end_date" class="form-control col-6" required>
               </div>
               <div class="form-group">
                 <label for="">Platform</label>
