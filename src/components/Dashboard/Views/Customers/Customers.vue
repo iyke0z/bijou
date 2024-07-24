@@ -156,6 +156,8 @@
       datatable(){
         $(function() {
           $('#table').DataTable({
+            dom: 'Bfrtip',
+          buttons: ['excel', 'pdf', 'print'],
             "bDestroy": true,
                 pageLength: 5,
                 lengthMenu: [[5,10,20], [5, 10, 20]],

@@ -14,8 +14,19 @@ import SideBar from './components/UIComponents/SidebarPlugin'
 import initProgress from './progressbar';
 
 // datatable
-import 'datatables.net-dt/js/dataTables.dataTables'
-import 'datatables.net-dt/css/jquery.dataTables.min.css'
+import $ from 'jquery';
+import 'datatables.net-dt/js/dataTables.dataTables';
+import 'datatables.net-dt/css/jquery.dataTables.min.css';
+import 'datatables.net-buttons/js/dataTables.buttons.min.js';
+import 'datatables.net-buttons-dt/css/buttons.dataTables.min.css';
+import 'datatables.net-buttons/js/buttons.html5.min.js';
+import 'datatables.net-buttons/js/buttons.print.min.js';
+import JSZip from 'jszip';
+
+window.JSZip = JSZip;
+
+
+
 import moment from 'moment'
 // import '@fortawesome/fontawesome-free/css/all.min.css'
 // import '@fortawesome/fontawesome-free/js/all.min.js'
@@ -25,9 +36,6 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 
 // router setup
 import routes from './routes/routes'
-import $ from 'jquery'
-import 'datatables.net-dt/js/dataTables.dataTables'
-import 'datatables.net-dt/css/jquery.dataTables.min.css'
 
 // library imports
 

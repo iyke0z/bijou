@@ -179,6 +179,8 @@ import Sales from '@/javascript/Api/Sales'
       datatable(){
         $(function() {
           $('#table').DataTable({
+            dom: 'Bfrtip',
+            buttons: ['excel', 'pdf', 'print'],
             "bDestroy": true,
                 pageLength: 5,
                 lengthMenu: [[5,10,20], [5, 10, 20]],
@@ -188,6 +190,8 @@ import Sales from '@/javascript/Api/Sales'
       datatableTrend(){
         $(function() {
           $('#trendtable').DataTable({
+            dom: 'Bfrtip',
+          buttons: ['excel', 'pdf', 'print'],
             "bDestroy": true,
                 pageLength: 5,
                 lengthMenu: [[5,10,20], [5, 10, 20]],
