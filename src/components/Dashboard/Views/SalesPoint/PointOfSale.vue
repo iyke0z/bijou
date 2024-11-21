@@ -1,3 +1,124 @@
+<style scoped>
+  nav {
+    background-color: #f1f5fee9;
+    height: 50px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    position: absolute;
+  }
+  li {
+    margin-left: 3%;
+    list-style-type: none;
+    color: rgb(6, 6, 6);
+    font-weight: 600;
+    position: relative;
+  }
+  .productList {
+    background-color: #cecece;
+    padding: 7px;
+    z-index: 10000;
+    cursor: pointer;
+  }
+
+  .productList:hover {
+    background-color: #f9f2f2;
+  }
+  #search {
+    width: 500px;
+  }
+
+  .auth {
+    margin-left: 23%;
+  }
+  .navBrand {
+    width: 300px;
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 24px;
+    margin-right: 10%;
+  }
+
+  /* Mobile-specific styles */
+  @media screen and (max-width: 768px) {
+    nav {
+      flex-wrap: wrap;
+      height: auto;
+      padding: 10px;
+    }
+    li {
+      margin-left: 5px;
+    }
+    .navBrand {
+      font-size: 16px;
+      margin-right: 5%;
+    }
+    #search {
+      width: 100%;
+      margin-top: 10px;
+    }
+    .auth {
+      margin-left: 5%;
+    }
+    .productList {
+      font-size: 12px;
+    }
+  }
+
+  @media screen and (max-width: 576px) {
+    nav {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .navBrand {
+      width: 100%;
+      text-align: center;
+    }
+    .auth {
+      margin-left: 0;
+    }
+  }
+
+  /* Responsive table */
+  table {
+    width: 100%;
+    overflow-x: auto;
+    display: block;
+  }
+  thead, tbody, tr, td, th {
+    display: block;
+  }
+  thead tr {
+    display: flex;
+    justify-content: space-between;
+  }
+  tbody tr {
+    display: flex;
+    justify-content: space-between;
+  }
+  td, th {
+    flex: 1;
+    text-align: center;
+    font-size: 12px;
+    padding: 5px;
+  }
+
+  /* Responsive buttons */
+  .form-group {
+    margin-top: 10px;
+    text-align: center;
+  }
+  button {
+    width: 100%;
+    margin-bottom: 10px;
+    font-size: 14px;
+  }
+  input {
+    width: 100%;
+    font-size: 14px;
+  }
+</style>
+
 <template>
   <div>
     <div class="nav w-100 bg-info" style="height:50px">
@@ -129,7 +250,7 @@
               <select v-model="payment_method" name="" class="form-control col-10" id="">
                 <option value="cash">Cash</option>
                 <option value="transfer">Transfer</option>
-                <option value="card">Card</option>
+                <option value="card">POS</option>
                 <option v-if="customer_id != null " value="on_credit">On Credit</option>
                 <option v-if="total <= customerWallet_balance && customer_id != null " value="wallet">Wallet</option>
               </select>
@@ -251,7 +372,10 @@ import User from '@/javascript/Api/User'
                 if (request != "" && request !== " " && productName.match(request))
                   {
                     this.searchResult.push(
-                    {product_id:product.id, stock:product.stock, name:product.name,qty: 1,price: product.price,},)
+                    // {product_id:product.id, stock:product.stock, name:product.name,qty: 1,price: product.price,},
+                    {product_id:product.id, has_stock:product.category.has_stock, stock:product.stock, name:product.name,qty: 1,price: product.price, category_id:product.category_id},
+
+                    )
                   }
           });
       },
@@ -285,7 +409,19 @@ import User from '@/javascript/Api/User'
       },
 
       appendProduct(product){
-        if(product.stock >= 1){
+        console.log(product)
+        if(product.has_stock == 0 ){
+          this.products.push({
+              product_id: product.product_id,
+              name:product.name,
+              qty: 1,
+              stock: product.stock,
+              price: product.price,
+            })
+            this.searchResult = []
+            this.searchParam = ""
+        }else{
+          if(product.stock >= 1){
             this.products.push({
               product_id: product.product_id,
               name:product.name,
@@ -305,6 +441,8 @@ import User from '@/javascript/Api/User'
               timer: 3000
             })
           }
+        }
+
       },
       logout(){
         Auth.logout().then(() => {
@@ -351,7 +489,11 @@ import User from '@/javascript/Api/User'
           "on_credit" : this.on_credit,
           "payment_method": this.payment_method,
           "products": this.products,
-          "platform": this.platform
+          "platform": this.platform,
+          "auth_code": this.user.access_code.code,
+          "description": "new sale",
+          "amount": this.total,
+          "is_order":false
         }
         Sales.new_sale(post).then((result) => {
           this.response = {products: this.products, summary:result.data.data}
@@ -461,91 +603,5 @@ import User from '@/javascript/Api/User'
     },
   }
 </script>
-<style scoped>
-  nav{
-    background-color: #f1f5fee9;
-    height: 50px;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    position: absolute;
-  }
-  hrDivider{
-    height: 100px;
-    border: 1px solid black;
-  }
-  li{
-    margin-left: 3%;
-    list-style-type: none;
-    color: rgb(6, 6, 6);
-    font-weight: 600;
-    position: relative;
-  }
-  .productList {
-    background-color:#cecece;
-    padding: 7px;
-    z-index: 10000;
-    cursor: pointer;
-  }
-
-  .productList:hover{
-    background-color: #f9f2f2;
-  }
-  #search{
-    width: 500px;
-  }
-
-  .auth{
-    margin-left: 23%;
-  }
-  .navBrand {
-    width: 300px;
-    color: white;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    font-size: 24px;
-    margin-right: 10%;
-  }
-
-  @media screen and( max-width: 992px) {
-    .navBrand {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      font-size: 12px;
-      margin-right: 5%;
-    }
-    .search    {
-      width: 180px;
-    }
-
-    .auth{
-      margin-left: 1%;
-    }
-  }
-  @media screen and( max-width: 778px) {
-    .navBrand {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      font-size: 12px;
-      margin-right: 5%;
-    }
-    .search    {
-      width: 100px;
-    }
 
 
-  }
-
-  @media print {
-    * { margin: 0 !important; padding: 0 !important; }
-    #controls, .footer, .footerarea{ display: none; }
-    html, body {
-      /*changing width to 100% causes huge overflow and wrap*/
-      height:100%;
-      overflow: hidden;
-      background: #FFF;
-      font-size: 9.5pt;
-    }
-
-    .receipt { width: auto; left:0; top:0; }
-    img { width:100%; }
-    li { margin: 0 0 10px 20px !important;}
-  }
-</style>

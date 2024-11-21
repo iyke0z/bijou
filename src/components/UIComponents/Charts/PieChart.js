@@ -3,20 +3,20 @@ import { Pie } from 'vue-chartjs'
 const defaultOptions = {
   legend: {
 
-    display: false
+    display: true
   },
 
   tooltips: {
-    enabled: false
+    enabled: true
   },
   scales: {
     yAxes: [{
 
       ticks: {
-        display: false
+        display: true
       },
       gridLines: {
-        drawBorder: false,
+        drawBorder: true,
         zeroLineColor: "transparent",
         color: 'rgba(255,255,255,0.05)'
       }
@@ -25,12 +25,12 @@ const defaultOptions = {
     xAxes: [{
       barPercentage: 1.6,
       gridLines: {
-        drawBorder: false,
+        drawBorder: true,
         color: 'rgba(255,255,255,0.1)',
         zeroLineColor: "transparent"
       },
       ticks: {
-        display: false,
+        display: true,
       }
     }]
   },
@@ -76,7 +76,8 @@ export default {
           backgroundColor: [
             '#e3e3e3',
             '#4acccd',
-            '#fcc468'
+            '#fcc468',
+            '#e47200'
           ],
           borderWidth: 0,
           data: this.data || []

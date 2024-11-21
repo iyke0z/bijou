@@ -1,11 +1,12 @@
 <template>
   <div class="container-fluid">
-    <div class="nav w-100 bg-info" style="height:50px">
+    <div class="nav bg-info" style="height:50px">
         <!--  -->
         <li>
           <form action="">
             <input autocomplete="off"
-                class="form-control mt-1"
+                class="form-control mt-2"
+                style="width:100%"
                 type="search" id="search"
                 placeholder="search for products..."
                 v-model="searchParam"
@@ -40,7 +41,7 @@
 
       </center>
       <div class="row mt-5 ">
-        <div class="col-12">
+        <div class="col-12 table-responsive">
           <table class="table table-bordered">
             <thead class="thead thead-dark">
               <tr>
@@ -241,7 +242,7 @@
                       <option value="null">Select Payment Method</option>
                       <option value="cash">Cash</option>
                       <option value="transfer">Transfer</option>
-                      <option value="card">Card</option>
+                      <option value="card">POS</option>
                     </select>
                   </td>
                   <td>
@@ -521,7 +522,7 @@ import { Button, Modal } from '@/components/UIComponents'
                 if (request != "" && request !== " " && productName.match(request))
                   {
                     this.searchResult.push(
-                    {product_id:product.id, stock:product.stock, name:product.name,qty: 1,price: product.price, category_id:product.category_id},)
+                    {product_id:product.id, has_stock:product.category.has_stock, stock:product.stock, name:product.name,qty: 1,price: product.price, category_id:product.category_id},)
                   }
           });
       },
@@ -556,7 +557,7 @@ import { Button, Modal } from '@/components/UIComponents'
 
       appendProduct(product){
         console.log(product)
-        if(product.category_id != 2 ){
+        if(product.has_stock == 0 ){
           this.products.push({
               product_id: product.product_id,
               name:product.name,
@@ -683,6 +684,7 @@ import { Button, Modal } from '@/components/UIComponents'
         });
       },
       pay(){
+        this.updateSaleOrder()
         if(this.payment_method == "card" && this.bank_id == null) {
           Swal.fire({
               position: 'top-end',
@@ -694,7 +696,7 @@ import { Button, Modal } from '@/components/UIComponents'
             })
         }else{
           var post = {
-            "amount":this.total,
+            "amount": this.total,
             "auth_code":this.auth_code,
             "ref":this.ref,
             "customer_id": this.customer_id,
@@ -704,6 +706,7 @@ import { Button, Modal } from '@/components/UIComponents'
             "payment_method": this.payment_method,
             "products": this.products,
             "bank_id": this.bank_id,
+            "is_order":true,
             "split": this.rows.split
           }
           Sales.pay(post).then((result) => {

@@ -7,7 +7,7 @@
       <div class="card-body">
         <h5 class="card-title">Expenditures</h5>
         <h6>Filter</h6>
-        <form action="" @submit.prevent="filter">
+        <form action="" @submit.prevent="filter()">
           <div class="form-group">
             <label for="">Start Date</label>
           <input type="date" v-model="form.start_date" class="form-control col-6"  required>
@@ -37,9 +37,9 @@
               <td>{{dateTime(expenditure.created_at)}}</td>
               <td>{{expenditure.user.fullname}}</td>
               <td>
-                <p-button class="mr-2" title="update" type="info" size="sm" icon @click.native="openModal('classic', 'Update Expenditure', 'update', expenditure)">
+                <!-- <p-button class="mr-2" title="update" type="info" size="sm" icon @click.native="openModal('classic', 'Update Expenditure', 'update', expenditure)">
                   <i class="fa fa-edit"></i>
-                </p-button>
+                </p-button> -->
                 <p-button class="mr-2" title="delete" type="danger" size="sm" icon @click.prevent="delete_expenditure(expenditure)">
                   <i class="fa fa-trash"></i>
                 </p-button>

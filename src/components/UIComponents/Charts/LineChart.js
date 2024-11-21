@@ -7,11 +7,11 @@ const gradientChartOptionsConfiguration = {
 
   legend: {
 
-    display: false
+    display: true
   },
 
   tooltips: {
-    enabled: false
+    enabled: true
   },
 
   scales: {
@@ -19,12 +19,12 @@ const gradientChartOptionsConfiguration = {
 
       ticks: {
         fontColor: "#9f9f9f",
-        beginAtZero: false,
+        beginAtZero: true,
         maxTicksLimit: 5,
         //padding: 20
       },
       gridLines: {
-        drawBorder: false,
+        drawBorder: true,
         zeroLineColor: "transparent",
         color: 'rgba(255,255,255,0.05)'
       }
@@ -34,10 +34,10 @@ const gradientChartOptionsConfiguration = {
     xAxes: [{
       barPercentage: 1.6,
       gridLines: {
-        drawBorder: false,
+        drawBorder: true,
         color: 'rgba(255,255,255,0.1)',
         zeroLineColor: "transparent",
-        display: false,
+        display: true,
       },
       ticks: {
         padding: 20,
@@ -87,7 +87,7 @@ export default {
           borderColor: color,
           pointRadius: 0,
           pointHoverRadius: 0,
-          fill: false,
+          fill: true,
           borderWidth: 3,
           data: this.data || data
         }]
