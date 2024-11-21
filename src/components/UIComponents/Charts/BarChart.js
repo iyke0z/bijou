@@ -24,7 +24,7 @@ let defaultOptions = {
 
   legend: {
 
-    display: false
+    display: true
   },
   scales: {
 
@@ -39,7 +39,7 @@ let defaultOptions = {
       gridLines: {
         zeroLineColor: "transparent",
         display: true,
-        drawBorder: false,
+        drawBorder: true,
         color: '#9f9f9f',
       }
 
@@ -48,9 +48,9 @@ let defaultOptions = {
       barPercentage: 0.4,
       gridLines: {
         zeroLineColor: "white",
-        display: false,
+        display: true,
 
-        drawBorder: false,
+        drawBorder: true,
         color: 'transparent',
       },
       ticks: {

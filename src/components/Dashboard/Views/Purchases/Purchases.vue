@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p-button type="success" size="lg" icon @click.native="openModal('classic', 'New Category', 'create')">
+    <p-button type="success" size="lg" icon @click.native="createPurchaseRoute()">
       Add New
     </p-button>
     <div>
@@ -73,7 +73,7 @@
           <tbody :key="purchaseKey">
             <tr v-for="purchase in purchase_details" :key="purchase.id">
               <td>
-                {{ purchase.product.name }}
+                {{ purchase.name}}
               </td>
               <td>
                 {{purchase.cost.toLocaleString()}}
@@ -135,6 +135,9 @@ import helpers from '@/javascript/helpers'
           this.category = category.id
           this.form = {name:category.name}
         }
+      },
+      createPurchaseRoute(){
+        this.$router.push('/purchase/create')
       },
       goToRoute(purchase){
         this.$router.push('/purchase/update/'+purchase.id)

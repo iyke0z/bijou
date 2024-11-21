@@ -12,6 +12,7 @@
         <tr>
           <th></th>
           <th>Name</th>
+          <th>Has Stock</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -19,6 +20,8 @@
         <tr v-for="(category, index) in all_categories" :key="category.id">
           <td>{{index+1}}</td>
           <td>{{category.name}}</td>
+          <td v-if="category.has_stock == 1">Yes</td>
+          <td v-else>No</td>
           <td>
             <p-button class="mr-2" title="details" type="warning" size="sm" icon @click.prevent="goToRoute(category)">
               <i class="fa fa-eye"></i>
@@ -46,8 +49,18 @@
                 <input required type="text" name="password" class="form-control col-8" v-model="form.name">
               </div>
               <div class="form-group">
+                <label for="">Category Has Stocks</label>
+
+                <select name="" id=""  class="form-control col-12" v-model="form.has_stock" required >
+                      <option value=1>Yes</option>
+                      <option value=0>No</option>
+                    </select>
+              </div>
+              <div class="form-group">
                 <button type="submit" class="btn btn-success">Submit</button>
               </div>
+             
+             
             </form>
           </fieldset>
           <form @submit.prevent="submit" enctype="multipart/form-data" v-if="!updateMode">
@@ -57,6 +70,13 @@
                   <td>{{ index+1 }}</td>
                   <td>
                     <input required type="text" name="password" class="form-control col-8" v-model="rows.category[index].name" placeholder="Category Name">
+                  </td>
+                  <td>
+                    <label for="">Category Has Stocks</label>
+                    <select name="" id=""  class="form-control col-12" v-model="rows.category[index].has_stock" required >
+                      <option value=1>Yes</option>
+                      <option value=0>No</option>
+                    </select>
                   </td>
                   <td>
                     <button type="button" class="btn btn-success text-light col-2" @click="new_row()">+</button>
@@ -105,7 +125,7 @@ import helpers from '@/javascript/helpers'
         modalAction:null,
         loading:false,
         modalContent:null,
-        rows:{category:[{name:null}]}
+        rows:{category:[{name:null, has_stock:null}]}
       }
     },
     methods: {
