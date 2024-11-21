@@ -89,11 +89,16 @@ export default [{
 
         ]
     },
-    // {
-    //     name: 'Sales Point',
-    //     icon: 'fa fa-bars',
-    //     path: '/sales-point'
-    // },
+    {
+        name: 'Sales Point',
+        icon: 'fa fa-money',
+        path: '/sales-point'
+    },
+    {
+        name: 'Waiter Sales Point',
+        icon: 'fa fa-money',
+        path: '/waiter'
+    },
     {
         name: 'Report',
         icon: 'fa fa-book',
