@@ -153,11 +153,11 @@
                   </tr>
                   <tr>
                     <td>Gross Profit Margin</td>
-                    <td>&#8358;{{ profitLoss?.gross_profit_margin }} %</td>
+                    <td>&#8358;{{ (profitLoss?.gross_profit_margin).toFixed(2) }} %</td>
                   </tr>
                   <tr>
                     <td>Net Profit Margin</td>
-                    <td>&#8358;{{ profitLoss?.net_profit_margin }} %</td>
+                    <td>&#8358;{{ (profitLoss?.net_profit_margin).toFixed(2) }} %</td>
                   </tr>
                 </table>
               </div>
