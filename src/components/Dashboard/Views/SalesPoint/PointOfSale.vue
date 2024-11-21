@@ -1,134 +1,14 @@
-<style scoped>
-  nav {
-    background-color: #f1f5fee9;
-    height: 50px;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    position: absolute;
-  }
-  li {
-    margin-left: 3%;
-    list-style-type: none;
-    color: rgb(6, 6, 6);
-    font-weight: 600;
-    position: relative;
-  }
-  .productList {
-    background-color: #cecece;
-    padding: 7px;
-    z-index: 10000;
-    cursor: pointer;
-  }
-
-  .productList:hover {
-    background-color: #f9f2f2;
-  }
-  #search {
-    width: 500px;
-  }
-
-  .auth {
-    margin-left: 23%;
-  }
-  .navBrand {
-    width: 300px;
-    color: white;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    font-size: 24px;
-    margin-right: 10%;
-  }
-
-  /* Mobile-specific styles */
-  @media screen and (max-width: 768px) {
-    nav {
-      flex-wrap: wrap;
-      height: auto;
-      padding: 10px;
-    }
-    li {
-      margin-left: 5px;
-    }
-    .navBrand {
-      font-size: 16px;
-      margin-right: 5%;
-    }
-    #search {
-      width: 100%;
-      margin-top: 10px;
-    }
-    .auth {
-      margin-left: 5%;
-    }
-    .productList {
-      font-size: 12px;
-    }
-  }
-
-  @media screen and (max-width: 576px) {
-    nav {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-    .navBrand {
-      width: 100%;
-      text-align: center;
-    }
-    .auth {
-      margin-left: 0;
-    }
-  }
-
-  /* Responsive table */
-  table {
-    width: 100%;
-    overflow-x: auto;
-    display: block;
-  }
-  thead, tbody, tr, td, th {
-    display: block;
-  }
-  thead tr {
-    display: flex;
-    justify-content: space-between;
-  }
-  tbody tr {
-    display: flex;
-    justify-content: space-between;
-  }
-  td, th {
-    flex: 1;
-    text-align: center;
-    font-size: 12px;
-    padding: 5px;
-  }
-
-  /* Responsive buttons */
-  .form-group {
-    margin-top: 10px;
-    text-align: center;
-  }
-  button {
-    width: 100%;
-    margin-bottom: 10px;
-    font-size: 14px;
-  }
-  input {
-    width: 100%;
-    font-size: 14px;
-  }
-</style>
-
 <template>
   <div>
     <div class="nav w-100 bg-info" style="height:50px">
-        <li class="navBrand">
+        <li class="navBrand" hidden>
           <a @click.prevent="goHome"> {{business_name}}</a>
         </li>
         <li>
           <form action="">
             <input
                 class="form-control mt-1"
+                style="width: auto;"
                 type="search" id="search"
                 placeholder="search for products..."
                 v-model="searchParam"
@@ -151,15 +31,15 @@
     </div>
     <div class="container col-12"  style="background-color: #f1f5fee9">
       <div class="row mt-5 ">
-        <div class="col-6">
+        <div class="col-12 table-responsive">
           <table class="table table-bordered">
             <thead class="thead thead-dark">
               <tr>
                 <th>#</th>
                 <th>Name</th>
                 <th>qty</th>
-                <th>Price</th>
-                <th>Total</th>
+                <th>Price (&#8358;)</th>
+                <th>Total (&#8358;)</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -168,17 +48,16 @@
                 <td>{{index+1}}</td>
                 <td>{{order.name}}</td>
                 <td>
-                   <input type="number" min="1" :max="order.stock" step="any" v-model="order.qty" @input="updateOrder(order.qty, index, true)" class="form-control col-3">
+                   <input type="number" min="1" :max="order.stock" step="any" v-model="order.qty" @input="updateOrder(order.qty, index, true)" class="form-control">
                 </td>
-                <td>&#8358; <input type="number" v-model="order.price" step="any" @input="updateOrder(order.price, index, false)" style="border: 1px solid white"></td>
-                <td>&#8358; {{(order.price * order.qty).toLocaleString()}}</td>
+                <td><input type="number" v-model="order.price" step="any" @input="updateOrder(order.price, index, false)" style="border: 1px solid white"
+                                class="form-control">
+                </td>
+                <td> {{(order.price * order.qty).toLocaleString()}}</td>
                 <td>
                   <button class="btn btn-danger" @click="removeFromList(index)"><i class="fa fa-trash" aria-hidden="true"></i></button>
                 </td>
               </tr>
-              <tr><td colspan="6"></td></tr>
-              <tr><td colspan="6"></td></tr>
-              <tr><td colspan="6"></td></tr>
             </tbody>
           </table>
           <div class="row">
@@ -206,12 +85,12 @@
               <input
                 @input="search_customer"
                 type="search"
-                class="form-control"
+                class="form-control col-12"
                 v-model="searchCustomer"
                 placeholder="search customer">
                 <span v-if="this.customer_id > 0">
                   <div class="row">
-                    <div class="col-12">
+                    <div>
                       <input v-model="from_wallet" @change="setWallet" :disabled="this.total > this.customerWallet_balance" type="checkbox" value="1"> Wallet
                   <small class="text-danger" v-if="this.total > this.customerWallet_balance">customer cannot afford this bill from wallet</small>
                     </div>
@@ -240,7 +119,7 @@
             <div class="col-4">
               <p class="lead">Total:</p>
             </div>
-            <div class="col-4">
+            <div class="col-8">
               <p class="lead">&#8358; {{ this.total.toLocaleString() }}</p>
             </div>
           </div>
@@ -263,10 +142,10 @@
             </div>
           </div>
         </div>
-        <div class="col-2"></div>
+        <!-- <div class="col-2"></div>
         <div class="col-4">
           <calculator :key="compKey" :total="total"/>
-        </div>
+        </div> -->
       </div>
     </div>
     <!-- <ImageBarcodeReader @decode="onDecode" @error="onError"></ImageBarcodeReader> -->
@@ -603,5 +482,91 @@ import User from '@/javascript/Api/User'
     },
   }
 </script>
+<style scoped>
+  nav{
+    background-color: #f1f5fee9;
+    height: 50px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    position: absolute;
+  }
+  hrDivider{
+    height: 100px;
+    border: 1px solid black;
+  }
+  li{
+    margin-left: 3%;
+    list-style-type: none;
+    color: rgb(6, 6, 6);
+    font-weight: 600;
+    position: relative;
+  }
+  .productList {
+    background-color:#cecece;
+    padding: 7px;
+    z-index: 10000;
+    cursor: pointer;
+  }
+
+  .productList:hover{
+    background-color: #f9f2f2;
+  }
+  #search{
+    width: 500px;
+  }
+
+  .auth{
+    margin-left: 23%;
+  }
+  .navBrand {
+    width: 300px;
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 24px;
+    margin-right: 10%;
+  }
+
+  @media screen and( max-width: 992px) {
+    .navBrand {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 12px;
+      margin-right: 5%;
+    }
+    .search    {
+      width: 180px;
+    }
+
+    .auth{
+      margin-left: 1%;
+    }
+  }
+  @media screen and( max-width: 778px) {
+    .navBrand {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 12px;
+      margin-right: 5%;
+    }
+    .search    {
+      width: 100px;
+    }
 
 
+  }
+
+  @media print {
+    * { margin: 0 !important; padding: 0 !important; }
+    #controls, .footer, .footerarea{ display: none; }
+    html, body {
+      /*changing width to 100% causes huge overflow and wrap*/
+      height:100%;
+      overflow: hidden;
+      background: #FFF;
+      font-size: 9.5pt;
+    }
+
+    .receipt { width: auto; left:0; top:0; }
+    img { width:100%; }
+    li { margin: 0 0 10px 20px !important;}
+  }
+</style>
