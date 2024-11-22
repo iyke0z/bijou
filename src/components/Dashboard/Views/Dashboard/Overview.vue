@@ -227,10 +227,10 @@
           datasets: [
             {
               label: "Data",
-              borderColor: '#fcc468',
+              borderColor: '#b993bc',
               fill: true,
-              backgroundColor: '#fcc468',
-              hoverBorderColor: '#fcc468',
+              backgroundColor: '#b993bc',
+              hoverBorderColor: '#b993bc',
               borderWidth: 5,
               data: [],
             }
@@ -307,10 +307,10 @@
           datasets: [
             {
               label: "Data",
-              borderColor: '#fcc468',
+              borderColor: '#add8e6',
               fill: true,
-              backgroundColor: '#fcc468',
-              hoverBorderColor: '#fcc468',
+              backgroundColor: '#add8e6',
+              hoverBorderColor: '#add8e6',
               borderWidth: 5,
               data: [],
             }
@@ -321,10 +321,10 @@
           datasets: [
             {
               label: "Data",
-              borderColor: '#fcc468',
+              borderColor: '#a2b9bc',
               fill: true,
-              backgroundColor: '#fcc468',
-              hoverBorderColor: '#fcc468',
+              backgroundColor: '#a2b9bc',
+              hoverBorderColor: '#a2b9bc',
               borderWidth: 8,
               data: [],
             },

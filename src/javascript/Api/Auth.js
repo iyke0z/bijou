@@ -6,5 +6,8 @@ export default {
     },
     logout() {
         return Api.post('/logout')
+    },
+    get_expiry(){
+        return Api.get('/get-expiration')
     }
 }

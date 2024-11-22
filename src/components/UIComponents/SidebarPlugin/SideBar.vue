@@ -11,7 +11,7 @@
           </div>
       </a>
       <a class="simple-text logo-normal">
-          {{ details.name }}
+          {{ details?.name }}
       </a>
     </div>
     <div class="sidebar-wrapper" ref="sidebarScrollArea">
@@ -42,7 +42,7 @@
     props: {
       title: {
         type: String,
-        default: 'Bijou Cafe',
+        default: 'Business Mnagement Solution',
         description: 'Sidebar title'
       },
       backgroundColor: {

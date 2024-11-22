@@ -1,5 +1,12 @@
 <template>
   <div class="container-fluid">
+    <div class="mb-2" v-if="expiry_response != 'active'">
+        <span v-if="expiry_response == 'expired'" class="text-white bg-danger pr-2 pl-2 pt-2 pb-2">Subscription Expired <small>Subscribe to continue </small></span>
+        <span v-if="expiry_response == 'active'" class="text-light bg-success pr-2 pl-2 pt-2 pb-2">Subscription Active</span>
+        <span v-if="expiry_response == 'expires_today'" class="text-light bg-danger pr-2 pl-2 pt-2 pb-2">Subscription Expires Today</span>
+        <span v-if="expiry_response == 'expires_tomorrow'" class="text-dark bg-info pr-2 pl-2 pt-2 pb-2">Subscription Expiring Tomorrow</span>
+        <span v-if="expiry_response == 'expires_in_two_days'" class="text-dark bg-warning pr-2 pl-2 pt-2 pb-2">Subscription Expiring In Two Days</span>
+    </div>
     <div class="nav bg-info" style="height:50px">
         <!--  -->
         <li>
@@ -336,6 +343,7 @@ import { Button, Modal } from '@/components/UIComponents'
         description:null,
         update:false,
         ref:null,
+        expiry_response:null,
         rows: {split:[{split_playment_method:null, split_payment_amount:null,bank_id:null}]}
       }
     },
@@ -553,6 +561,14 @@ import { Button, Modal } from '@/components/UIComponents'
           }else{
             this.appendProduct(product)
           }
+      },
+      
+
+      getExpiry(){
+        Auth.get_expiry().then((result) => {
+          this.expiry_response = result.data.data
+
+        })
       },
 
       appendProduct(product){
@@ -845,6 +861,7 @@ import { Button, Modal } from '@/components/UIComponents'
       this.getDetails()
       this.getProducts()
       this.getCustomers()
+      this.getExpiry()
     },
   }
 </script>

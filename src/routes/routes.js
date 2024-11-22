@@ -31,6 +31,8 @@ import AllExpType from '../components/Dashboard/Views/Expenditure/AllTypes.vue'
 import CreateExpenditure from '../components/Dashboard/Views/Expenditure/NewExpenditure.vue'
 import AllExpenditure from '../components/Dashboard/Views/Expenditure/AllExpenditure.vue'
 import SalesPoint from '../components/Dashboard/Views/SalesPoint/PointOfSale.vue'
+import Settings from '../components/Dashboard/Views/Settings.vue'
+import Subscribe from '../components/Dashboard/Views/Subscribe.vue'
 import SalesReport from '../components/Dashboard/Views/Report/SalesReport.vue'
 import GeneralReport from '../components/Dashboard/Views/Report/GeneralReport.vue'
 import Receipt from '../components/Dashboard/Views/Waiter/Receipt.vue'
@@ -290,6 +292,22 @@ let report = {
     ]
 }
 
+let settings = {
+    path: '/business',
+    name: 'Settings',
+    component: DashboardLayout,
+    children: [{
+        path: 'settings',
+        name: 'settings',
+        component: Settings
+    },
+    {
+        path: 'subscribe',
+        name: 'subscribe',
+        component: Subscribe
+    }]
+}
+
 const routes = [
     loginPage,
     user,
@@ -306,6 +324,7 @@ const routes = [
     bar,
     reporprint,
     lockPage,
+    settings,
     {
         path: '/admin',
         component: DashboardLayout,
