@@ -5,14 +5,14 @@
         <nav class="footer-nav">
           <ul>
             <li>
-              <a href="https://www.ikebeelion.com" target="_blank" rel="noopener">ikebeelion</a><br>
-              08147082856
+              <!-- <a href="https://www.ikebeelion.com" target="_blank" rel="noopener">ikebeelion</a><br>
+              08147082856 -->
             </li>
           </ul>
         </nav>
         <div class="credits ml-auto">
           <div class="copyright">
-            IK.B.N &copy; {{ date }}
+            <!-- IK.B.N &copy; {{ date }} -->
           </div>
         </div>
       </div>

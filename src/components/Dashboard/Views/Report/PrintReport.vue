@@ -2,7 +2,7 @@
     <div>
         <div class="card">
             <div class="card-body">
-              <h5 class="card-title">Bijou Cafe Sales Report <br/> from {{form.start_date}} - {{form.end_date}}</h5>
+              <h5 class="card-title">Sales Report <br/> from {{form.start_date}} - {{form.end_date}}</h5>
 
 
               <table id="table" class="table table-striped" v-if="all_sales != null">

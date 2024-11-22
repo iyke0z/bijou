@@ -114,4 +114,20 @@ export default [{
 
         ]
     },
+    {
+        name: 'Settings',
+        icon: 'fa fa-wrench',
+        collapsed: true,
+        children: [{
+                name: 'Business Settings',
+                path: '/business/settings'
+            },
+            {
+                name: 'Subscribe',
+                path: '/business/subscribe'
+            },
+            
+        ]
+    }
+    
 ]
