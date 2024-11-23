@@ -137,11 +137,11 @@
                   </tr>
                   <tr>
                     <td>Gross Profit</td>
-                    <td>&#8358;{{ (profitLoss?.opex).toLocaleString() }}</td>
+                    <td>&#8358;{{ (profitLoss?.gross_profit).toLocaleString() }}</td>
                   </tr>
                   <tr>
                     <td>Less: Operating Expenses</td>
-                    <td>&#8358;{{ (profitLoss?.gross_profit).toLocaleString() }}</td>
+                    <td>&#8358;{{ (profitLoss?.opex).toLocaleString() }}</td>
                   </tr>
                   <tr>
                     <td>Total Expense</td>
