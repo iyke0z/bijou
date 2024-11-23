@@ -378,6 +378,8 @@ import User from '@/javascript/Api/User'
           this.$router.push({name:'Login'})
         })
       },
+
+      
       getDetails(){
         Vat.details().then((result) => {
           this.business_name = result.data.name
