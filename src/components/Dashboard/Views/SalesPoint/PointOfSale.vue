@@ -221,6 +221,7 @@ import User from '@/javascript/Api/User'
         showReceipt: false,
         tempStock:0,
         user:null,
+        ref:null,
         expiry_response:null
       }
     },
@@ -428,7 +429,8 @@ import User from '@/javascript/Api/User'
           "is_order":false
         }
         Sales.new_sale(post).then((result) => {
-          this.response = {products: this.products, summary:result.data.data}
+          this.response = {products: this.products, summary: result.data.data}
+          this.ref = result.data.data.ref
           localStorage.setItem('products', JSON.stringify(this.response.products))
           localStorage.setItem('summary', JSON.stringify(this.response.summary))
           localStorage.setItem('details', this.business_name)
@@ -449,6 +451,7 @@ import User from '@/javascript/Api/User'
             showConfirmButton: false,
             timer: 3000
           })
+          this.printReceipt()
         }).catch((err) => {
           Swal.fire({
             position: 'top-end',
