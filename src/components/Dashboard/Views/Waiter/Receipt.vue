@@ -4,7 +4,7 @@
   <div class="orderNo">
     <b>{{ this.details }}</b><br/>
     {{getDate()}} <br/>
-    Customer Receipt ID# <span id="Order #">{{ String(summary.ref_no).padStart(7, 0)}}</span>
+    Customer Receipt ID# <span id="Order #">{{ String(summary?.ref_no).padStart(7, 0)}}</span>
   </div>
   <div class="body">
     <div class="tableArea">
@@ -30,19 +30,19 @@
     <div class="TotalCalc" v-if="summary != null">
       <div class="row">
         <div class="col-4">Subotal:</div>
-        <div class="col-4"><b>&#8358; {{(summary.amount).toLocaleString()}}</b></div>
+        <div class="col-4"><b>&#8358; {{(summary?.amount).toLocaleString()}}</b></div>
       </div>
       <div class="row">
         <div class="col-4">Discount</div>
-        <div class="col-4">{{summary.discount}} %</div>
+        <div class="col-4">{{summary?.discount}} %</div>
       </div>
       <div class="row">
         <div class="col-4">V.A.T</div>
-        <div class="col-4">{{summary.vat}}</div>
+        <div class="col-4">{{summary?.vat}}</div>
       </div>
       <div class="row">
         <div class="col-4">Total</div>
-        <div class="col-4"> <b>&#8358; {{Math.ceil(summary.total).toLocaleString()}}</b></div>
+        <div class="col-4"> <b>&#8358; {{Math.ceil(summary?.total).toLocaleString()}}</b></div>
       </div>
     </div>
   </div>
