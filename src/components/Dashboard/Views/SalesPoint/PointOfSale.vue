@@ -381,6 +381,7 @@ import User from '@/javascript/Api/User'
       getDetails(){
         Vat.details().then((result) => {
           this.business_name = result.data.name
+          this.vat = result.data.vat
         })
       },
       search_customer(){
@@ -431,9 +432,12 @@ import User from '@/javascript/Api/User'
         Sales.new_sale(post).then((result) => {
           this.response = {products: this.products, summary: result.data.data}
           this.ref = result.data.data.ref
-          localStorage.setItem('products', JSON.stringify(this.response.products))
-          localStorage.setItem('summary', JSON.stringify(this.response.summary))
-          localStorage.setItem('details', this.business_name)
+          this.vat = this.vat
+          this.cache()
+
+          // localStorage.setItem('products', JSON.stringify(this.response.products))
+          // localStorage.setItem('summary', JSON.stringify(this.response.summary))
+          // localStorage.setItem('details', this.business_name)
           this.receiptKey++
           this.reset()
           this.showReceipt = true
@@ -442,7 +446,6 @@ import User from '@/javascript/Api/User'
           this.customerSearch = [],
           this.searchCustomer = "",
           this.on_credit = false
-          this.cache()
           Swal.fire({
             position: 'top-end',
             icon: 'success',
@@ -451,7 +454,6 @@ import User from '@/javascript/Api/User'
             showConfirmButton: false,
             timer: 3000
           })
-          this.printReceipt()
         }).catch((err) => {
           Swal.fire({
             position: 'top-end',
