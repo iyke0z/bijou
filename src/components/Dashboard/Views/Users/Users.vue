@@ -124,7 +124,7 @@
           Swal.fire({
             position: 'top-end',
             icon: 'error',
-            title: result.data.message,
+            title: err?.response?.data?.error ?? err.response.data.message,
             customClass: 'Swal-wide',
             showConfirmButton: false,
             timer: 3000
@@ -147,7 +147,7 @@
           Swal.fire({
             position: 'top-end',
             icon: 'error',
-            title: result.data.message,
+            title: err?.response?.data?.error ?? err.response.data.message,
             customClass: 'Swal-wide',
             showConfirmButton: false,
             timer: 3000

@@ -227,13 +227,13 @@
           this.get_product()
         }).catch((err) => {
           Swal.fire({
-            position: 'top-end',
-            icon: 'error',
-            title: result.data.message,
-            customClass: 'Swal-wide',
-            showConfirmButton: false,
-            timer: 3000
-          })
+              position: 'top-end',
+              icon: 'error',
+              title: err?.response?.data?.error ?? err.response.data.message,
+              customClass: 'Swal-wide',
+              showConfirmButton: false,
+              timer: 3000
+            })
         });
       },
 

@@ -3,42 +3,67 @@
       <h4>Subscribe</h4>
       <div class="row">
         <!-- <div class="md-3"> -->
-        <div class="card card-stats col-3" v-for="single_package in packages" :key="single_package.id">
-          <div class="card-header lead"><center><strong>{{single_package.description}}</strong></center></div>
-           <div class="card-body">
-            <div class="row">
-              <div class="col-md-12">
-                <div>
-                  <center>
-                  <hr/>
-                    <div class="card-body">
-                      <p class="card-title lead">&#8358;{{(single_package.price).toLocaleString()}}</p>
-                    </div>
-                  </center>
+          <div class="row">
+  <div
+    class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4"
+    v-for="single_package in packages"
+    :key="single_package.id"
+  >
+    <div class="card card-stats">
+      <div class="card-header lead">
+        <center><strong>{{ single_package.description }}</strong></center>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-12">
+            <div>
+              <center>
+                <hr />
+                <div class="card-body">
+                  <p class="card-title lead">&#8358;{{ single_package.price.toLocaleString() }}</p>
                 </div>
+              </center>
             </div>
           </div>
-          <center>
-            <div class="card-footer">
-              <hr/>
-              <slot name="footer"><button class="btn btn-dark" @click.prevent="fundWallet(single_package.price)">Subscribe</button></slot>
-            </div>
-          </center>
         </div>
       </div>
+      <center>
+        <div class="card-footer">
+          <hr />
+          <slot name="footer">
+            <button class="btn btn-dark" @click.prevent="fundWallet(single_package.price)">Subscribe</button>
+          </slot>
+        </div>
+      </center>
+    </div>
+  </div>
+</div>
+
     </div>
       <!-- </div> -->
+      <section class="col-12 col-md-6">
+        <h3>Activate</h3>
+        <small>Input the activation code sent to your company email</small>
+        <form @submit.prevent="activateSubscription">
+          <div class="form-group">
+            <!-- <label for="activationCode">Activation Code</label> -->
+            <input type="text" id="activationCode" v-model="code" class="form-control" placeholder="Input Code" required>
+          </div>
+          <button class="btn btn-success col-12 col-md-8" type="submit">
+            Activate <span class="loader" v-if="loading"></span>
+          </button>
+        </form>
+      </section>
      
     </div>
   </template>
   <script>
     import Categories from '@/javascript/Api/Categories';
-    import Product from '@/javascript/Api/Product';
     import Swal from 'sweetalert2';
     import Details from '@/javascript/Api/BusinessDetails'
     import Auth from '@/javascript/Api/Auth'
     import PaystackPop from '@paystack/inline-js';
-import BusinessDetails from '@/javascript/Api/BusinessDetails';
+    import BusinessDetails from '@/javascript/Api/BusinessDetails';
 
     export default{
       data(){
@@ -54,7 +79,8 @@ import BusinessDetails from '@/javascript/Api/BusinessDetails';
             categories:null,
             details:null,
             packages:null,
-            business:null
+            business:null,
+            code:null
         }
       },
       methods: {
@@ -112,6 +138,32 @@ import BusinessDetails from '@/javascript/Api/BusinessDetails';
             });
             handler.openIframe(); 
           },
+
+        activateSubscription(){
+          this.loading = true
+          Details.activate({code:this.code}).then((result) => {
+            Swal.fire({
+              position: 'top-end',
+              icon: 'success',
+              title: result.response.data.message,
+              customClass: 'Swal-wide',
+              showConfirmButton: false,
+              timer: 3000
+            })
+            window.location.reload()
+          this.loading = false
+          }).catch((err) => {
+            Swal.fire({
+              position: 'top-end',
+              icon: 'error',
+              title: err.response.data.message,
+              customClass: 'Swal-wide',
+              showConfirmButton: false,
+              timer: 3000
+            })
+          });
+          this.loading = false
+        }
         },
       created(){
         this.getBusinessDetails()

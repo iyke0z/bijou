@@ -82,7 +82,7 @@ import helpers from '@/javascript/helpers'
           localStorage.removeItem('summary')
           localStorage.removeItem('details')
 
-        this.$router.push('/waiter')
+          this.$router.go(-1);
         }, 2000)
 
       }

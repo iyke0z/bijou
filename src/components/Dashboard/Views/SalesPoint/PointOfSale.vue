@@ -40,115 +40,131 @@
     <div class="container col-12"  style="background-color: #f1f5fee9">
       <div class="row mt-5 ">
         <div class="col-12 table-responsive">
-          <table class="table table-bordered">
-            <thead class="thead thead-dark">
-              <tr>
-                <th>#</th>
-                <th>Name</th>
-                <th>qty</th>
-                <th>Price (&#8358;)</th>
-                <th>Total (&#8358;)</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(order, index) in products" :key="order.id">
-                <td>{{index+1}}</td>
-                <td>{{order.name}}</td>
-                <td>
-                   <input type="number" min="1" :max="order.stock" step="any" v-model="order.qty" @input="updateOrder(order.qty, index, true)" class="form-control">
-                </td>
-                <td><input type="number" v-model="order.price" step="any" @input="updateOrder(order.price, index, false)" style="border: 1px solid white"
-                                class="form-control">
-                </td>
-                <td> {{(order.price * order.qty).toLocaleString()}}</td>
-                <td>
-                  <button class="btn btn-danger" @click="removeFromList(index)"><i class="fa fa-trash" aria-hidden="true"></i></button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <div class="row">
-            <div class="col-4">
-              <p class="lead">Subtotal:</p>
-            </div>
-            <div class="col-4">
-              <p class="lead">&#8358; {{ this.subtotal.toLocaleString() }}</p>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-4">
-              <p class="lead">Discount:</p>
-            </div>
-            <div class="col-3">
-              <input type="number" v-model="discount_pctge" step="any" class="form-control" placeholder="0">
-            </div>
-            <b><span class="col">%</span></b>
-          </div>
-          <div class="row">
-            <div class="col-4">
-              <p class="lead">Customer:</p>
-            </div>
-            <div class="col-3">
-              <input
-                @input="search_customer"
-                type="search"
-                class="form-control col-12"
-                v-model="searchCustomer"
-                placeholder="search customer">
-                <span v-if="this.customer_id > 0">
-                  <div class="row">
-                    <div>
-                      <input v-model="from_wallet" @change="setWallet" :disabled="this.total > this.customerWallet_balance" type="checkbox" value="1"> Wallet
-                  <small class="text-danger" v-if="this.total > this.customerWallet_balance">customer cannot afford this bill from wallet</small>
-                    </div>
-                    <div class="col-12">
-                      <input v-model="on_credit" @change="setCredit" type="checkbox" value="1"> Credit
-                    </div>
-                  </div>
+          <div class="table-responsive">
+  <table class="table table-bordered">
+    <thead class="thead-dark">
+      <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Qty</th>
+        <th>Price (&#8358;)</th>
+        <th>Total (&#8358;)</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="(order, index) in products" :key="order.id">
+        <td>{{index+1}}</td>
+        <td>{{order.name}}</td>
+        <td class="col-12 col-md-4">
+  <input type="number" min="1" :max="order.stock" step="any" v-model="order.qty" @input="updateOrder(order.qty, index, true)" class="form-control form-control-sm" style="width: 100%; min-width: 120px;">
+</td>
+<td class="col-12 col-md-4">
+  <input type="number" v-model="order.price" step="any" @input="updateOrder(order.price, index, false)" class="form-control form-control-sm" style="width: 100%; min-width: 120px;">
+</td>
 
-                </span>
-            </div>
-            <ul class="col-11">
-              <li class="productList" v-for="customer in customerSearch" :key="customer" @click="addCustomer(customer)">
-                {{ customer.name}}
-              </li>
-            </ul>
-          </div>
-          <div class="row">
-            <div class="col-4">
-              <p class="lead">V.A.T:</p>
-            </div>
-            <div class="col-4">
-              <p class="lead">{{ this.vat }} %</p>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-4">
-              <p class="lead">Total:</p>
-            </div>
-            <div class="col-8">
-              <p class="lead">&#8358; {{ this.total.toLocaleString() }}</p>
-            </div>
-          </div>
-          <div class="row ml-3">
-            <div class="form-group">
-              <label for="">Payment Method</label>
-              <select v-model="payment_method" name="" class="form-control col-10" id="">
-                <option value="cash">Cash</option>
-                <option value="transfer">Transfer</option>
-                <option value="card">POS</option>
-                <option v-if="customer_id != null " value="on_credit">On Credit</option>
-                <option v-if="total <= customerWallet_balance && customer_id != null " value="wallet">Wallet</option>
-              </select>
-            </div>
-            <div class="form-group ml-5">
-              <label for=""></label><br />
-              <button class="btn btn-success mr-2" @click.prevent="pay">Pay <i class="fa fa-money" aria-hidden="true"></i></button>
-              <button class="btn btn-grey" @click.prevent="reset">Reset <i class="fa fa-refresh" aria-hidden="true"></i></button>
-              <button class="btn btn-grey" @click.prevent="printReceipt">Print Receipt <i class="fa fa-print" aria-hidden="true"></i></button>
-            </div>
-          </div>
+<!-- <td>{{ (order.price * order.qty).toLocaleString() }}</td> -->
+
+        <td>{{ (order.price * order.qty).toLocaleString() }}</td>
+        <td>
+          <button class="btn btn-danger" @click="removeFromList(index)">
+            <i class="fa fa-trash" aria-hidden="true"></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+        <div class="row">
+        <div class="col-4 col-md-4">
+          <p class="lead">Subtotal:</p>
+        </div>
+        <div class="col-8 col-md-4">
+          <p class="lead">&#8358; {{ this.subtotal.toLocaleString() }}</p>
+        </div>
+      </div>
+
+<div class="row">
+  <div class="col-4 col-md-4">
+    <p class="lead">Discount:</p>
+  </div>
+  <div class="col-6 col-md-3">
+    <input type="number" v-model="discount_pctge" step="any" class="form-control" placeholder="0">
+  </div>
+  <div class="col-2">
+    <b>%</b>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-4 col-md-4">
+    <p class="lead">Customer:</p>
+  </div>
+  <div class="col-8 col-md-8">
+    <input
+      @input="search_customer"
+      type="search"
+      class="form-control"
+      v-model="searchCustomer"
+      placeholder="search customer">
+    <span v-if="this.customer_id > 0">
+      <div class="row">
+        <div class="col-12">
+          <input v-model="from_wallet" @change="setWallet" :disabled="this.total > this.customerWallet_balance" type="checkbox" value="1"> Wallet
+          <small class="text-danger" v-if="this.total > this.customerWallet_balance">customer cannot afford this bill from wallet</small>
+        </div>
+        <div class="col-12">
+          <input v-model="on_credit" @change="setCredit" type="checkbox" value="1"> Credit
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<ul class="col-12">
+  <li class="productList" v-for="customer in customerSearch" :key="customer" @click="addCustomer(customer)">
+    {{ customer.name}}
+  </li>
+</ul>
+
+<div class="row">
+  <div class="col-4 col-md-4">
+    <p class="lead">V.A.T:</p>
+  </div>
+  <div class="col-8 col-md-4">
+    <p class="lead">{{ this.vat }} %</p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-4 col-md-4">
+    <p class="lead">Total:</p>
+  </div>
+  <div class="col-8 col-md-8">
+    <p class="lead">&#8358; {{ this.total.toLocaleString() }}</p>
+  </div>
+</div>
+
+<div class="row ml-1">
+  <div class="form-group col-12 col-md-5">
+    <label for="">Payment Method</label>
+    <select v-model="payment_method" class="form-control">
+      <option value="cash">Cash</option>
+      <option value="transfer">Transfer</option>
+      <option value="card">POS</option>
+      <option v-if="customer_id != null" value="on_credit">On Credit</option>
+      <option v-if="total <= customerWallet_balance && customer_id != null" value="wallet">Wallet</option>
+    </select>
+  </div>
+  <div class="form-group col-12 col-md-6">
+    <label for=""></label><br />
+    <button class="btn btn-success mr-2" @click.prevent="pay">Pay <i class="fa fa-money" aria-hidden="true"></i></button>
+    <button class="btn btn-secondary" @click.prevent="reset">Reset <i class="fa fa-refresh" aria-hidden="true"></i></button>
+    <button class="btn btn-secondary" @click.prevent="printReceipt">Print Receipt <i class="fa fa-print" aria-hidden="true"></i></button>
+  </div>
+</div>
+
         </div>
         <!-- <div class="col-2"></div>
         <div class="col-4">
@@ -244,6 +260,24 @@ import User from '@/javascript/Api/User'
 
       setCredit(){
         this.payment_method = "on_credit"
+      },
+
+      cache(){
+        if(this.products.length > 0){
+          this.getTotal()
+            var vatAmt = this.vat/100 * this.subtotal
+            var total = this.subtotal + vatAmt
+          var summary = {
+            ref_no:this.ref,
+            amount: this.subtotal,
+            discount: this.discount_pctge,
+            vat: this.vat,
+            total:total,
+          }
+          localStorage.setItem('products', JSON.stringify(this.products))
+          localStorage.setItem('summary', JSON.stringify(summary))
+          localStorage.setItem('details', this.business_name)
+        }
       },
 
       getCustomers(){
@@ -373,6 +407,11 @@ import User from '@/javascript/Api/User'
         this.products.splice(index, 1)
       },
       pay(){
+        try {
+          
+        } catch (error) {
+          
+        }
         var post = {
           "customer_id": this.customer_id,
           "discount_pctge": this.discount_pctge,
@@ -401,6 +440,7 @@ import User from '@/javascript/Api/User'
           this.customerSearch = [],
           this.searchCustomer = "",
           this.on_credit = false
+          this.cache()
           Swal.fire({
             position: 'top-end',
             icon: 'success',
@@ -410,7 +450,14 @@ import User from '@/javascript/Api/User'
             timer: 3000
           })
         }).catch((err) => {
-          console.log(err)
+          Swal.fire({
+            position: 'top-end',
+            icon: 'error',
+            title: err?.response?.data?.error ?? err.response.data.message,
+            customClass: 'Swal-wide',
+            showConfirmButton: false,
+            timer: 3000
+          })
         });
 
       },
@@ -584,4 +631,19 @@ import User from '@/javascript/Api/User'
     img { width:100%; }
     li { margin: 0 0 10px 20px !important;}
   }
+
+  @media (max-width: 576px) {
+  .table td input {
+    width: 100%;  /* Ensure inputs take up full width on mobile */
+    font-size: 14px;  /* Adjust font size for better readability on mobile */
+  }
+}
+
+@media (min-width: 768px) {
+  .table td input {
+    width: auto;  /* Let the input field adjust itself on larger screens */
+    font-size: 16px;  /* Increase font size on medium and large screens */
+  }
+}
+
 </style>
