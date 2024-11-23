@@ -79,7 +79,7 @@
           Swal.fire({
             position: 'top-end',
             icon: 'success',
-            title: result.response.data.message,
+            title: result.data.message,
             customClass: 'Swal-wide',
             showConfirmButton: false,
             timer: 3000

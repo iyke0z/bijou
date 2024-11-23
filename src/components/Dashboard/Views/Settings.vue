@@ -24,10 +24,10 @@
             <input type="string" step="any" min="0" class="form-control col-8"  placeholder="Phone Number" v-model="details.phone_two"  required>
         </div>
         <br>
-        <div >
+        <!-- <div >
             <label for="">Email Address</label>
             <input type="email" step="any" min="0" class="form-control col-8"  placeholder="Email Address" v-model="details.email"  required>
-        </div>
+        </div> -->
 
         <br>
 
@@ -73,7 +73,7 @@
             Swal.fire({
               position: 'top-end',
               icon: 'success',
-              title: result.response.data.message,
+              title: result.data.message,
               customClass: 'Swal-wide',
               showConfirmButton: false,
               timer: 3000
