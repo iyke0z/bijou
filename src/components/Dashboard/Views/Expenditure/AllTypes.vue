@@ -117,13 +117,13 @@ import helpers from '@/javascript/helpers'
           this.expenditure_details = null
         }).catch((err) => {
           Swal.fire({
-            position: 'top-end',
-            icon: 'error',
-            title: result.data.message,
-            customClass: 'Swal-wide',
-            showConfirmButton: false,
-            timer: 3000
-          })
+              position: 'top-end',
+              icon: 'error',
+              title: err?.response?.data?.error ?? err.response.data.message,
+              customClass: 'Swal-wide',
+              showConfirmButton: false,
+              timer: 3000
+            })
         });
       },
       update_expenditue(){
@@ -142,13 +142,13 @@ import helpers from '@/javascript/helpers'
           this.allexpenditures()
         }).catch((err) => {
           Swal.fire({
-            position: 'top-end',
-            icon: 'error',
-            title: result.data.message,
-            customClass: 'Swal-wide',
-            showConfirmButton: false,
-            timer: 3000
-          })
+              position: 'top-end',
+              icon: 'error',
+              title: err?.response?.data?.error ?? err.response.data.message,
+              customClass: 'Swal-wide',
+              showConfirmButton: false,
+              timer: 3000
+            })
         });
       },
       allexpenditures(){

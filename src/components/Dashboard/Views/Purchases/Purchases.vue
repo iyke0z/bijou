@@ -158,14 +158,14 @@ import helpers from '@/javascript/helpers'
           this.loading = false
         }).catch((err) => {
           this.loading = false
-          Swal.fire({
-            position: 'top-end',
-            icon: 'error',
-            title: err.response.data.message,
-            customClass: 'Swal-wide',
-            showConfirmButton: false,
-            timer: 3000
-          })
+         Swal.fire({
+              position: 'top-end',
+              icon: 'error',
+              title: err?.response?.data?.error ?? err.response.data.message,
+              customClass: 'Swal-wide',
+              showConfirmButton: false,
+              timer: 3000
+            })
         });
       },
       allpurchases(){
@@ -208,14 +208,14 @@ import helpers from '@/javascript/helpers'
           })
           this.purchase_detail(purchase.purchase_id)
         }).catch((err) => {
-          Swal.fire({
-            position: 'top-end',
-            icon: 'error',
-            title: err.response.data.message,
-            customClass: 'Swal-wide',
-            showConfirmButton: false,
-            timer: 3000
-          })
+         Swal.fire({
+              position: 'top-end',
+              icon: 'error',
+              title: err?.response?.data?.error ?? err.response.data.message,
+              customClass: 'Swal-wide',
+              showConfirmButton: false,
+              timer: 3000
+            })
         });
       },
       purchase_detail(id){

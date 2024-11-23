@@ -55,8 +55,8 @@
                 <th>#</th>
                 <th>Name</th>
                 <th>qty</th>
-                <th>Price</th>
-                <th>Total</th>
+                <th>Price (&#8358;) </th>
+                <th>Total (&#8358;) </th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -64,12 +64,14 @@
               <tr v-for="(order, index) in products" :key="order.id">
                 <td>{{index+1}}</td>
                 <td>{{order.name}}</td>
-                <td>
-                   <input autocomplete="off" v-if="!update" type="number" min="1" :max="order.stock" step="any" v-model="order.qty" @input="updateOrder(order.qty, index, true)" class="form-control col-12">
-                   <input autocomplete="off" v-if="update" type="number" min="1" :max="order.max" step="any" v-model="order.qty" @input="updateOrder(order.qty, index, true)" class="form-control col-12">
-                </td>
-                <td>&#8358; <input autocomplete="off" readonly type="number" v-model="order.price" step="any" @input="updateOrder(order.price, index, false)" style="border: 1px solid white"></td>
-                <td>&#8358; {{(order.price * order.qty).toLocaleString()}}</td>
+                <td class="col-12 col-md-4">
+  <input type="number" min="1" :max="order.stock" step="any" v-model="order.qty" @input="updateOrder(order.qty, index, true)" class="form-control form-control-sm" style="width: 100%; min-width: 120px;">
+</td>
+<td class="col-12 col-md-4">
+  {{(order.price).toLocaleString()}}
+  <!-- <input disabled type="number" v-model="order.price" step="any" @input="updateOrder(order.price, index, false)" class="form-control form-control-sm" style="width: 100%; min-width: 120px;"> -->
+</td>
+                <td>{{(order.price * order.qty).toLocaleString()}}</td>
                 <td>
                   <button class="btn btn-danger" @click="removeFromList(index)"><i class="fa fa-trash" aria-hidden="true"></i></button>
                 </td>
@@ -83,7 +85,7 @@
             <div class="col-4">
               <p class="lead">Subtotal:</p>
             </div>
-            <div class="col-4">
+            <div class="col-8">
               <p class="lead">&#8358; {{ this.subtotal.toLocaleString() }}</p>
             </div>
           </div>
@@ -100,7 +102,7 @@
             <div class="col-4">
               <p class="lead">Customer:</p>
             </div>
-            <div class="col-3">
+            <div class="col-8">
               <input autocomplete="off"
                 @input="search_customer"
                 type="search"
@@ -130,7 +132,7 @@
             <div class="col-4">
               <p class="lead">V.A.T:</p>
             </div>
-            <div class="col-4">
+            <div class="col-8">
               <p class="lead">{{ this.vat }} %</p>
             </div>
           </div>
@@ -138,7 +140,7 @@
             <div class="col-4">
               <p class="lead">Total:</p>
             </div>
-            <div class="col-4">
+            <div class="col-8">
               <p class="lead">&#8358; {{ this.total.toLocaleString() }}</p>
             </div>
           </div>
@@ -415,10 +417,10 @@ import { Button, Modal } from '@/components/UIComponents'
         }).catch((err) => {
           this.loadingOrder = false
 
-          Swal.fire({
+           Swal.fire({
             position: 'top-end',
             icon: 'error',
-            title: 'Unauthorized',
+            title: err?.response?.data?.error ?? err.response.data.message,
             customClass: 'Swal-wide',
             showConfirmButton: false,
             timer: 3000
@@ -454,11 +456,12 @@ import { Button, Modal } from '@/components/UIComponents'
           Swal.fire({
             position: 'top-end',
             icon: 'error',
-            title: 'Unauthorized',
+            title: err?.response?.data?.error ?? err.response.data.message,
             customClass: 'Swal-wide',
             showConfirmButton: false,
             timer: 3000
-          })        });
+          })
+        });
       },
       new_row(){
         this.rows.split.push(
@@ -681,13 +684,13 @@ import { Button, Modal } from '@/components/UIComponents'
             })
           }).catch((err) => {
             Swal.fire({
-            position: 'top-end',
-            icon: 'error',
-            title: 'Unauthorized',
-            customClass: 'Swal-wide',
-            showConfirmButton: false,
-            timer: 3000
-          })
+              position: 'top-end',
+              icon: 'error',
+              title: err?.response?.data?.error ?? err.response.data.message,
+              customClass: 'Swal-wide',
+              showConfirmButton: false,
+              timer: 3000
+            })
           });
       },
       datatable(){
@@ -748,13 +751,13 @@ import { Button, Modal } from '@/components/UIComponents'
             })
           }).catch((err) => {
             Swal.fire({
-            position: 'top-end',
-            icon: 'error',
-            title: 'Unauthorized',
-            customClass: 'Swal-wide',
-            showConfirmButton: false,
-            timer: 3000
-          })
+              position: 'top-end',
+              icon: 'error',
+              title: err?.response?.data?.error ?? err.response.data.message,
+              customClass: 'Swal-wide',
+              showConfirmButton: false,
+              timer: 3000
+            })
           });
         }
 

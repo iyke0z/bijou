@@ -12,13 +12,43 @@
 
         </navbar-toggle-button>
       </div>
-      <a class="navbar-brand" href="/business/subscribe">{{details?.name}} 
-        <span v-if="expiry_response == 'expired'" class="text-white bg-danger pr-2 pl-2 pt-2 pb-2">Subscription Expired, <small class="text-light">Click to continue </small></span>
-        <span v-if="expiry_response == 'active'" class="text-light bg-success pr-2 pl-2 pt-2 pb-2">Subscription Active</span>
-        <span v-if="expiry_response == 'expires_today'" class="text-light bg-danger pr-2 pl-2 pt-2 pb-2">Subscription Expires Today</span>
-        <span v-if="expiry_response == 'expires_tomorrow'" class="text-dark bg-info pr-2 pl-2 pt-2 pb-2">Subscription Expiring Tomorrow</span>
-        <span v-if="expiry_response == 'expires_in_two_days'" class="text-dark bg-warning pr-2 pl-2 pt-2 pb-2">Subscription Expiring In Two Days</span>
-      </a>
+      <a class="navbar-brand mb-4" href="/business/subscribe">
+  {{details?.name}}
+  <span class="d-block text-wrap">
+    <span
+      v-if="expiry_response == 'expired'"
+      class="text-white bg-danger px-2 py-2 d-inline-block w-100"
+    >
+      Subscription Expired, 
+      <small class="text-light">Click to continue</small>
+    </span>
+    <span
+      v-if="expiry_response == 'active'"
+      class="text-light bg-success px-2 py-2 d-inline-block w-100"
+    >
+      Subscription Active
+    </span>
+    <span
+      v-if="expiry_response == 'expires_today'"
+      class="text-light bg-danger px-2 py-2 d-inline-block w-100"
+    >
+      Subscription Expires Today
+    </span>
+    <span
+      v-if="expiry_response == 'expires_tomorrow'"
+      class="text-dark bg-info px-2 py-2 d-inline-block w-100"
+    >
+      Subscription Expiring Tomorrow
+    </span>
+    <span
+      v-if="expiry_response == 'expires_in_two_days'"
+      class="text-dark bg-warning px-2 py-2 d-inline-block w-100"
+    >
+      Subscription Expiring In Two Days
+    </span>
+  </span>
+</a>
+
     </div>
 
     <template slot="navbar-menu">

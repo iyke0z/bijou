@@ -93,14 +93,14 @@ import helpers from '@/javascript/helpers';
           })
            this.$router.push("/customer/all")
         }).catch((err) => {
-          Swal.fire({
-            position: 'top-end',
-            icon: 'error',
-            title: err.response.data.message,
-            customClass: 'Swal-wide',
-            showConfirmButton: false,
-            timer: 3000
-          })
+         Swal.fire({
+              position: 'top-end',
+              icon: 'error',
+              title: err?.response?.data?.error ?? err.response.data.message,
+              customClass: 'Swal-wide',
+              showConfirmButton: false,
+              timer: 3000
+            })
         });
       },
       get_customer(){
