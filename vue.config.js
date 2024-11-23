@@ -6,7 +6,7 @@ const path = require('path');
 // }
 module.exports = {
     pwa: {
-        name: 'Bijou Cafe',
+        name: 'Efficincy Labs',
         themeColor: '#66615B',
         msTileColor: '#66615B',
         appleMobileWebAppCapable: 'yes',
@@ -19,7 +19,7 @@ module.exports = {
     pluginOptions: {
         electronBuilder: {
             builderOptions: {
-                productName: "Bijou Cafe",
+                productName: "Efficiency Labs",
                 appId: 'mystore.com',
                 win: {
                     "target": [
