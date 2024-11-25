@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="table-responsive">
     <h3>Users </h3>
     <span v-if="loading" class="loader"></span>
     <div v-if="!loading">

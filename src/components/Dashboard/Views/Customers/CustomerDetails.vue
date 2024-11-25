@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="table-responsive">
     <div class="card">
       <div class="card-body">
         <h5 class="card-title">Customer Details</h5>

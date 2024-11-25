@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="table-responsive">
     <div class="mb-2" v-if="expiry_response != 'active'">
         <span v-if="expiry_response == 'expired'" class="text-white bg-danger pr-2 pl-2 pt-2 pb-2">Subscription Expired <small>Subscribe to continue </small></span>
         <span v-if="expiry_response == 'active'" class="text-light bg-success pr-2 pl-2 pt-2 pb-2">Subscription Active</span>
@@ -379,7 +379,7 @@ import User from '@/javascript/Api/User'
         })
       },
 
-      
+
       getDetails(){
         Vat.details().then((result) => {
           this.business_name = result.data.name

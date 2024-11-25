@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="table-responsive">
     <h5 class="info-text"> What are you doing? (checkboxes) </h5>
     <div class="row justify-content-center">
       <div class="col-lg-10">

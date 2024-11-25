@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="table-responsive">
     <h3>Products</h3>
      <div v-if="!loading">
        <table id="table" class="table table-striped">
@@ -10,7 +10,7 @@
              <th>code</th>
              <th>category</th>
              <th>stock</th>
-             <th>out of stock</th>
+             <th>status</th>
              <th>Actions</th>
            </tr>
          </thead>

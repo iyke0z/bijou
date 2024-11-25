@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="table-responsive">
     <div class="header text-center">
       <h3 class="title">Timeline</h3>
     </div>

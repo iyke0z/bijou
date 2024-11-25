@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="table-responsive">
     <div class="card ">
       <div class="card-header">
         <!-- <h4 class="card-title">Full Screen Map</h4> -->

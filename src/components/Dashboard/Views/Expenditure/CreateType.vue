@@ -1,7 +1,7 @@
 <template>
   <div>
     <h4>New Expenditure</h4>
-    <section class="col-6">
+    <section class="col-12">
       <form @submit.prevent="submit">
         <div class="form-group">
           <label for="">Type</label>
