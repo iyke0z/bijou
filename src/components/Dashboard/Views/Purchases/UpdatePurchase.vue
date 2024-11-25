@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="table-responsive">
     <h4>Update Purchase</h4>
     <form action="" @submit.prevent="submit">
       <div class="form-group">

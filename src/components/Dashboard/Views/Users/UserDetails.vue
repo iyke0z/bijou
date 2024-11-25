@@ -40,8 +40,8 @@
       </div>
     </div>
 
-    <section class="row">
-      <div class="card col-6  mr-3">
+    <!-- <section class="row"> -->
+      <div class="card col-12  mr-3">
         <div class="card-body">
           <h5 class="card-title">Access Log</h5>
           <table id="myTable" class="table table-stripped">
@@ -62,7 +62,7 @@
           </table>
         </div>
       </div>
-      <div class="card col-5">
+      <div class="card col-12">
         <div class="card-body">
           <h5 class="card-title">Priviledges</h5>
           <table id="priviledges" class="table table-stripped">
@@ -81,10 +81,10 @@
           </table>
         </div>
       </div>
-    </section>
+    <!-- </section> -->
 
-    <section class="row">
-      <div class="card col-6 mr-3">
+    <!-- <section class="row"> -->
+      <div class="card col-12 mr-3">
         <div class="card-body">
           <h5 class="card-title">Purchase History</h5>
           <table id="myPurchases" class="table table-stripped">
@@ -111,7 +111,7 @@
           </table>
         </div>
       </div>
-      <div class="card col-5">
+      <div class="card col-12">
         <div class="card-body">
           <h5 class="card-title">Purchase Items</h5>
           <table id="purchase" class="table table-stripped">
@@ -143,7 +143,7 @@
           </table>
         </div>
       </div>
-    </section>
+    <!-- </section> -->
     <div class="card">
       <div class="card-body">
         <h5 class="card-title">Sales History</h5>

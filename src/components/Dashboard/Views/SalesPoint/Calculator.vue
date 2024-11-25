@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="table-responsive">
     <div class="calculator-container">
       <div class="display-box row">
         <input type="text" readonly autofocus step="any" v-model="val" class="form-control col-6 whiteSpace" placeholder="0">

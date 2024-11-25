@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="table-responsive">
     <Loader :loading="isLoading" />
     <div class="card">
       <center>

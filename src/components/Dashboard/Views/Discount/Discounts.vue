@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="table-responsive">
     <h3>Categories</h3> <br/>
     <p-button type="success" size="lg" icon @click.native="openModal('classic', 'New Category', 'create')">
       Add New

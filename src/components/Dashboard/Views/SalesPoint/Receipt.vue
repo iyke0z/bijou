@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="table-responsive">
     <div class="paper">
       <div class="head">
         <center>
@@ -32,20 +32,20 @@
         </div>
         <div class="TotalCalc" v-if="summary != null">
           <div class="row">
-            <div class="col-4">Subotal:</div>
-            <div class="col-4">&#8358; {{summary?.amount}}</div>
+            <div class="col-8">Subotal:</div>
+            <div class="col-8">&#8358; {{summary?.amount}}</div>
           </div>
           <div class="row">
-            <div class="col-4">Discount</div>
-            <div class="col-4">{{summary?.discount}} %</div>
+            <div class="col-8">Discount</div>
+            <div class="col-8">{{summary?.discount}} %</div>
           </div>
           <div class="row">
-            <div class="col-4">V.A.T</div>
-            <div class="col-4">{{summary?.vat}}</div>
+            <div class="col-8">V.A.T</div>
+            <div class="col-8">{{summary?.vat}}</div>
           </div>
           <div class="row">
-            <div class="col-4">Total</div>
-            <div class="col-4">&#8358; {{Math.ceil(summary?.total)}}</div>
+            <div class="col-8">Total</div>
+            <div class="col-8">&#8358; {{Math.ceil(summary?.total)}}</div>
           </div>
         </div>
       </div>

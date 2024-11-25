@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="table-responsive">
     <div class="card">
       <div class="card-header">
         <h5 class="card-title">Table with Links</h5>

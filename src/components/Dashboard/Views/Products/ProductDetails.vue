@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div class="card">
+  <div class="table-responsive">
+    <div class="card table-responsive">
       <div class="card-body">
         <h5 class="card-title">product details</h5>
         <table class="table" >
@@ -30,7 +30,7 @@
         </table>
       </div>
     </div>
-    <div class="card">
+    <div class="card table-responsive">
       <div class="card-body">
         <h5 class="card-title">Periodic Report</h5>
         <form @submit.prevent="generateReport">
@@ -47,8 +47,7 @@
       </div>
     </div>
 
-    <div class="row">
-      <div class="card col-5 mr-3">
+    <div class="card mr-3 table-responsive">
         <div class="card-body">
           <h5 class="card-title">Purchase Items</h5>
           <table id="purchase" class="table table-stripped">
@@ -78,8 +77,8 @@
             </tbody>
           </table>
         </div>
-      </div>
-      <div class="card col-6">
+    </div>
+    <div class="card table-responsive">
         <div class="card-body">
           <h5 class="card-title">Sales History</h5>
           <table id="sales" class="table table-stripped">
@@ -104,9 +103,7 @@
             </tbody>
           </table>
         </div>
-      </div>
     </div>
-
   </div>
 </template>
 

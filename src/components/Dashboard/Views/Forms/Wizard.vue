@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="table-responsive">
     <div class="row d-flex justify-content-center">
       <div class="col-md-10 mr-auto ml-auto">
           <wizard @complete="wizardComplete">
