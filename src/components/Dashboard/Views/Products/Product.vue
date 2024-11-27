@@ -24,13 +24,13 @@
               <td v-if="product.stock < 1" class="bg-danger">Out of Stock</td>
               <td v-else class="bg-success">Available</td>
               <td>
-                <p-button class="mr-2" title="details" type="warning" size="sm" icon @click.prevent="goToRoute(product)">
+                <p-button class="mr-1" title="details" type="warning" size="sm" icon @click.prevent="goToRoute(product)">
                   <i class="fa fa-eye"></i>
                 </p-button>
-                <p-button class="mr-2" title="update" type="info" size="sm" icon @click.native="openModal('classic', 'Update Product', 'update', product)">
+                <p-button class="mr-1" title="update" type="info" size="sm" icon @click.native="openModal('classic', 'Update Product', 'update', product)">
                   <i class="fa fa-edit"></i>
                 </p-button>
-                <p-button class="mr-2" title="delete" type="danger" size="sm" icon @click.prevent="delete_user(product)">
+                <p-button class="mr-1" title="delete" type="danger" size="sm" icon @click.prevent="delete_user(product)">
                   <i class="fa fa-trash"></i>
                 </p-button>
               </td>

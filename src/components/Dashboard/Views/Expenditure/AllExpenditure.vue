@@ -18,7 +18,8 @@
           </div>
           <button class="btn btn-success" type="submit">Fiter</button>
         </form>
-        <table id="table" class="table table-striped">
+        <div class="table-responsive">
+          <table id="table" class="table table-striped">
           <thead>
             <tr>
               <th></th>
@@ -47,6 +48,8 @@
             </tr>
           </tbody>
         </table>
+        </div>
+
       </div>
     </div>
 

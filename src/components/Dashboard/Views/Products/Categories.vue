@@ -49,8 +49,7 @@
                 <input required type="text" name="password" class="form-control col-8" v-model="form.name">
               </div>
               <div class="form-group">
-                <label for="">Category Has Stocks</label>
-
+                <label for="">Has Stocks</label>
                 <select name="" id=""  class="form-control col-12" v-model="form.has_stock" required >
                       <option value=1>Yes</option>
                       <option value=0>No</option>
@@ -67,20 +66,21 @@
             <fieldset >
                 <table id="myTable">
                 <tr v-for="(row, index) in rows.category" :key="index">
-                  <td>{{ index+1 }}</td>
+                  <!-- <td>{{ index+1 }}</td> -->
                   <td>
+                    <label for="">Name</label>
                     <input required type="text" name="password" class="form-control col-8" v-model="rows.category[index].name" placeholder="Category Name">
                   </td>
                   <td>
-                    <label for="">Category Has Stocks</label>
-                    <select name="" id=""  class="form-control col-12" v-model="rows.category[index].has_stock" required >
+                    <label for="">Has Stocks</label>
+                    <select name="" id=""  class="form-control col-12 mr-5" v-model="rows.category[index].has_stock" required >
                       <option value=1>Yes</option>
                       <option value=0>No</option>
                     </select>
                   </td>
                   <td>
-                    <button type="button" class="btn btn-success text-light col-2" @click="new_row()">+</button>
-                    <button v-show="rows.category.length > 1" type="button" class="btn btn-danger text-light col-2" @click="delete_row(index)">x</button>
+                    <button type="button" class="btn btn-success text-light col-2 mt-5" @click="new_row()">+</button>
+                    <button v-show="rows.category.length > 1" type="button" class="btn btn-danger text-light mt-5 col-2" @click="delete_row(index)">x</button>
                   </td>
                 </tr>
               </table>

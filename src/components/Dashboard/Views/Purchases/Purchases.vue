@@ -21,7 +21,8 @@
           </div>
           <button class="btn btn-success" type="submit">Fiter</button>
         </form>
-        <table id="table" class="table table-striped">
+        <div class="table-responsive">
+          <table id="table" class="table table-striped">
           <thead>
             <tr>
               <th></th>
@@ -56,10 +57,12 @@
             </tr>
           </tbody>
         </table>
+        </div>
+       
       </div>
     </div>
     <div class="card col-12 mr-3">
-      <div class="card-body">
+      <div class="card-body table-responsive">
         <h5 class="card-title">Purchase Items</h5>
         <table id="purchase" class="table table-stripped">
           <thead>

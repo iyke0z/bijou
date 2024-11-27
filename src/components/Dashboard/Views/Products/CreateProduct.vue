@@ -2,14 +2,12 @@
   <div class="table-responsive">
     <h4>Create New Product</h4>
     <form action="" @submit.prevent="submit">
-      <table class="table">
-        <thead>
-          <tr v-for="(product, index) in rows.products"  :key="index">
-            <td>
+          <div v-for="(product, index) in rows.products"  :key="index">
+            <div>
               <label for="">Name</label>
               <input type="text" class="form-control" required v-model="rows.products[index].name" placeholder="name">
-            </td>
-            <td>
+            </div>
+            <div>
               <label for="">Category</label>
               <select name="" id="" class="form-control" v-model="rows.products[index].category_id" required>
                 <option value="null">Select</option>
@@ -17,23 +15,21 @@
                   {{ category.name }}
                 </option>
               </select>
-            </td>
-            <td>
+            </div>
+            <div>
               <label for="">Price</label>
               <input type="number" placeholder="0.00" step="any" required class="form-control" v-model="rows.products[index].price">
-            </td>
-            <td>
+            </div>
+            <div>
               <label for="">Code</label>
               <input type="text" placeholder="barcode" class="form-control" v-model="rows.products[index].code">
-            </td>
-            <td>
+            </div>
+            <div>
               <button class="btn btn-info mr-2 mt-4" @click.prevent="addRow">+</button>
               <button class="btn btn-danger mt-4" v-if="index > 0" @click="deleteRow(index)">x</button>
-            </td>
-          </tr>
-        </thead>
-      </table>
-      <button class="btn btn-success" type="submit">Submit <span v-if="loading" class="loader"></span></button>
+            </div>
+          </div>
+      <button class="btn btn-success col-12" type="submit">Submit <span v-if="loading" class="loader"></span></button>
     </form>
   </div>
 </template>
