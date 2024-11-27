@@ -2,7 +2,7 @@
   <div class="table-responsive">
     <h3>Users </h3>
     <span v-if="loading" class="loader"></span>
-    <div v-if="!loading">
+    <!-- <div v-if="!loading">
       <center>
         <label class="mr-2">Filter Table </label>
         <select @change="filter_table()" v-model="filter">
@@ -13,7 +13,7 @@
             <option value="5">VIP Users</option>
         </select>
       </center>
-    </div>
+    </div> -->
     <table id="table" class="table table-striped">
       <thead>
         <tr>

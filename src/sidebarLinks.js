@@ -115,7 +115,7 @@ export default [{
         ]
     },
     {
-        name: 'Settings',
+        name: 'Customer Service',
         icon: 'fa fa-wrench',
         collapsed: true,
         children: [{
@@ -126,6 +126,11 @@ export default [{
                 name: 'Subscribe',
                 path: '/business/subscribe'
             },
+            {
+                name: 'Support',
+                path: '/business/customer-service'
+            },
+            
             
         ]
     }
