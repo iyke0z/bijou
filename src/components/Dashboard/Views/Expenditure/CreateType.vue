@@ -1,11 +1,18 @@
 <template>
   <div>
-    <h4>New Expenditure</h4>
+    <h4>New Expenditure Type</h4>
     <section class="col-12">
       <form @submit.prevent="submit">
         <div class="form-group">
           <label for="">Type</label>
           <input type="text" step="any" class="form-control" v-model="form.name" placeholder="Enter Expenditure Type Name" required>
+        </div>
+        <div class="form-group">
+          <label for="">Type</label>
+          <select step="any" class="form-control" v-model="form.expenditure_type" placeholder="Enter Expenditure Type Name" required>
+            <option value="cogs">COGS</option>
+            <option value="opex">OPEX</option>
+          </select>
         </div>
         <button class="btn btn-success col-8" type="submit">Submit</button>
       </form>
@@ -23,6 +30,7 @@ import Swal from 'sweetalert2';
       return {
         form:{
           name:null,
+          expenditure_type:'cogs'
         },
         types: null
       }
@@ -40,6 +48,8 @@ import Swal from 'sweetalert2';
           })
           this.form = {
             name:null,
+            expenditure_type:'cogs'
+
         }
         }).catch((err) => {
          Swal.fire({
