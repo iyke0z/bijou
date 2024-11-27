@@ -23,7 +23,7 @@
               <input type="text" class="form-control" required v-model="rows.purchase[index].qty" placeholder="qty">
             </td>
             <td>
-              <label for="">Cost Price</label>
+              <label for="">Price</label>
               <input type="number" placeholder="0.00" step="any" required class="form-control" v-model="rows.purchase[index].cost">
             </td>
             <td>

@@ -1,149 +1,141 @@
 <template>
-  <div class="table-responsive">
-
-    <div class="card table-responsive">
+  <div class="container-fluid">
+    <div class="card">
       <div class="card-body">
         <h5 class="card-title">General Report</h5>
         <div class="row">
-          <div class="col-4">
+          <!-- Generate Report Section -->
+          <div class="col-12 col-md-4 mb-3">
             <h6>Generate Report</h6>
-            <form action="" @submit.prevent="filter">
+            <form @submit.prevent="filter">
               <div class="form-group">
-                <label for="">Start Date</label>
-              <input type="datetime-local" v-model="form.start_date" class="form-control col-6"  required>
+                <label for="start-date">Start Date</label>
+                <input 
+                  type="datetime-local" 
+                  id="start-date" 
+                  v-model="form.start_date" 
+                  class="form-control w-100" 
+                  required>
               </div>
               <div class="form-group">
-                <label for="">End Date</label>
-                <input type="datetime-local" v-model="form.end_date" class="form-control col-6" required>
+                <label for="end-date">End Date</label>
+                <input 
+                  type="datetime-local" 
+                  id="end-date" 
+                  v-model="form.end_date" 
+                  class="form-control w-100" 
+                  required>
               </div>
               <div class="form-group">
-                <label for="">Platform</label>
-                <select name="" v-model="form.platform" class="form-control col-6" id="" required>
+                <label for="platform">Platform</label>
+                <select 
+                  id="platform" 
+                  v-model="form.platform" 
+                  class="form-control w-100" 
+                  required>
                   <option value="online">Online</option>
                   <option value="offline">Offline</option>
                   <option value="all">All</option>
                 </select>
               </div>
-              <button class="btn btn-success" type="submit">Generate <span class="loader" v-if="loading"></span></button>
+              <button class="btn btn-success btn-block" type="submit">
+                Generate <span class="loader" v-if="loading"></span>
+              </button>
             </form>
           </div>
-          <div class="col-4 table-responsive">
-            <h6>Summary Report from <br> {{form.start_date}} - {{form.end_date}}</h6>
-            <table class="table">
+
+          <!-- Summary Report Section -->
+          <div class="col-12 col-md-4 mb-3">
+            <h6>Summary Report from <br> {{ form.start_date }} - {{ form.end_date }}</h6>
+            <table class="table table-bordered table-sm">
               <tr>
                 <td>Total Cost</td>
-                <td>&#8358; {{totalcost.toLocaleString()}}</td>
+                <td>&#8358; {{ totalcost.toLocaleString() }}</td>
               </tr>
               <tr>
                 <td>Total Expenditure</td>
-                <td>&#8358; {{totalexp.toLocaleString()}}</td>
+                <td>&#8358; {{ totalexp.toLocaleString() }}</td>
               </tr>
               <tr>
                 <td>Total Sales</td>
-                <td>&#8358; {{totalsales.toLocaleString()}}</td>
+                <td>&#8358; {{ totalsales.toLocaleString() }}</td>
               </tr>
               <tr>
                 <td>Profit</td>
-                <td>&#8358; {{profit.toLocaleString()}}</td>
+                <td>&#8358; {{ profit.toLocaleString() }}</td>
               </tr>
             </table>
           </div>
-          <div class="col-4 table-responsive">
+
+          <!-- Product Trend Section -->
+          <div class="col-12 col-md-4 mb-3">
             <h6>Product Trend</h6>
-            <table id="trendtable" class="table">
-              <thead>
-                <tr>
-                  <th>Product</th>
-                  <th>Count</th>
-                  <th>Current Stock</th>
-                </tr>
-              </thead>
-              <tbody :key="trendKey">
-                <tr v-for="product in productTrend" :key="product.id">
-                  <td>{{product.name}}</td>
-                  <td>{{product.count}}</td>
-                  <td>{{product.stock}}</td>
-                </tr>
-              </tbody>
-            </table>
+            <div class="table-responsive">
+              <table id="trendtable" class="table table-bordered table-sm">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Count</th>
+                    <th>Current Stock</th>
+                  </tr>
+                </thead>
+                <tbody :key="trendKey">
+                  <tr v-for="product in productTrend" :key="product.id">
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.count }}</td>
+                    <td>{{ product.stock }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
 
-        <table id="table" class="table table-striped">
-          <thead>
-            <tr>
-              <th>Ref No</th>
-              <th>Transaction Type</th>
-              <th>Transaction Status</th>
-              <th>payment method</th>
-              <th>Amount</th>
-              <th>Customer</th>
-              <th>Waiter</th>
-              <th>date</th>
-              <th>Description</th>
-              <th>actions</th>
-            </tr>
-          </thead>
-          <tbody :key="tableKey">
-            <tr v-for="transaction in transactions" :key="transaction">
-              <td>{{String(transaction.id).padStart(9,0)}}</td>
-              <td>{{transaction.type ?? "awaiting staff closing transaction"}}</td>
-              
-              <td>{{transaction.status}}</td>
-              <td>{{transaction.payment_method ?? "--" }}</td>
-              <td>{{transaction.amount.toLocaleString()}}</td>
-              <td v-if="transaction.customer != null">{{transaction.customer.fullname}}</td>
-              <td v-else>null</td><td>{{transaction.user.fullname}}</td>
-
-              <td>{{dateTime(transaction.created_at)}}</td>
-              <td>{{transaction.table_description}}</td>
-              <td>
-                <button @click.prevent="details(transaction.id)" class="btn btn-info mr-2" title="View Details" >
-                  <i class="fa fa-eye" aria-hidden="true"></i>
-                </button>
-                <button @click.prevent="deleteSale(transaction.id)" data-toggle="tooltip" data-placement="top" title="Cancel Receipt" class="btn btn-danger">
-                  <i class="fa fa-trash" aria-hidden="true"></i>
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <!-- Transactions Table -->
+        <div class="table-responsive">
+          <table id="table" class="table table-striped table-bordered">
+            <thead>
+              <tr>
+                <th>Ref No</th>
+                <th>Transaction Type</th>
+                <th>Transaction Status</th>
+                <th>Payment Method</th>
+                <th>Amount</th>
+                <th>Customer</th>
+                <th>Waiter</th>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody :key="tableKey">
+              <tr v-for="transaction in transactions" :key="transaction.id">
+                <td>{{ String(transaction.id).padStart(9, '0') }}</td>
+                <td>{{ transaction.type ?? "Awaiting staff closing transaction" }}</td>
+                <td>{{ transaction.status }}</td>
+                <td>{{ transaction.payment_method ?? "--" }}</td>
+                <td>{{ transaction.amount.toLocaleString() }}</td>
+                <td>{{ transaction.customer?.fullname ?? "N/A" }}</td>
+                <td>{{ transaction.user.fullname }}</td>
+                <td>{{ dateTime(transaction.created_at) }}</td>
+                <td>{{ transaction.table_description }}</td>
+                <td>
+                  <button @click.prevent="details(transaction.id)" class="btn btn-info btn-sm">
+                    <i class="fa fa-eye"></i>
+                  </button>
+                  <button @click.prevent="deleteSale(transaction.id)" class="btn btn-danger btn-sm">
+                    <i class="fa fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
-    <div class="card col-12 mr-3 table-responsive">
-      <div class="card-body">
-        <h5 class="card-title">Sales Details</h5>
-        <table id="purchase" class="table table-stripped">
-          <thead>
-            <tr>
-              <th></th>
-              <th>product</th>
-              <th>qty</th>
-              <th>price</th>
-              <th>amount payable</th>
-              <th>status</th>
-              <th>ref</th>
-              <th>discount</th>
-            </tr>
-          </thead>
-          <tbody :key="detailsKey">
-            <tr v-for="(sale, index) in sales_details" :key="sale.id">
-              <td>{{index+1}}</td>
-              <td>{{sale.name}}</td>
-              <td>{{sale.qty}}</td>
-              <td>{{sale.price.toLocaleString()}}</td>
-              <td>{{(sale.price * sale.qty).toLocaleString()}}</td>
-              <td>{{sale.status}}</td>
-              <td>{{sale.ref}}</td>
-              <td>{{sale.discount}}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
   </div>
 </template>
+
 <script>
 import { Button, Modal } from '@/components/UIComponents'
 import Purchases from '@/javascript/Api/Purchases'

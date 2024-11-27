@@ -101,7 +101,7 @@
   <div class="col-4 col-md-4">
     <p class="lead">Customer:</p>
   </div>
-  <div class="col-8 col-md-8">
+  <div class="col-6 col-md-6">
     <input
       @input="search_customer"
       type="search"
@@ -110,11 +110,11 @@
       placeholder="search customer">
     <span v-if="this.customer_id > 0">
       <div class="row">
-        <div class="col-12">
+        <div class="col-6">
           <input v-model="from_wallet" @change="setWallet" :disabled="this.total > this.customerWallet_balance" type="checkbox" value="1"> Wallet
           <small class="text-danger" v-if="this.total > this.customerWallet_balance">customer cannot afford this bill from wallet</small>
         </div>
-        <div class="col-12">
+        <div class="col-8">
           <input v-model="on_credit" @change="setCredit" type="checkbox" value="1"> Credit
         </div>
       </div>
@@ -157,7 +157,7 @@
       <option v-if="total <= customerWallet_balance && customer_id != null" value="wallet">Wallet</option>
     </select>
   </div>
-  <div class="form-group col-12 col-md-6">
+  <div class="form-group col-6 col-md-6">
     <label for=""></label><br />
     <button class="btn btn-success mr-2" @click.prevent="pay">Pay <i class="fa fa-money" aria-hidden="true"></i></button>
     <button class="btn btn-secondary" @click.prevent="reset">Reset <i class="fa fa-refresh" aria-hidden="true"></i></button>

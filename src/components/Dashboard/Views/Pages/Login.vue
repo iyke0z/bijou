@@ -55,7 +55,7 @@
                   <fg-input v-model="form.password" addon-left-icon="nc-icon nc-key-25" placeholder="Password"
                             required type="password"></fg-input>
                   <br>
-                  <button type="submit" style="cursor:pointer" class="btn btn-warning mb-3 col-sm-12">Login</button>
+                  <button type="submit" style="cursor:pointer" class="btn btn-warning mb-3 col-sm-12">Login<span v-if="loading" class="loader"></span></button>
                 </card>
               </form>
             </div>
@@ -74,6 +74,7 @@
   import Auth from '@/javascript/Api/Auth'
   import BusinessDetails from '@/javascript/Api/BusinessDetails';
   import Swal from 'sweetalert2'
+import { Loading } from 'element-ui';
 
   export default {
     components: {
@@ -105,6 +106,7 @@
       },
 
       login() {
+        this.loading = true
         if(this.form.phone != null && this.form.password != null){
           Auth.login(this.form).then((result) =>{
             //admin go here
@@ -115,9 +117,11 @@
               //role 3 go here
               window.location.href = "/sales-point"
             }
+            this.loading = false
             
             // this.$router.push({name:'dashboard'})
           }).catch((err) => {
+            this.loading = false
             Swal.fire({
               position: 'top-end',
               icon: 'error',
@@ -159,7 +163,8 @@
           status:'active',
         },
         getDetails:[],
-        componentKey:0
+        componentKey:0,
+        loading: false
       }
     },
     created() {
