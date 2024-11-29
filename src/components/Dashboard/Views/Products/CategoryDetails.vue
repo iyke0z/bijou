@@ -3,7 +3,8 @@
     <div class="card">
       <div class="card-body">
         <h5 class="card-title">products under <b>{{category.name}}</b> category</h5>
-        <table class="table">
+        <div class="table-responsive">
+          <table class="table">
           <thead>
             <tr>
               <th></th>
@@ -27,6 +28,8 @@
             </tr>
           </tbody>
         </table>
+        </div>
+       
       </div>
     </div>
   </div>

@@ -8,8 +8,9 @@
        href="#"
        @click.prevent="collapseMenu">
       <i :class="link.icon"></i>
-      <p>{{link.name}}
-        <b class="caret" :class="{rotated: !collapsed}"></b>
+      <p>
+        <!-- <b class="caret" :class="{rotated: !collapsed}"></b> -->
+        {{link.name}}
       </p>
     </a>
     <collapse-transition v-if="$slots.default || this.isMenu">

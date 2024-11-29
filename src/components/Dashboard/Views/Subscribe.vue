@@ -64,6 +64,7 @@
     import Auth from '@/javascript/Api/Auth'
     import PaystackPop from '@paystack/inline-js';
     import BusinessDetails from '@/javascript/Api/BusinessDetails';
+    import axios from 'axios';
 
     export default{
       data(){
@@ -85,7 +86,7 @@
       },
       methods: {
         getpackages(){
-          Details.get_packages().then((result) => {
+          axios.get('https://api.ngmkt.site/api/admin/packages').then((result) => {
               this.packages = result.data.data
           })
         },

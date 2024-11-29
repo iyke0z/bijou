@@ -76,7 +76,7 @@
           <tbody :key="purchaseKey">
             <tr v-for="purchase in purchase_details" :key="purchase.id">
               <td>
-                {{ purchase.name}}
+                {{ purchase.product.name}}
               </td>
               <td>
                 {{purchase.cost.toLocaleString()}}
