@@ -4,11 +4,24 @@
         <article>
             <div class="ml-4">
                 <li class="lead">How Do I Record My Sales?</li>
-                <p>(A). The record sales go to the <router-link  to="/sales-point">Sales Point</router-link> Page
+                <p>(A). To record sales go to the <router-link  to="/sales-point">Sales Point</router-link> Page
                      <br> (B). Search for the product your want to record by input the name of the product in the search bar on the top of the screen.
                      <br> (C). Click on the desired product and it appends to the table.
                      <br> (D). To update the price, if there's a need, on the price column input your desired price.
                      <br> (E). Select the payment method and pay.
+                </p>
+
+                <p> (A). To record sales for <b>RESTAURANTS & CAFE's</b> go to the <router-link  to="/waiter">Waiter</router-link> Page
+                     <br> (B). Search for the product your want to record by input the name of the product in the search bar on the top of the screen.
+                     <br> (C). Click on the desired product and it appends to the table.
+                     <br> (D). Input Sales Auth Code and Place Order.
+                </p>
+
+                <li class="lead">How Do I Load Orders Pending Payment?</li>
+                <p> (A). To load orders for <b>RESTAURANTS & CAFE's</b> go to the <router-link  to="/waiter">Waiter</router-link> Page
+                     <br> (B). Go to the VIEW ACTIVE orders on the bottom left part of the screen.
+                     <br> (D). Input Sales Auth Code and Place Order.
+                     <br> (F). Search for the order using the order ID or the description and click on VIEW ACTIVE ORDERS.
                 </p>
 
                 <li class="lead">How Do I Record Credit Sales?</li>
