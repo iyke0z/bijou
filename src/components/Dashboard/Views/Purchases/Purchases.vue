@@ -1,5 +1,5 @@
 <template>
-  <div class="table-responsive">
+  <div class="table-responsive"><br>
     <p-button type="success" size="lg" icon @click.native="createPurchaseRoute()">
       Add New
     </p-button>

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div><br>
     <h4>New Expenditure Type</h4>
     <section class="col-12">
       <form @submit.prevent="submit">

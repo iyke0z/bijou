@@ -94,11 +94,11 @@ export default [{
         icon: 'fa fa-money',
         path: '/sales-point'
     },
-    {
-        name: 'Restuarant Sales Point',
-        icon: 'fa fa-money',
-        path: '/waiter'
-    },
+    // {
+    //     name: 'Restuarant Sales Point',
+    //     icon: 'fa fa-money',
+    //     path: '/waiter'
+    // },
     {
         name: 'Reports',
         icon: 'fa fa-book',
@@ -125,6 +125,10 @@ export default [{
             {
                 name: 'Subscribe',
                 path: '/business/subscribe'
+            },
+            {
+                name: 'Frequently Asked Questions',
+                path: '/business/knowledge-base'
             },
             {
                 name: 'Support',

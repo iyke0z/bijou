@@ -1,5 +1,5 @@
 <template>
-  <div class="row">
+  <div class="row"><br>
     <div class="col-md-12">
       <p>Simple yet flexible JavaScript charting for designers &amp; developers. Made by our friends from
         <a target="_blank" rel="noopener" href="https://github.com/gionkunz/chartist-js">Chartist.js</a>. Please check

@@ -1,5 +1,5 @@
 <template>
-  <div class="table-responsive">
+  <div class="table-responsive"><br>
     <h4>Update User</h4>
     <section class="col-12">
       <form @submit.prevent="submit">

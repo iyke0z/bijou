@@ -1,5 +1,5 @@
 <template>
-  <div class="table-responsive">
+  <div class="table-responsive"><br>
     <div class="card">
       <div class="card-body">
         <h5 class="card-title">products under <b>{{category.name}}</b> category</h5>

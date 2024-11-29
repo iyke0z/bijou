@@ -1,5 +1,5 @@
 <template>
-  <div class="table-responsive">
+  <div class="table-responsive"><br>
     <h3>Customers</h3>
     <table id="table" class="table table-striped">
       <thead>

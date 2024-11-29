@@ -59,7 +59,7 @@
                     <th>Product</th>
                     <th>Price</th>
                     <th>Quantity</th>
-                    <th>Payable</th>
+                    <th>Receivable</th>
                     <th>Waiter</th>
                   </tr>
                 </thead>
