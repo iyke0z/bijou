@@ -1,5 +1,5 @@
 <template>
-  <div class="table-responsive">
+  <div class="table-responsive"><br>
     <h4>Create New Product</h4>
     <form action="" @submit.prevent="submit">
           <div v-for="(product, index) in rows.products"  :key="index">

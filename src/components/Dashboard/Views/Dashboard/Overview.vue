@@ -58,7 +58,7 @@
     <div class="col-md-6">
       <card>
         <template slot="header">
-          <h4 class="card-title">Customer Debt Chart</h4>
+          <h4 class="card-title">Receivables</h4>
           <p class="category">Debt Chart for the period</p>
         </template>
         <bar-chart :labels="debReportChart.labels"

@@ -1,5 +1,5 @@
 <template>
-  <div class="table-responsive">
+  <div class="table-responsive"><br>
     <div class="card table-responsive">
       <div class="card-body">
         <h5 class="card-title">product details</h5>

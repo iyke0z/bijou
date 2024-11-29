@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div><br>
     <div class="card">
       <div class="card-body">
         <h5 class="card-title">User Details</h5>
