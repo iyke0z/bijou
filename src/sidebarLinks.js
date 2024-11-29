@@ -4,7 +4,7 @@ export default [{
         path: '/admin/overview'
     },
     {
-        name: 'Users',
+        name: 'Staff Management',
         icon: 'fa fa-users',
         collapsed: true,
         children: [{
@@ -18,7 +18,7 @@ export default [{
         ]
     },
     {
-        name: 'Product',
+        name: 'Product Management',
         icon: 'fa fa-product-hunt',
         collapsed: true,
         children: [{
@@ -37,7 +37,7 @@ export default [{
         ]
     },
     {
-        name: 'Purchases',
+        name: 'Product Purchases',
         icon: 'fa fa-refresh',
         collapsed: true,
         children: [{
@@ -52,7 +52,7 @@ export default [{
         ]
     },
     {
-        name: 'Customers',
+        name: 'Customer Management',
         icon: 'fa fa-user',
         collapsed: true,
         children: [{
@@ -67,7 +67,7 @@ export default [{
         ]
     },
     {
-        name: 'Expenditure',
+        name: 'Expenditure Management',
         icon: 'fa fa-plus',
         collapsed: true,
         children: [{
@@ -95,12 +95,12 @@ export default [{
         path: '/sales-point'
     },
     {
-        name: 'Waiter Sales Point',
+        name: 'Restuarant Sales Point',
         icon: 'fa fa-money',
         path: '/waiter'
     },
     {
-        name: 'Report',
+        name: 'Reports',
         icon: 'fa fa-book',
         collapsed: true,
         children: [{
@@ -115,7 +115,7 @@ export default [{
         ]
     },
     {
-        name: 'Customer Service',
+        name: 'Self Service',
         icon: 'fa fa-wrench',
         collapsed: true,
         children: [{

@@ -11,6 +11,7 @@
             <tr>
               <th></th>
               <th>Name</th>
+              <th>Expenditure Category</th>
               <th>actions</th>
             </tr>
           </thead>
@@ -18,6 +19,7 @@
             <tr v-for="(expenditure, index) in all_expenditures" :key="expenditure.id">
               <td>{{index+1}}</td>
               <td>{{expenditure.name}}</td>
+              <td>{{expenditure.expenditure_type}}</td>
               <td>
                 <p-button class="mr-2" title="update" type="info" size="sm" icon @click.native="openModal('classic', 'Update Type', 'update', expenditure)">
                   <i class="fa fa-edit"></i>

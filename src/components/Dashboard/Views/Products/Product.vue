@@ -139,17 +139,17 @@
         formData.append('product_id', this.form.id )
         formData.append('image', this.img)
         Product.upload_image(formData).then((result) => {
-            Swal.fire({
-              position: 'top-end',
-              icon: 'success',
-              title: result.data.message,
-              customClass: 'Swal-wide',
-              showConfirmButton: false,
-              timer: 3000
-            })
+            // Swal.fire({
+            //   position: 'top-end',
+            //   icon: 'success',
+            //   title: result.data.message,
+            //   customClass: 'Swal-wide',
+            //   showConfirmButton: false,
+            //   timer: 3000
+            // })
             this.upl_image = null
             this.img = null
-            this.modals.classic = false
+            // this.modals.classic = false
         }).catch((err) => {
           Swal.fire({
               position: 'top-end',

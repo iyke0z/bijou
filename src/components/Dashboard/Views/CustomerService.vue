@@ -5,11 +5,13 @@
       <!-- </div> -->
       <section class="col-12 col-md-6">
         <small></small>
-        <form @submit.prevent="activateSubscription">
+        <form @submit.prevent="submit">
           <div class="form-group">
             <label for="activationCode"> Type of Message</label>
             <select type="text" id="activationCode" v-model="type" class="form-control" required>
-              <option v-for="type in messageTypes" :key="type.id">{{ type.name  }}</option>
+              <option value="billing">Billing</option>
+              <option value="tech_support">Tech Support</option>
+              <option value="inquiry">Inquiry</option>
             </select>
           </div>
           <div class="form-group">
@@ -32,7 +34,6 @@
     import Auth from '@/javascript/Api/Auth'
     import PaystackPop from '@paystack/inline-js';
     import BusinessDetails from '@/javascript/Api/BusinessDetails';
-import { text } from 'd3';
 import axios from 'axios';
 
     export default{
@@ -51,15 +52,15 @@ import axios from 'axios';
             messageTypes:null,
             message:null,
             business:null,
-            type:null
+            type:'billing'
         }
       },
       methods: {
-        getMessageTypes(){
-          axios.get('https://api.ngmkt.site/api/message-types').then((result) => {
-              this.messageTypes = result.data.data
-          })
-        },
+        // getMessageTypes(){
+        //   axios.get('https://api.ngmkt.site/api/message-types').then((result) => {
+        //       this.messageTypes = result.data.data
+        //   })
+        // },
 
         getBusinessDetails(){
           Details.details().then((result) => {
@@ -98,7 +99,7 @@ import axios from 'axios';
         },
       created(){
         this.getBusinessDetails()
-        this.getMessageTypes()
+        // this.getMessageTypes()
       }
     }
   </script>
