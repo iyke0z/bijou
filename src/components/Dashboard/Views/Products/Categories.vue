@@ -178,7 +178,7 @@ import helpers from '@/javascript/helpers'
           this.rows.category = [{name:null}]
           this.allcategories()
           this.loading = false
-          this.allcategories()
+          window.location.reload()
         }).catch((err) => {
           this.loading = false
          Swal.fire({
