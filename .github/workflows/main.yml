@@ -1,0 +1,53 @@
+name: Deploy ngmkt App
+
+on:
+  push:
+    branches:
+      - main  # Run this workflow when changes are pushed to the main branch
+
+jobs:
+  build-and-deploy:
+    name: Build and Deploy Vue.js App
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out the repository
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14.18.1'  # Specify your Node.js version
+
+      # Step 3: Install dependencies
+      - name: Install Dependencies
+        run: npm install
+
+      # Step 4: Build the Vue.js app
+      - name: Build Application
+        run: npm run build
+
+      # Step 5: Deploy to the server
+      - name: Deploy Dist Folder
+        uses: appleboy/scp-action@v0.1.5
+        with:
+          host: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          source: ./dist/  # The folder containing the built files
+          target: ${{ secrets.FTP_PATH }}/enterprise/frontend  # Target folder on the server
+          port: 22  # Default SFTP port
+
+      # Step 6: Run optional server-side commands
+      - name: Post-deployment Script
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: 22
+          script: |
+            cd ${{ secrets.FTP_PATH }}
+            cp -r * ${{ secrets.FTP_PATH }}/enterprise/frontend  # Copy all files from dist to deployed folder
