@@ -393,7 +393,8 @@ import { Button, Modal } from '@/components/UIComponents'
         var post = {
           "auth_code": this.auth_code,
           "products": this.products,
-          "description": this.description
+          "description": this.description,
+          "is_order":true
         }
           this.loadingOrder = true
 

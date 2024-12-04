@@ -10,7 +10,7 @@
         <a class="flex-sm-fill  btn btn-secondarytext-sm-center mr-1 "  @click="currentTab = 'customer_management'">Customer Managment</a>
         <a class="flex-sm-fill  btn btn-secondarytext-sm-center mr-1 "  @click="currentTab = 'expenditure_management'">Expenditure Managment</a>
         <a class="flex-sm-fill  btn btn-secondarytext-sm-center mr-1 "  @click="currentTab = 'sales_management'">Sales Point</a>
-        <a class="flex-sm-fill  btn btn-secondarytext-sm-center mr-1 "  @click="currentTab = 'subscription_management'">Subscription</a>
+        <a class="flex-sm-fill  btn btn-secondarytext-sm-center mr-1 "  @click="currentTab = 'subscription_management'">Billing</a>
         <a class="flex-sm-fill  btn btn-secondarytext-sm-center mr-1 "  @click="currentTab = 'reports'">Reports</a>
         <a class="flex-sm-fill  btn btn-secondarytext-sm-center mr-1 "  @click="currentTab = 'accounting_education'">Basic Accounting Education</a>
       </nav>

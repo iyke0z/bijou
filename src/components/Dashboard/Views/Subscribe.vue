@@ -1,9 +1,10 @@
 <template>
   <div><br>
-      <h4>Subscribe</h4>
+      <h4>Billing</h4>
       <div class="row">
         <!-- <div class="md-3"> -->
           <div class="row">
+            <div class="loader" v-if="loading"></div>
   <div
     class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4"
     v-for="single_package in packages"
@@ -11,7 +12,10 @@
   >
     <div class="card card-stats">
       <div class="card-header lead">
-        <center><strong>{{ single_package.description }}</strong></center>
+        <center>
+          <strong class="lead">{{ single_package.name }}</strong><br>
+          <p class="text-sm">{{ single_package.description }}</p>
+        </center>
       </div>
       <div class="card-body">
         <div class="row">
@@ -86,9 +90,11 @@
       },
       methods: {
         getpackages(){
+          this.loading = true
           axios.get('https://api.ngmkt.site/api/admin/packages').then((result) => {
               this.packages = result.data.data
           })
+          this.loading = false
         },
 
         getBusinessDetails(){

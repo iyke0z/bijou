@@ -69,7 +69,9 @@
             <tr>
               <th>Name</th>
               <th>Cost</th>
-              <th>Qty</th>
+              <th>Previous Stock</th>
+              <th>Qty Purchased</th>
+              <th>Current Stock</th>
               <!-- <th>Action</th> -->
             </tr>
           </thead>
@@ -82,7 +84,13 @@
                 {{purchase.cost.toLocaleString()}}
               </td>
               <td>
+                {{ purchase.previous_stock.toLocaleString()}}
+              </td>
+              <td>
                 {{purchase.qty.toLocaleString()}}
+              </td>
+              <td v-if="purchase.previous_stock != null">
+                {{purchase.qty + purchase.previous_stock}}
               </td>
               <!-- <td>
                 <p-button class="mr-2" title="delete" type="danger" size="sm" icon @click.prevent="delete_purchase_detail(purchase)">

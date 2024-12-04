@@ -12,28 +12,38 @@
             <input type="number" step="any" min="0" class="form-control col-8"  placeholder="input VAT" v-model="details.vat" required>
         </div>
         <br>
-
+bs
         <div >
             <label for="">Phone number 1</label>
-            <input type="string" step="any" min="0" class="form-control col-8"  placeholder="Phone Number" v-model="details.phone_one"  required>
+            <input type="text" step="any" min="0" class="form-control col-8"  placeholder="Phone Number" v-model="details.phone_one"  required>
         </div>
 
         <br>
         <div >
             <label for="">Phone number 2</label>
-            <input type="string" step="any" min="0" class="form-control col-8"  placeholder="Phone Number" v-model="details.phone_two"  required>
+            <input type="text" step="any" min="0" class="form-control col-8"  placeholder="Phone Number" v-model="details.phone_two"  required>
         </div>
-        <br>
         <!-- <div >
             <label for="">Email Address</label>
             <input type="email" step="any" min="0" class="form-control col-8"  placeholder="Email Address" v-model="details.email"  required>
         </div> -->
-
         <br>
 
         <div >
             <label for="">Motto</label>
-            <input type="motto" step="any" min="0" class="form-control col-8"  placeholder="Motto" v-model="details.motto"  required>
+            <input type="text" step="any" min="0" class="form-control col-8"  placeholder="Motto" v-model="details.motto"  required>
+        </div>
+        <br>
+
+        <div >
+            <label for="">Business Opening Time</label>
+            <input type="time" step="any" min="0" class="form-control col-8"  placeholder="Motto" v-model="details.motto"  required>
+        </div>
+        <br>
+
+        <div >
+            <label for="">Business Closing Time</label>
+            <input type="time" step="any" min="0" class="form-control col-8"  placeholder="Motto" v-model="details.motto"  required>
         </div>
         <button class="btn btn-success" type="submit">Update <span v-if="loading" class="loader"></span></button>
       </form>

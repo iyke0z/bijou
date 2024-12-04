@@ -49,7 +49,7 @@
             <h6>Summary Report from <br> {{ form.start_date }} - {{ form.end_date }}</h6>
             <table class="table table-bordered table-sm">
               <tr>
-                <td>Total Cost</td>
+                <td>Total Purchases</td>
                 <td>&#8358; {{ totalcost.toLocaleString() }}</td>
               </tr>
               <tr>
@@ -60,10 +60,10 @@
                 <td>Total Sales</td>
                 <td>&#8358; {{ totalsales.toLocaleString() }}</td>
               </tr>
-              <tr>
+              <!-- <tr>
                 <td>Profit</td>
                 <td>&#8358; {{ profit.toLocaleString() }}</td>
-              </tr>
+              </tr> -->
             </table>
           </div>
 
@@ -195,6 +195,7 @@ import Sales from '@/javascript/Api/Sales'
         return helpers.dateTime(date)
       },
       filter(){
+        this.loading = true
         Report.general_report(this.form).then((result) => {
           this.transactions = result.data.data['transaction']
           this.sales = result.data.data['sales']
@@ -203,6 +204,7 @@ import Sales from '@/javascript/Api/Sales'
             this.datatable()
             this.getSummary()
         })
+        this.loading = false
       },
       getProductTrend(){
         let product = []

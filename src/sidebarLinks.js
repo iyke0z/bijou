@@ -123,8 +123,8 @@ export default [{
                 path: '/business/settings'
             },
             {
-                name: 'Subscribe',
-                path: '/business/subscribe'
+                name: 'Billing',
+                path: '/business/billing'
             },
             {
                 name: 'Frequently Asked Questions',
@@ -134,6 +134,10 @@ export default [{
                 name: 'Support',
                 path: '/business/customer-service'
             },
+            // {
+            //     name: 'AI Analyst',
+            //     path: '/business/analyst'
+            // },
             
             
         ]

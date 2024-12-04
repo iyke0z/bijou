@@ -8,6 +8,7 @@ export default {
     generate_report(form) {
         return Api.post('/transaction-report', form)
     },
+    
 
     get_sales_performance(form) {
         return Api.post('/report/sales-performance', form)

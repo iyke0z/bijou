@@ -13,7 +13,7 @@
       <div class="card-body">
         <h5 class="card-title text-center">
           Sales Report <br /> 
-          from {{ form.start_date }} - {{ form.end_date }}
+          from {{ dateTime(form.start_date)}} - {{ dateTime(form.end_date) }}
         </h5>
         
         <!-- Filters -->
@@ -83,26 +83,44 @@
               </tbody>
             </table>
           </div>
+          <h3 v-if="all_sales != null">BANK TRANSACTION REMITANCE</h3>
+              <table id="table" class="table table-striped" v-if="all_sales != null">
+                <thead>
+                  <tr>
+                    <th>BANK NAME</th>
+                    <th>AMOUNT</th>
+                  </tr>
+                </thead>
+                <tbody :key="tableKey">
+                  <tr v-for="(bank, index) in all_sales.banks" :key="bank.id">
+                    <td>{{bank.bank_name}}</td>
+                    <td>{{bank.amount.toLocaleString()}}</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h3 v-if="oustanding != null">Unpaid Orders</h3>
+              <table id="table" class="table table-striped" v-if="all_sales != null">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Receivable</th>
+                    <th>Waiter</th>
+                  </tr>
+                </thead>
+                <tbody :key="tableKey">
+                  <tr v-for="oustanding in oustanding" :key="oustanding.id">
+                    <td>{{oustanding.product}}</td>
+                    <td>{{oustanding.price.toLocaleString()}}</td>
+                    <td>{{oustanding.quantity.toLocaleString()}}</td><td>{{(oustanding.price*oustanding.quantity).toLocaleString()}}</td>
+                    <td>{{oustanding.waiter}}</td>
+                  </tr>
+                </tbody>
+              </table>
         </div>
 
-        <!-- Other Tables (Reusable) -->
-        <div v-for="(table, tableTitle) in dynamicTables" :key="tableTitle" v-if="table.data.length" class="mt-4">
-          <h5 class="mb-2">{{ table.title }}</h5>
-          <div class="table-responsive">
-            <table class="table table-striped w-full">
-              <thead>
-                <tr>
-                  <th v-for="header in table.headers" :key="header">{{ header }}</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="row in table.data" :key="row.id">
-                  <td v-for="value in row" :key="value">{{ value }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+        
       </div>
     </div>
   </div>
@@ -135,6 +153,7 @@ export default {
     printReceipt() {
       this.$router.push('/report-print')
     },
+
     sales() {
       this.isLoading = true;
       Reports.generate_report(this.form).then((result) => {
@@ -175,7 +194,7 @@ export default {
       this.void_items = []
       if (data.length > 0) {
         data[0].forEach(element => {
-          console.log(element)
+          // console.log(element)
           element.sales.forEach(sale => {
             this.void_items.push({
               product: sale.product.name,
@@ -191,10 +210,11 @@ export default {
       this.voided_table()
     },
     getOutstanding(data) {
+      console.log(data)
+
       this.oustanding = []
       if (data.length > 0) {
         data[0].forEach(element => {
-          console.log(element)
           element.sales.forEach(sale => {
             this.oustanding.push({
               product: sale.product.name,
@@ -213,7 +233,6 @@ export default {
       this.sold_items = []
       if (data.length > 0) {
         data[0].forEach(element => {
-          console.log(element)
           element.sales.forEach(sale => {
             this.sold_items.push({
               product: sale.product.name,
@@ -268,7 +287,10 @@ export default {
           lengthMenu: [[5, 10, 20], [5, 10, 20]]
         });
       });
-    }
+    },
+    dateTime(data) {
+      return helpers.dateTime(data)
+    },
   },
   created() {
     this.datatable()

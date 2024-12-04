@@ -33,6 +33,7 @@ import AllExpenditure from '../components/Dashboard/Views/Expenditure/AllExpendi
 import SalesPoint from '../components/Dashboard/Views/SalesPoint/PointOfSale.vue'
 import Settings from '../components/Dashboard/Views/Settings.vue'
 import Subscribe from '../components/Dashboard/Views/Subscribe.vue'
+import Analyst from '../components/Dashboard/Views/Analyst.vue'
 import KnowledgeBase from '../components/Dashboard/Views/KnowledgeBase/KnowledgeBase.vue'
 import CustomerService from '../components/Dashboard/Views/CustomerService.vue'
 import SalesReport from '../components/Dashboard/Views/Report/SalesReport.vue'
@@ -304,8 +305,8 @@ let settings = {
         component: Settings
     },
     {
-        path: 'subscribe',
-        name: 'subscribe',
+        path: 'billing',
+        name: 'billing',
         component: Subscribe
     },
     {
@@ -316,6 +317,10 @@ let settings = {
         path: 'knowledge-base',
         name: 'knowledgebase',
         component: KnowledgeBase
+    },{
+        path: 'analyst',
+        name: 'analyst',
+        component: Analyst
     }]
 }
 

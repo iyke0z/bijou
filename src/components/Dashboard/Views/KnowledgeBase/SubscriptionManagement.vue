@@ -1,10 +1,10 @@
 <template>
     <div>
-        <h4>Subscription Management</h4>
+        <h4>Billing Management</h4>
         <article>
             <div class="ml-4">
                 <li class="lead">How Do I Subscribe?</li>
-                <p>(A). The list of packages can be found at the <router-link  to="/business/subscribe">Subscribe</router-link> Page
+                <p>(A). The list of packages can be found at the <router-link  to="/business/billing">Subscribe</router-link> Page
                      <br> (B). Click on your desired package and make payment with the available payment methods on the paystack gateway.
 
                 </p>

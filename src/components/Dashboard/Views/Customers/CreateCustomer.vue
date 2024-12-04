@@ -25,7 +25,7 @@
           <label for="">Wallet Balance</label>
           <input type="number" step="any" class="form-control" v-model="form.wallet_balance" required>
         </div>
-        <button class="btn btn-success col-8" type="submit">Submit</button>
+        <button class="btn btn-success col-8" type="submit">Submit <span v-if="loading" class="spinner-border" role="status"></span></button>
       </form>
     </section>
   </div>
@@ -39,6 +39,7 @@ import Swal from 'sweetalert2';
   export default{
     data(){
       return {
+        loading:false,
         form:{
           fullname:null,
           email:null,
@@ -50,6 +51,7 @@ import Swal from 'sweetalert2';
     },
     methods: {
       submit(){
+        this.loading = true
         Customer.create(this.form).then((result) => {
           Swal.fire({
             position: 'top-end',
@@ -66,6 +68,7 @@ import Swal from 'sweetalert2';
           address:null,
           wallet_balance:0
         }
+        this.loading = false
         }).catch((err) => {
          Swal.fire({
               position: 'top-end',
@@ -75,6 +78,8 @@ import Swal from 'sweetalert2';
               showConfirmButton: false,
               timer: 3000
             })
+            this.loading = false
+
         });
       }
 

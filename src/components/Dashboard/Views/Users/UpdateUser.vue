@@ -39,10 +39,10 @@
 
           </select>
         </div>
-        <!-- <div class="form-group">
+        <div class="form-group">
           <label for="">Password</label>
           <input type="password" class="form-control" v-model="form.password" required>
-        </div> -->
+        </div>
         <div class="form-group">
           <label for="">Upload Picture</label>
           <div class="col-4">
@@ -92,7 +92,7 @@ import Swal from 'sweetalert2';
             this.form.phone = result.data.data['phone']
             this.form.address = result.data.data['address']
             this.form.role_id = result.data.data['role_id']
-            // this.form.password = result.data.data['password']
+            this.form.password = result.data.data['password']
             this.form.dob = result.data.data['dob']
             this.form.gender = result.data.data['gender']
             this.form.picture = result.data.data['picture']
@@ -123,7 +123,7 @@ import Swal from 'sweetalert2';
         formData.append('phone', this.form.phone)
         formData.append('address', this.form.address)
         formData.append('role_id', this.form.role_id)
-        // formData.append('password', this.form.password)
+        formData.append('password', this.form.password)
         formData.append('dob', this.form.dob)
         formData.append('gender', this.form.gender)
         formData.append('picture', this.form.picture)
