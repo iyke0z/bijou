@@ -3,45 +3,45 @@
       <h4>Billing</h4>
       <div class="row">
         <!-- <div class="md-3"> -->
-          <div class="row">
+          <div class="row col-12">
             <div class="loader" v-if="loading"></div>
-  <div
-    class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4"
-    v-for="single_package in packages"
-    :key="single_package.id"
-  >
-    <div class="card card-stats">
-      <div class="card-header lead">
-        <center>
-          <strong class="lead">{{ single_package.name }}</strong><br>
-          <p class="text-sm">{{ single_package.description }}</p>
-        </center>
-      </div>
-      <div class="card-body">
-        <div class="row">
-          <div class="col-md-12">
-            <div>
+          <div
+          class="col-12 col-sm-6 col-md-4 col-lg-4 mb-4"
+          v-for="single_package in packages"
+          :key="single_package.id"
+        >
+          <div class="card card-stats">
+            <div class="card-header lead">
               <center>
-                <hr />
-                <div class="card-body">
-                  <p class="card-title lead">&#8358;{{ single_package.price.toLocaleString() }}</p>
-                </div>
+                <strong class="lead">{{ single_package.name }}</strong><br>
+                <p class="text-sm">{{ single_package.description }}</p>
               </center>
             </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-12">
+                  <div>
+                    <center>
+                      <hr />
+                      <div class="card-body">
+                        <p class="card-title lead">&#8358;{{ single_package.price.toLocaleString() }}</p>
+                      </div>
+                    </center>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <center>
+              <div class="card-footer">
+                <hr />
+                <slot name="footer">
+                  <button class="btn btn-dark" @click.prevent="fundWallet(single_package.price)">Subscribe</button>
+                </slot>
+              </div>
+            </center>
           </div>
         </div>
-      </div>
-      <center>
-        <div class="card-footer">
-          <hr />
-          <slot name="footer">
-            <button class="btn btn-dark" @click.prevent="fundWallet(single_package.price)">Subscribe</button>
-          </slot>
-        </div>
-      </center>
-    </div>
-  </div>
-</div>
+      </div>  
 
     </div>
       <!-- </div> -->

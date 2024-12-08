@@ -133,6 +133,37 @@
         </div>
       </div>
     </div>
+    <div class="card col-12 mr-3 table-responsive">
+      <div class="card-body">
+        <h5 class="card-title">Sales Details</h5>
+        <table id="purchase" class="table table-stripped">
+          <thead>
+            <tr>
+              <th></th>
+              <th>product</th>
+              <th>qty</th>
+              <th>price</th>
+              <th>amount payable</th>
+              <th>status</th>
+              <th>ref</th>
+              <th>discount</th>
+            </tr>
+          </thead>
+          <tbody :key="detailsKey">
+            <tr v-for="(sale, index) in sales_details" :key="sale.id">
+              <td>{{index+1}}</td>
+              <td>{{sale.name}}</td>
+              <td>{{sale.qty}}</td>
+              <td>{{sale.price.toLocaleString()}}</td>
+              <td>{{(sale.price * sale.qty).toLocaleString()}}</td>
+              <td>{{sale.status}}</td>
+              <td>{{sale.ref}}</td>
+              <td>{{sale.discount}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </template>
 

@@ -1,5 +1,6 @@
 <template>
   <div class="row"><br><br>
+   
       <marquee class="col-12 mt-4 mb-3" behavior="" direction="LEFT">
         <b class="mr-3">OPENING BALANCE: &#8358; {{ (profitLoss?.accounting_balance?.opening_cash_balance).toLocaleString() }}</b> | 
         <b class="mr-3">OPENING RECIEVABLE BALANCE: &#8358; {{ (profitLoss?.accounting_balance?.opening_receivables_balance).toLocaleString() }}</b> |
@@ -207,7 +208,8 @@
 
   </div>
     </div>
-  </div>
+    </div>
+      
 </template>
 <script>
   import { Card } from '@/components/UIComponents'

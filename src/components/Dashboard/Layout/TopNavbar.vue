@@ -12,7 +12,7 @@
 
         </navbar-toggle-button>
       </div>
-      <a class="navbar-brand mb-4" href="/business/subscribe">
+      <a class="navbar-brand mb-4" href="/business/billing">
   {{details?.name}}
   <!-- <span class="d-block text-wrap"> -->
     <span

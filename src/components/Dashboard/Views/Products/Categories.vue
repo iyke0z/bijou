@@ -207,6 +207,8 @@ import helpers from '@/javascript/helpers'
           this.form = {name:null}
           this.modals.classic = false
           this.loading = false
+          window.location.reload()
+
         }).catch((err) => {
         this.loading = false
          Swal.fire({

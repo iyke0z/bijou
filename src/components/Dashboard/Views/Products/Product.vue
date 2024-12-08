@@ -192,6 +192,7 @@
             this.get_product();
             this.tableKey++
             this.datatable()
+            window.location.reload()
           }).catch(err => {
           this.modals.classic = false
           Swal.fire({
