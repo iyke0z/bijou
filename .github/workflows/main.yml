@@ -47,11 +47,23 @@ jobs:
             "edzain")
               API_URL="https://api.edzain.ngmkt.site"
               ;;
-            "subdomain2")
-              API_URL="https://api.subdomain2.ngmkt.site"
+            "bingoml")
+              API_URL="https://api.bingoml.ngmkt.site"
               ;;
-            "subdomain3")
-              API_URL="https://api.subdomain3.ngmkt.site"
+            "aromaperk")
+              API_URL="https://api.aromaperk.ngmkt.site"
+              ;;
+            "totech")
+              API_URL="https://api.totech.ngmkt.site"
+              ;;
+            "fitandfeet")
+              API_URL="https://api.fitandfeet.ngmkt.site"
+              ;;
+            "chosenconcept")
+              API_URL="https://api.chosenconcept.ngmkt.site"
+              ;;
+            "phlorah")
+              API_URL="https://api.phlorah.ngmkt.site"
               ;;
             *)
               echo "Unknown subdomain!"
