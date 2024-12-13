@@ -33,17 +33,20 @@ jobs:
       fail-fast: false  # Continue if one matrix job fails
 
     steps:
-      # Step 1: Checkout the repository
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      # Step 2: Set up Node.js
+      - name: Fetch Full Git History
+        run: |
+          # Fetch the full history to ensure the before commit is available
+          git fetch --unshallow
+          git fetch origin ${{ github.ref }}  # Fetch the specific branch (in case it's shallow)
+          
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '14.18.1'  # Specify your Node.js version
+          node-version: '14.18.1'
 
-      # Step 3: Detect if there are changes in the subdomain folder
       - name: Check if subdomain folder has changed
         id: check_changes
         run: |
