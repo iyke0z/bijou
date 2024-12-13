@@ -25,7 +25,7 @@ jobs:
       - name: Replace baseURL in Api.js
         run: |
           # Replace the baseURL in src/javascript/Api.js with https://api.edzain.ngmkt.site
-          sed -i 's|http://localhost:9009/api/v1|https://api.edzain.ngmkt.site/api/v1|' ./src/javascript/Api.js
+          sed -i 's|http://localhost:9009/api/v1|https://api.edzain.ngmkt.site/api/v1|' ./src/javascript/Api/Api.js
 
       # Step 4: Install dependencies
       - name: Install Dependencies
