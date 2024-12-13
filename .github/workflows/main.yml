@@ -47,25 +47,25 @@ jobs:
         with:
           node-version: '14.18.1'
 
-      - name: Check if subdomain folder has changed
-        id: check_changes
-        run: |
-          echo "Checking if files in the ${{ matrix.folder }} folder have changed..."
+      # - name: Check if subdomain folder has changed
+      #   id: check_changes
+      #   run: |
+      #     echo "Checking if files in the ${{ matrix.folder }} folder have changed..."
 
-          # Ensure we're using the correct commit references for diff
-          echo "Using commit range: ${{ github.event.before }}..${{ github.sha }}"
+      #     # Ensure we're using the correct commit references for diff
+      #     echo "Using commit range: ${{ github.event.before }}..${{ github.sha }}"
 
-          # Get the list of changed files between the previous and current commit
-          changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+      #     # Get the list of changed files between the previous and current commit
+      #     changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
 
-          # Check if any files in the specific subdomain folder have changed
-          if echo "$changed_files" | grep -q "^${{ matrix.folder }}/"; then
-            echo "Changes detected in the ${{ matrix.folder }} folder. Proceeding with deployment."
-            echo "deploy=true" >> $GITHUB_ENV
-          else
-            echo "No changes detected in the ${{ matrix.folder }} folder. Skipping deployment."
-            echo "deploy=false" >> $GITHUB_ENV
-          fi
+      #     # Check if any files in the specific subdomain folder have changed
+      #     if echo "$changed_files" | grep -q "^${{ matrix.folder }}/"; then
+      #       echo "Changes detected in the ${{ matrix.folder }} folder. Proceeding with deployment."
+      #       echo "deploy=true" >> $GITHUB_ENV
+      #     else
+      #       echo "No changes detected in the ${{ matrix.folder }} folder. Skipping deployment."
+      #       echo "deploy=false" >> $GITHUB_ENV
+      #     fi
 
       # Step 4: Replace baseURL in Api.js with the subdomain's API URL (Only if the folder changed)
       - name: Replace baseURL in Api.js
