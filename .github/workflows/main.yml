@@ -1,4 +1,4 @@
-name: Deploy ngmkt admin FE App
+name: Deploy ngmkt FE App
 
 on:
   push:
@@ -16,10 +16,10 @@ jobs:
         uses: actions/checkout@v3
 
       # Step 2: Set up Node.js
-        - name: Set up Node.js
-          uses: actions/setup-node@v3
-          with:
-            node-version: '14.18.1'  # Specify your Node.js version
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14.18.1'  # Specify your Node.js version
 
       # Step 3: Replace baseURL in Api.js with the new URL
       - name: Replace baseURL in Api.js
