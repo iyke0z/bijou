@@ -22,6 +22,11 @@ jobs:
           node-version: '14.18.1'  # Specify your Node.js version
 
       # Step 3: Replace baseURL in Api.js with the new URL
+      - name: List files for debugging
+        run: |
+          echo "Listing files in the repository:"
+          ls -R
+
       - name: Replace baseURL in Api.js
         run: |
           # Replace the baseURL in src/javascript/Api.js with https://api.edzain.ngmkt.site
