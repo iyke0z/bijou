@@ -41,35 +41,14 @@ jobs:
           # Fetch the full history to ensure the before commit is available
           git fetch --unshallow
           git fetch origin ${{ github.ref }}  # Fetch the specific branch (in case it's shallow)
-          
+
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '14.18.1'
 
-      # - name: Check if subdomain folder has changed
-      #   id: check_changes
-      #   run: |
-      #     echo "Checking if files in the ${{ matrix.folder }} folder have changed..."
-
-      #     # Ensure we're using the correct commit references for diff
-      #     echo "Using commit range: ${{ github.event.before }}..${{ github.sha }}"
-
-      #     # Get the list of changed files between the previous and current commit
-      #     changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
-
-      #     # Check if any files in the specific subdomain folder have changed
-      #     if echo "$changed_files" | grep -q "^${{ matrix.folder }}/"; then
-      #       echo "Changes detected in the ${{ matrix.folder }} folder. Proceeding with deployment."
-      #       echo "deploy=true" >> $GITHUB_ENV
-      #     else
-      #       echo "No changes detected in the ${{ matrix.folder }} folder. Skipping deployment."
-      #       echo "deploy=false" >> $GITHUB_ENV
-      #     fi
-
-      # Step 4: Replace baseURL in Api.js with the subdomain's API URL (Only if the folder changed)
+      # Step 4: Replace baseURL in Api.js
       - name: Replace baseURL in Api.js
-        if: env.deploy == 'true'
         run: |
           echo "Updating API URL for subdomain: ${{ matrix.subdomain }}"
           case "${{ matrix.subdomain }}" in
@@ -106,19 +85,16 @@ jobs:
           # Replace the base URL in Api.js file
           sed -i "s|http://localhost:9009/api/v1|$API_URL/api/v1|" ./src/javascript/Api/Api.js
 
-      # Step 5: Install dependencies (Only if the folder changed)
+      # Step 5: Install dependencies
       - name: Install Dependencies
-        if: env.deploy == 'true'
         run: npm install
 
-      # Step 6: Build the Vue.js app (Only if the folder changed)
+      # Step 6: Build the Vue.js app
       - name: Build Application
-        if: env.deploy == 'true'
         run: npm run build
 
-      # Step 7: Upload Built Files via SCP (Only if the folder changed)
+      # Step 7: Upload Built Files via SCP
       - name: Upload Built Files via SCP
-        if: env.deploy == 'true'
         uses: appleboy/scp-action@v0.1.5
         with:
           host: ${{ secrets.FTP_HOST }}
@@ -128,9 +104,8 @@ jobs:
           source: dist  # Local directory to upload
           target: ${{ secrets.FTP_PATH }}/${{ matrix.folder }}/frontend/  # Remote directory based on subdomain
 
-      # Step 8: Run Post-Deployment Commands (Only if the folder changed)
+      # Step 8: Run Post-Deployment Commands
       - name: Run Post-Deployment Commands
-        if: env.deploy == 'true'
         uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.FTP_HOST }}
