@@ -44,7 +44,7 @@ jobs:
           node-version: '14.18.1'  # Specify your Node.js version
 
       # Step 3: Detect if there are changes in the subdomain folder
-     - name: Check if subdomain folder has changed
+      - name: Check if subdomain folder has changed
         id: check_changes
         run: |
           echo "Checking if files in the ${{ matrix.folder }} folder have changed..."
@@ -63,7 +63,6 @@ jobs:
             echo "No changes detected in the ${{ matrix.folder }} folder. Skipping deployment."
             echo "deploy=false" >> $GITHUB_ENV
           fi
-
 
       # Step 4: Replace baseURL in Api.js with the subdomain's API URL (Only if the folder changed)
       - name: Replace baseURL in Api.js
