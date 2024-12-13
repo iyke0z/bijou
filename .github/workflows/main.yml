@@ -10,8 +10,23 @@ jobs:
     name: Build and Deploy Vue.js App
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        subdomain: ["edzain", "bingoml", "aromaperk", "totech", "fitandfeet", "chosenconcept", "phlorah"]  # List of subdomains
+        # You can also define deployment paths specific to each subdomain
+        folder: [
+                    "business_sites/edzain", 
+                    "business_sites/bingoml", 
+                    "business_sites/aromaperk",
+                    "business_sites/totech", 
+                    "business_sites/fitandfeet",
+                    "business_sites/chosenconcept",
+                    "business_sites/phlorah",
+                ]
+      fail-fast: false  # Continue if one matrix job fails
+
     steps:
-      # Step 1: Check out the repository
+      # Step 1: Checkout the repository
       - name: Checkout Repository
         uses: actions/checkout@v3
 
@@ -21,11 +36,31 @@ jobs:
         with:
           node-version: '14.18.1'  # Specify your Node.js version
 
-      # Step 3: Replace baseURL in Api.js with the new URL
+      # Step 3: Replace baseURL in Api.js with the subdomain's API URL
       - name: Replace baseURL in Api.js
         run: |
-          # Replace the baseURL in src/javascript/Api.js with https://api.edzain.ngmkt.site
-          sed -i 's|http://localhost:9009/api/v1|https://api.edzain.ngmkt.site/api/v1|' ./src/javascript/Api/Api.js
+          # Dynamically replace the baseURL in Api.js based on the subdomain
+          echo "Updating API URL for subdomain: ${{ matrix.subdomain }}"
+
+          # Set the base URL for the subdomain
+          case "${{ matrix.subdomain }}" in
+            "edzain")
+              API_URL="https://api.edzain.ngmkt.site"
+              ;;
+            "subdomain2")
+              API_URL="https://api.subdomain2.ngmkt.site"
+              ;;
+            "subdomain3")
+              API_URL="https://api.subdomain3.ngmkt.site"
+              ;;
+            *)
+              echo "Unknown subdomain!"
+              exit 1
+              ;;
+          esac
+
+          # Replace the base URL in Api.js file
+          sed -i "s|http://localhost:9009/api/v1|$API_URL/api/v1|" ./src/javascript/Api/Api.js
 
       # Step 4: Install dependencies
       - name: Install Dependencies
@@ -44,7 +79,7 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           port: 22  # SCP over SSH
           source: dist  # Local directory to upload
-          target: ${{ secrets.FTP_PATH }}/business_sites/edzain/frontend/  # Remote directory
+          target: ${{ secrets.FTP_PATH }}/${{ matrix.folder }}/frontend/  # Remote directory based on subdomain
 
       # Step 7: Run Post-Deployment Commands
       - name: Run Post-Deployment Commands
@@ -58,8 +93,8 @@ jobs:
             # Check and print the current working directory
             echo "Current working directory: $(pwd)"
             
-            # Navigate to the public directory (adjust the path if necessary)
-            cd "www/business_sites/edzain/frontend" | { echo "Target directory does not exist"; exit 1; }
+            # Navigate to the target directory based on the subdomain
+            cd "www/${{ matrix.folder }}/frontend" || { echo "Target directory does not exist"; exit 1; }
 
             # Verify that we are in the correct directory
             echo "Changed to directory: $(pwd)"
@@ -69,10 +104,11 @@ jobs:
             ls -la || { echo "Error: Failed to list files"; exit 1; }
 
             # Check if the dist folder exists before proceeding
-            if [ -d public_html/business_sites/edzain/frontend/dist ]; then
+            if [ -d dist ]; then
               # Change into the dist folder
-              cd public_html/business_sites/edzain/frontend/dist || { echo "Error: Failed to enter dist directory"; exit 1; }
+              cd dist || { echo "Error: Failed to enter dist directory"; exit 1; }
 
+              # Copy the built files to the parent directory
               cp -r * ../ || { echo "Error: Failed to copy files"; exit 1; }
 
               # Return to the public directory
