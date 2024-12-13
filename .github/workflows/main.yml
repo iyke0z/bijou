@@ -12,12 +12,12 @@ jobs:
 
     strategy:
       matrix:
-        subdomain: ["edzain", "bingoml"]  # List of subdomains
-        # You can also define deployment paths specific to each subdomain
-        folder: [
-                    "business_sites/edzain", 
-                    "business_sites/bingoml", 
-                ]
+        # Define an array of objects with both subdomain and folder values
+        include:
+          - subdomain: "edzain"
+            folder: "business_sites/edzain"
+          - subdomain: "bingoml"
+            folder: "business_sites/bingoml"
       fail-fast: false  # Continue if one matrix job fails
 
     steps:
