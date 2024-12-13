@@ -55,7 +55,7 @@
             }, 
             {
               headers: {
-                  Authorization: 'Bearer ' + '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'
+                  Authorization: 'Bearer ' + ''
               }
             }).then(res => {
               console.log(res)
