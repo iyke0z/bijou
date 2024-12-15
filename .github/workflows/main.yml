@@ -29,6 +29,8 @@ jobs:
             folder: "business_sites/chosenconcept"
           - subdomain: "amasemporium"
             folder: "business_sites/amasemporium"
+          - subdomain: "jomarsgroups"
+            folder: "business_sites/jomarsgroups"
 
       fail-fast: false  # Continue if one matrix job fails
 
@@ -75,6 +77,9 @@ jobs:
               ;;
             "amasemporium")
               API_URL="https://api.amasemporium.ngmkt.site"
+              ;;
+            "jomarsgroups")
+              API_URL="https://api.jomarsgroups.ngmkt.site"
               ;;
             *)
               echo "Unknown subdomain!"
