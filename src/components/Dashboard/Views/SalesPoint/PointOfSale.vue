@@ -7,21 +7,27 @@
         <span v-if="expiry_response == 'expires_tomorrow'" class="text-dark bg-info pr-2 pl-2 pt-2 pb-2">Subscription Expiring Tomorrow</span>
         <span v-if="expiry_response == 'expires_in_two_days'" class="text-dark bg-warning pr-2 pl-2 pt-2 pb-2">Subscription Expiring In Two Days</span>
     </div>
-        
-    <div class="nav w-100 bg-info" style="height:50px">
-        <li class="navBrand" hidden>
+    
+    <div class="nav col-12 bg-info" style="height:70px">
+        <li class="navBrand mt-3">
           <a @click.prevent="goHome"> {{business_name}}</a>
         </li>
-        <li>
-          <form action="">
-            <input
-                class="form-control mt-1"
-                style="width: auto;"
-                type="search" id="search"
-                placeholder="search for products..."
-                v-model="searchParam"
-                @input="searchProduct">
-          </form>
+        <li class="col-1 mt-3">
+  <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" 
+         @click="barcodeMode = !barcodeMode" :checked="barcodeMode">
+  <label for="flexSwitchCheckChecked" class="text-light">Click to scan barcode <i class="fa fa-barcode"></i></label>
+</li>
+<li class="col-4">
+  <form @submit.prevent="searchProduct">
+    <input
+        class="form-control mt-3 col-8"
+        type="search"
+        id="search"
+        placeholder="search for products..."
+        v-model="searchParam"
+        @input.prevent="handleInput"
+        ref="searchInput">
+  </form>
           <ul class="col-11">
             <li class="productList" v-for="product in searchResult" :key="product" @click="addProduct(product)">
               {{ product.name}}
@@ -33,9 +39,11 @@
             <li>
             </li>
           </ul>
+         
         </li>
-        <li> <button style="margin-top:8px; border:none; color:white" class="bg-danger" @click="logout">
-          {{user.fullname}} <i class="fa fa-sign-out" aria-hidden="true">logout</i></button></li>
+          
+        <li class="mt-3"> <button style="margin-top:8px; border:none; color:white" class="bg-danger" @click="logout">
+          {{user?.fullname}} <i class="fa fa-sign-out" aria-hidden="true">logout</i></button></li>
     </div>
     <div class="container col-12"  style="background-color: #f1f5fee9">
       <div class="row mt-5 ">
@@ -187,7 +195,6 @@ import Receipt from './Receipt.vue'
 import Swal from 'sweetalert2'
 import Auth from '@/javascript/Api/Auth'
 import User from '@/javascript/Api/User'
-// import { StreamBarcodeReader } from "vue-barcode-reader";
 
   export default{
     components:{ Calculator, Receipt},
@@ -204,7 +211,7 @@ import User from '@/javascript/Api/User'
         allProducts: null,
         platform: "offline",
         receiptKey: 0,
-        barcode:null,
+        barcodeMode:false,
         searchParam:"",
         searchResult: [],
         allCustomers:null,
@@ -227,6 +234,11 @@ import User from '@/javascript/Api/User'
     },
 
     methods: {
+      handleInput() {
+        if (!this.barcodeMode) {
+          this.searchProduct();
+        }
+      },
       updateOrder(qty, index, isQty){
           if(isQty){
             this.products[index].qty = qty
@@ -241,10 +253,7 @@ import User from '@/javascript/Api/User'
 
         })
       },
-      onDecode (result) {
-        console.log(result)
-      },
-
+      
       getProducts(){
         Product.products().then((result) => {
           this.allProducts = result.data.data
@@ -297,7 +306,8 @@ import User from '@/javascript/Api/User'
           this.allProducts.forEach(product => {
             var request  = this.searchParam.toLowerCase()
               var productName = product.name.toLowerCase()
-                if (request != "" && request !== " " && productName.match(request))
+              var barcodeValue = product.code
+                if (request != "" && this.barcodeMode == false && request !== " " && productName.match(request))
                   {
                     this.searchResult.push(
                     // {product_id:product.id, stock:product.stock, name:product.name,qty: 1,price: product.price,},
@@ -305,6 +315,10 @@ import User from '@/javascript/Api/User'
 
                     )
                   }
+                if (request != "" && this.barcodeMode == true && request !== " " && barcodeValue.match(request)){
+                  this.addProduct({product_id:product.id, has_stock:product.category.has_stock, stock:product.stock, name:product.name,qty: 1,price: product.price, category_id:product.category_id})
+                }
+                
           });
       },
 
@@ -526,7 +540,14 @@ import User from '@/javascript/Api/User'
           this.searchResult = []
         }
       },
-
+      barcodeMode(newValue) {
+    // Focus the input element when barcodeMode changes to true
+    this.$nextTick(() => {
+      if (newValue) {
+        this.$refs.searchInput.focus();
+      }
+    });
+  },
       searchCustomer(){
         if(this.searchCustomer == ""){
           this.customer_id = null
@@ -652,5 +673,7 @@ import User from '@/javascript/Api/User'
     font-size: 16px;  /* Increase font size on medium and large screens */
   }
 }
-
+.barcode-reader-section {
+  margin: 1rem 0;
+}
 </style>
