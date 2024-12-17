@@ -9,80 +9,81 @@
     </div>
     
     <div class="nav col-12 bg-info" style="height:70px">
-        <li class="navBrand mt-3">
+      <li class="navBrand mt-3 d-none d-md-block">
           <a @click.prevent="goHome"> {{business_name}}</a>
         </li>
-        <li class="col-1 mt-3">
-  <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" 
-         @click="barcodeMode = !barcodeMode" :checked="barcodeMode">
-  <label for="flexSwitchCheckChecked" class="text-light">Click to scan barcode <i class="fa fa-barcode"></i></label>
-</li>
-<li class="col-4">
-  <form @submit.prevent="searchProduct">
-    <input
-        class="form-control mt-3 col-8"
-        type="search"
-        id="search"
-        placeholder="search for products..."
-        v-model="searchParam"
-        @input.prevent="handleInput"
-        ref="searchInput">
-  </form>
+        <li class="col-2 col-md-1 ml-2 mt-4 pb-0">
+          <label for="flexSwitchCheckChecked" class="text-light">
+            <span class="d-none d-md-block">Click to scan</span>
+          <i class="fa fa-barcode"></i></label>
+          <input class="form-check-input ml-2 mt-1" type="checkbox" role="switch" id="flexSwitchCheckChecked" 
+                @click="barcodeMode = !barcodeMode" :checked="barcodeMode">
+        </li>
+        <!--  -->
+        <li class="col-md-4 col-7">
+          <form @submit.prevent="searchProduct">
+            <input
+                class="form-control mt-3 col-12"
+                type="search"
+                id="search"
+                placeholder="search for products..."
+                v-model="searchParam"
+                @input.prevent="handleInput"
+                ref="searchInput">
+          </form>
           <ul class="col-11">
             <li class="productList" v-for="product in searchResult" :key="product" @click="addProduct(product)">
               {{ product.name}}
               <b>
                 <small class="bg-dark w-100 text-light"> {{product.price.toLocaleString()}}</small>
               </b>
-
             </li>
             <li>
             </li>
           </ul>
-         
         </li>
-          
-        <li class="mt-3"> <button style="margin-top:8px; border:none; color:white" class="bg-danger" @click="logout">
-          {{user?.fullname}} <i class="fa fa-sign-out" aria-hidden="true">logout</i></button></li>
+        <!--  -->
+        <li class="mt-3 col-1 mr-1"> <button style="margin-top:8px; border:none; color:white" class="bg-danger" @click="logout">
+         <i class="fa fa-sign-out" aria-hidden="true">logout</i></button></li>
     </div>
     <div class="container col-12"  style="background-color: #f1f5fee9">
       <div class="row mt-5 ">
         <div class="col-12 table-responsive">
           <div class="table-responsive">
-  <table class="table table-bordered">
-    <thead class="thead-dark">
-      <tr>
-        <th>#</th>
-        <th>Name</th>
-        <th>Qty</th>
-        <th>Price (&#8358;)</th>
-        <th>Total (&#8358;)</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="(order, index) in products" :key="order.id">
-        <td>{{index+1}}</td>
-        <td>{{order.name}}</td>
-        <td class="col-12 col-md-4">
-  <input type="number" min="1" :max="order.stock" step="any" v-model="order.qty" @input="updateOrder(order.qty, index, true)" class="form-control form-control-sm" style="width: 100%; min-width: 120px;">
-</td>
-<td class="col-12 col-md-4">
-  <input type="number" v-model="order.price" step="any" @input="updateOrder(order.price, index, false)" class="form-control form-control-sm" style="width: 100%; min-width: 120px;">
-</td>
+            <table class="table table-bordered">
+              <thead class="thead-dark">
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Qty</th>
+                  <th>Price (&#8358;)</th>
+                  <th>Total (&#8358;)</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(order, index) in products" :key="order.id">
+                  <td>{{index+1}}</td>
+                  <td>{{order.name}}</td>
+                  <td class="col-12 col-md-4">
+            <input type="number" min="1" :max="order.stock" step="any" v-model="order.qty" @input="updateOrder(order.qty, index, true)" class="form-control form-control-sm" style="width: 100%; min-width: 120px;">
+          </td>
+          <td class="col-12 col-md-4">
+            <input type="number" v-model="order.price" step="any" @input="updateOrder(order.price, index, false)" class="form-control form-control-sm" style="width: 100%; min-width: 120px;">
+          </td>
 
-<!-- <td>{{ (order.price * order.qty).toLocaleString() }}</td> -->
+          <!-- <td>{{ (order.price * order.qty).toLocaleString() }}</td> -->
 
-        <td>{{ (order.price * order.qty).toLocaleString() }}</td>
-        <td>
-          <button class="btn btn-danger" @click="removeFromList(index)">
-            <i class="fa fa-trash" aria-hidden="true"></i>
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+                  <td>{{ (order.price * order.qty).toLocaleString() }}</td>
+                  <td>
+                    <button class="btn btn-danger" @click="removeFromList(index)">
+                      <i class="fa fa-trash" aria-hidden="true"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+  </div>
 
         <div class="row">
         <div class="col-4 col-md-4">
