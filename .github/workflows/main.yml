@@ -31,6 +31,10 @@ jobs:
             folder: "business_sites/amasemporium"
           - subdomain: "jomarsgroups"
             folder: "business_sites/jomarsgroups"
+          - subdomain: "royalrelish"
+            folder: "business_sites/royalrelish"
+          - subdomain: "osasumwenbyfd"
+            folder: "business_sites/osasumwenbyfd"
 
       fail-fast: false  # Continue if one matrix job fails
 
@@ -80,6 +84,12 @@ jobs:
               ;;
             "jomarsgroups")
               API_URL="https://api.jomarsgroups.ngmkt.site"
+              ;;
+            "royalrelish")
+              API_URL="https://api.royalrelish.ngmkt.site"
+              ;;
+            "osasumwenbyfd")
+              API_URL="https://api.osasumwenbyfd.ngmkt.site"
               ;;
             *)
               echo "Unknown subdomain!"
