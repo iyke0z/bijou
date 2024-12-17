@@ -330,6 +330,7 @@ import User from '@/javascript/Api/User'
               this.products[getProduct].qty++
               this.searchResult = []
               this.searchParam = ""
+              this.getTotal()
             }else{
               Swal.fire({
                 position: 'top-end',
