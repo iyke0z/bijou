@@ -98,7 +98,7 @@
             </div>
             <b><span class="col">%</span></b>
           </div> -->
-          <div class="row" v-show="update">
+          <div class="row">
             <div class="col-4">
               <p class="lead">Customer:</p>
             </div>

@@ -35,6 +35,8 @@ jobs:
             folder: "business_sites/royalrelish"
           - subdomain: "osasumwenbyfd"
             folder: "business_sites/osasumwenbyfd"
+          - subdomain: "hairarena"
+            folder: "business_sites/hairarena"
 
       fail-fast: false  # Continue if one matrix job fails
 
@@ -90,6 +92,9 @@ jobs:
               ;;
             "osasumwenbyfd")
               API_URL="https://api.osasumwenbyfd.ngmkt.site"
+              ;;
+            "hairarena")
+              API_URL="https://api.hairarena.ngmkt.site"
               ;;
             *)
               echo "Unknown subdomain!"
