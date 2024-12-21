@@ -160,6 +160,10 @@
                     <td>&#8358;{{ (profitLoss?.net_profit).toLocaleString() }}</td>
                   </tr>
                   <tr>
+                    <td>Depreciation <br><small>Value of assets</small></td>
+                    <td>&#8358;{{ (profitLoss?.depreciation).toLocaleString() }}</td>
+                  </tr>
+                  <tr>
                     <td>Total Expense <br><small>Total Expenditure= COGS + OPEX.</small></td>
                     <td>&#8358;{{ (profitLoss?.total_expenditure).toLocaleString() }}</td>
                   </tr>

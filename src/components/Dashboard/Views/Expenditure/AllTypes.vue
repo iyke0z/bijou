@@ -40,15 +40,29 @@
       <h4 slot="header" class="title title-up" v-show="!updateMode">{{ modalTitle }}</h4>
         <div>
           <fieldset v-if="updateMode">
-            <form action=""  @submit.prevent="update_expenditue">
-              <div class="form-group">
-                <label for="">Name</label>
-                <input required type="text" name="password" class="form-control col-8" v-model="form.name">
-              </div>
-              <div class="form-group">
-                <button type="submit" class="btn btn-success">Update</button>
-              </div>
-            </form>
+            <form @submit.prevent="update_expenditue">
+        <div class="form-group">
+          <label for="">Name</label>
+          <input type="text" step="any" class="form-control" v-model="form.name" placeholder="Enter Expenditure Type Name" required>
+        </div>
+        <div class="form-group">
+          <label for="">Category</label>
+          <select step="any" class="form-control" v-model="form.expenditure_type" placeholder="Enter Expenditure Type Name" required>
+            <option value="cogs">COGS</option>
+            <option value="opex">OPEX</option>
+            <option value="capex">CAPEX</option>
+          </select>
+        </div>
+        <div class="form-group" v-if="form.expenditure_type == 'capex'">
+          <label for="">Useful Life</label>
+          <input type="number" step="any" class="form-control" v-model="form.useful_life" placeholder="How long will this asset be valuable to your business (in years)" required>
+        </div>
+        <div class="form-group" v-if="form.expenditure_type == 'capex'">
+          <label for="">Salvage Value <small>(this is how much this item will cost when the item is sold, put this in percentage)</small></label>
+          <input type="number" step="any" class="form-control" v-model="form.salvage_value" placeholder="How long will this asset be valuable to your business (in years)" required>
+        </div>
+        <button class="btn btn-success col-8" type="submit">Submit</button>
+      </form>
           </fieldset>
         </div>
       <template slot="footer">
@@ -76,7 +90,12 @@ import helpers from '@/javascript/helpers'
         purchaseKey:0,
         rowCount:1,
         expenditure:null,
-        form:{start_date:null, end_date:null},
+        form:{
+          name:null,
+          expenditure_type:'cogs',
+          useful_life: null,
+          salvage_value: null
+        },
         modals: {
           classic: false,
           notice: false,
