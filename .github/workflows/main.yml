@@ -37,6 +37,8 @@ jobs:
             folder: "business_sites/osasumwenbyfd"
           - subdomain: "hairarena"
             folder: "business_sites/hairarena"
+          - subdomain: "standardchoice"
+            folder: "business_sites/standardchoice"
 
       fail-fast: false  # Continue if one matrix job fails
 
@@ -95,6 +97,9 @@ jobs:
               ;;
             "hairarena")
               API_URL="https://api.hairarena.ngmkt.site"
+              ;;
+            "standardchoice")
+              API_URL="https://api.standardchoice.ngmkt.site"
               ;;
             *)
               echo "Unknown subdomain!"
