@@ -42,6 +42,11 @@ import Waiter from '../components/Dashboard/Views/Waiter/Index.vue'
 import Kitchen from '../components/Dashboard/Views/Kitchen/Index.vue'
 import Bar from '../components/Dashboard/Views/Bar/Index.vue'
 import ReportPrint from '../components/Dashboard/Views/Report/PrintReport.vue'
+import Role from '@/components/Dashboard/Views/Roles/Roles.vue'
+import Priviledges from '@/components/Dashboard/Views/Roles/Priviledges.vue'
+import Shops from '@/components/Dashboard/Views/Shops/Shops.vue'
+import axios from 'axios'
+import RolesPriviledge from '@/javascript/Api/RolesPriviledge'
 
 
 let loginPage = {
@@ -121,6 +126,40 @@ let user = {
         },
 
     ]
+}
+
+let roles = {
+    path: "/",
+    name: 'roles',
+    component: DashboardLayout,
+    children: [{
+        path: 'roles',
+        name: 'all-roles',
+        component: Role
+    }]
+
+}
+
+let priviledges = {
+    path: "/",
+    name: 'priviledges',
+    component: DashboardLayout,
+    children: [{
+        path: 'priviledges',
+        name: 'all-priviledges',
+        component: Priviledges
+    }]
+}
+
+let shops = {
+    path: "/",
+    name: 'shops',
+    component: DashboardLayout,
+    children: [{
+        path: 'shops',
+        name: 'all-shops',
+        component: Shops
+    }]
 }
 
 let category = {
@@ -319,8 +358,11 @@ let settings = {
     }]
 }
 
+
 const routes = [
     loginPage,
+    roles,
+    priviledges,
     user,
     report,
     category,
@@ -334,6 +376,7 @@ const routes = [
     waiter,
     bar,
     reporprint,
+    shops,
     lockPage,
     settings,
     {

@@ -8,6 +8,11 @@
     }
 }
 
+body{
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-weight: 200;
+}
+
 .sidebar,
 .off-canvas-sidebar {
     position: fixed;
@@ -240,7 +245,6 @@
             margin: 10px 10px;
             color: $white-color;
             line-height: 20px;
-            font-family: 'Muli', "Helvetica", Arial, sans-serif;
         }
         .simple-text {
             text-transform: uppercase;
@@ -396,7 +400,7 @@
     position: relative;
     float: right;
     width: $sidebar-width;
-    background-color: #f4f3ef;
+    background-color: #fff;
     @include transition (0.50s, cubic-bezier(0.685, 0.0473, 0.346, 1));
     >.content {
         padding: 0 30px 30px;

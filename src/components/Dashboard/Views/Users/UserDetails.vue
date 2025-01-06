@@ -99,8 +99,8 @@
             <tbody>
               <tr v-for="purchase in user.purchase" :key="purchase.id">
                 <td>{{purchase.id}}</td>
-                <td>{{purchase.price.toLocaleString()}}</td>
-                <td>{{purchase.added_costs.toLocaleString()}}</td>
+                <td>{{purchase.price?.toLocaleString()}}</td>
+                <td>{{purchase.added_costs?.toLocaleString()}}</td>
                 <td>
                   <button @click="purchase_detail(purchase.id)" class="btn btn-info">
                     <i class="fa fa-search" aria-hidden="true"></i>

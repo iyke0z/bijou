@@ -75,6 +75,8 @@
   import BusinessDetails from '@/javascript/Api/BusinessDetails';
   import Swal from 'sweetalert2'
 import { Loading } from 'element-ui';
+import Shops from '@/javascript/Api/Shops';
+import RolesPriviledge from '@/javascript/Api/RolesPriviledge';
 
   export default {
     components: {
@@ -109,8 +111,10 @@ import { Loading } from 'element-ui';
         this.loading = true
         if(this.form.phone != null && this.form.password != null){
           Auth.login(this.form).then((result) =>{
+            Shops.set_shop_state(result.data.data.shop)
             //admin go here
             localStorage.setItem("token", result.data.data['access_token'])
+            localStorage.setItem('role', result.data.data['user']['role']['id'])
             if(result.data.data['user']['role']['id'] == 1){
               window.location.href = "/admin/overview"
             }else{
@@ -118,6 +122,7 @@ import { Loading } from 'element-ui';
               window.location.href = "/sales-point"
             }
             this.loading = false
+
             
             // this.$router.push({name:'dashboard'})
           }).catch((err) => {

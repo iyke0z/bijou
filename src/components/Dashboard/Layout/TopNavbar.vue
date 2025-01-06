@@ -12,7 +12,7 @@
 
         </navbar-toggle-button>
       </div>
-      <a class="navbar-brand mb-4" href="/business/billing">
+      <a class="navbar-brand zoom-element" href="/business/billing">
   {{details?.name}}
   <!-- <span class="d-block text-wrap"> -->
     <span
@@ -49,20 +49,13 @@
   <!-- </span> -->
 </a>
 
+
     </div>
 
     <template slot="navbar-menu">
-      <!-- <form>
-        <div class="input-group no-border">
-          <input type="text" value="" class="form-control" placeholder="Search...">
-          <div class="input-group-append">
-            <div class="input-group-text">
-              <i class="nc-icon nc-zoom-split"></i>
-            </div>
-          </div>
-        </div>
-      </form> -->
+      
       <ul class="navbar-nav">
+       
         <li class="nav-item">
           <a class="nav-link btn-rotate bg-danger text-light" href="#" @click.prevent="logout">
             <i class="fa fa-power-off" aria-hidden="true"></i>
@@ -87,7 +80,8 @@
         activeNotifications: false,
         showNavbar: false,
         details:null,
-        expiry_response: null
+        expiry_response: null,
+    
       }
     },
     methods: {
@@ -136,10 +130,27 @@
     created(){
       this.business_details()
       this.getExpiry()
+
+
     }
   }
 
 </script>
 <style>
+@keyframes zoomInOut {
+  0% {
+    transform: scale(1); /* Initial size */
+  }
+  50% {
+    transform: scale(0.97); /* Zoom in */
+  }
+  100% {
+    transform: scale(1); /* Zoom out back to initial size */
+  }
+} 
+
+.zoom-element {
+  animation: zoomInOut 4s ease-in-out infinite; /* Continuous animation */
+}
 
 </style>

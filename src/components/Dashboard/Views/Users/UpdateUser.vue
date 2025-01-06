@@ -40,6 +40,12 @@
           </select>
         </div>
         <div class="form-group">
+          <label for="">Assign Shop</label>
+          <select v-model="form.shop_id" class="form-control"  required>
+            <option :value="shop.id" v-for="shop in shops" :key="shop.id">{{shop.title}}</option>
+          </select>
+        </div>
+        <div class="form-group">
           <label for="">Password</label>
           <input type="password" class="form-control" v-model="form.password" required>
         </div>
@@ -63,6 +69,7 @@
 import User from '@/javascript/Api/User';
 import RolesPriviledge from '@/javascript/Api/RolesPriviledge';
 import Swal from 'sweetalert2';
+import Shops from '@/javascript/Api/Shops';
   export default{
     data(){
       return {
@@ -77,8 +84,10 @@ import Swal from 'sweetalert2';
           dob:null,
           loading: false,
           gender:null,
-          picture:null
+          picture:null,
+          shop_id:1
         },
+        shops:null,
         image:null,
         upl_image:'static/img/imageholder.jpg',
         roles:null
@@ -96,6 +105,7 @@ import Swal from 'sweetalert2';
             this.form.dob = result.data.data['dob']
             this.form.gender = result.data.data['gender']
             this.form.picture = result.data.data['picture']
+            this.form.shop_id = result.data.data['shop_id']
             this.datatable()
         })
       },
@@ -115,6 +125,11 @@ import Swal from 'sweetalert2';
             this.upl_image = this.previewImage;
           };
       },
+      getShops() {
+        Shops.get_shops().then(res => {
+          this.shops = res.data.data
+        })
+      },
       submit(){
         this.loading = true
         var formData = new FormData()
@@ -127,6 +142,7 @@ import Swal from 'sweetalert2';
         formData.append('dob', this.form.dob)
         formData.append('gender', this.form.gender)
         formData.append('picture', this.form.picture)
+        formData.append('shop_id', this.form.shop_id)
 
         User.update(formData, this.$route.params.id).then((result) => {
           Swal.fire({
@@ -156,6 +172,7 @@ import Swal from 'sweetalert2';
     created(){
       this.get_roles()
       this.get_user()
+      this.getShops()
     }
   }
 </script>

@@ -22,6 +22,7 @@
           <th>Telephone</th>
           <th>Email Address</th>
           <th>Role</th>
+          <th>Shop</th>
           <th>Code</th>
           <th>Actions</th>
         </tr>
@@ -33,6 +34,7 @@
           <td>{{user.phone}}</td>
           <td>{{user.email}}</td>
           <td>{{user.role.name}}</td>
+          <td>{{user.shop.title}}</td>
           <td v-if="user.access_code != null">{{user.access_code.code}}</td>
           <td v-else>null</td>
           <td>
@@ -48,18 +50,41 @@
             <p-button class="mr-2" title="delete" type="danger" size="sm" icon @click.prevent="delete_user(user)">
               <i class="fa fa-trash"></i>
             </p-button>
-            <!-- <p-button class="mr-2" title="assign priviledge" type="secondary" size="sm" icon @click.prevent="assign_priviledge(user)">
-              <i class="fa fa-refresh"></i>
-            </p-button> -->
+            <p-button class="mr-2" title="manage shops user can access" type="secondary" size="sm" icon @click.prevent="openModal('Manage Shop Access', user)">
+              <i class="fa fa-home  "></i>
+            </p-button>
           </td>
         </tr>
       </tbody>
     </table>
+    <Modal :show.sync="modalOpen" headerClasses="justify-content-center">
+      <h4 slot="header" class="title title-up">{{ modalTitle }}</h4>
+      <div>
+        <p>Select Shops to Assign:</p>
+        <ol>
+          <li v-for="shop in shops" :key="shop.id">
+            {{ shop.title }}:
+            <input 
+              type="checkbox" 
+              :value="shop.id" 
+              :checked="getChecked(shop.id)" 
+              @change="updateShopSelection(shop.id, $event)"
+            />
+          </li>
+        </ol>
+        <button @click="assignPrivileges()" class="btn btn-success">Assign</button>
+              </div>
+      <template slot="footer">
+        <p-button type="default" link @click.prevent="modalOpen = false">Close</p-button>
+      </template>
+    </Modal>
+
 
   </div>
 </template>
 <script>
   import { Modal } from '@/components/UIComponents'
+import Shops from '@/javascript/Api/Shops';
   import User from '@/javascript/Api/User'
   import Swal from 'sweetalert2'
 
@@ -75,32 +100,25 @@
         tableKey:0,
         user:null,
         all_users: null,
-        loading: false
+        loading: false,
+        shops:null,
+        modalTitle:null,
+        modalAction:null,
+        selectedUser:null,
+        modalOpen:false,
+        selectedShops: [], // Stores selected shop IDs,
+        shopsToAdd: [],
+        shopsToRemove: [],
+
+
       }
     },
     methods: {
-      openModal(type, title, action, user){
+      openModal(title, user){
+        this.modalOpen = true
         this.modalTitle = title
-        this.modals[type] = true
-        this.modalAction = action
-        this.passenger = user
-        if(action == 'deactivate'){
-          this.modalContent = "Are you sure you want to deactivate this user?"
-        }
-        if(action == 'deactivate'){
-          this.modalContent = "Are you sure you want to activate this user?"
-        }
-        if(action == 'ban'){
-          this.form.user_id = user.id
-          this.modalContent = "Are you sure you want to ban this user?"
-        }
-        if(action == 'unban'){
-          this.passenger = user.id
-          this.modalContent = "Are you sure you want to remove ban?"
-        }
-        if(action == 'details'){
-          this.passenger_resource(user.id)
-        }
+        this.selectedUser = user
+      
       },
       goToRoute(user){
         this.$router.push('/user/details/'+user.id)
@@ -175,6 +193,13 @@
         });
       },
 
+      getChecked(shopId) {
+        console.log(!this.selectedUser?.shop_access)
+        if (!this.selectedUser?.shop_access) return false;
+
+        return this.selectedUser.shop_access.some(shop => shop.shop_id === shopId);
+      },
+
           filter_table(){
                 if(this.filter == 1){
                     this.all_users = this.all_users
@@ -196,9 +221,81 @@
         api_refresh(){
             this.allUsers()
         },
+        getShops(){
+          Shops.get_shops().then(res => {
+            this.shops = res.data.data
+          })
+        },
+      
+        assignShops(user) {
+    if (!this.selectedShops.length) {
+      Swal.fire({
+        position: 'top-end',
+        icon: 'error',
+        title: "No shop selected!",
+        customClass: 'Swal-wide',
+        showConfirmButton: false,
+        timer: 3000
+      });
+      return;
+    }
+  },
+    updateShopSelection(shopId, event) {
+    if (event.target.checked) {
+      // If checked, add to shopsToAdd and remove from shopsToRemove if it exists
+      if (!this.shopsToAdd.includes(shopId)) {
+        this.shopsToAdd.push(shopId);
+      }
+      this.shopsToRemove = this.shopsToRemove.filter(id => id !== shopId);
+    } else {
+      // If unchecked, add to shopsToRemove and remove from shopsToAdd if it exists
+      if (!this.shopsToRemove.includes(shopId)) {
+        this.shopsToRemove.push(shopId);
+      }
+      this.shopsToAdd = this.shopsToAdd.filter(id => id !== shopId);
+    }
+  },
+  
+  // This method handles the assignment logic
+  assignPrivileges() {
+    const payload = {
+      userId: this.selectedUser.id,
+      shopsToAdd: this.shopsToAdd,
+      shopsToRemove: this.shopsToRemove,
+    };
+
+    // Call API to assign privileges
+    Shops.assign_shops(payload, this.selectedUser.id)
+      .then(response => {
+        Swal.fire({
+          position: 'top-end',
+          icon: 'success',
+          title: response.data.message,
+          customClass: 'Swal-wide',
+          showConfirmButton: false,
+          timer: 3000
+        });
+        // Refresh shops or user data as needed
+        this.allUsers();
+        this.modalOpen = false;
+      })
+      .catch(err => {
+        Swal.fire({
+          position: 'top-end',
+          icon: 'error',
+          title: err?.response?.data?.error ?? err.response.data.message,
+          customClass: 'Swal-wide',
+          showConfirmButton: false,
+          timer: 3000
+        });
+      });
+
+
+  },
     },
     created(){
       this.allUsers()
+      this.getShops()
     }
 
   }
