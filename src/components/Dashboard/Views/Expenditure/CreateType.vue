@@ -21,7 +21,7 @@
         </div>
         <div class="form-group" v-if="form.expenditure_type == 'capex'">
           <label for="">Salvage Value <small>(this is how much this item will cost when the item is sold, put this in percentage)</small></label>
-          <input type="number" step="any" class="form-control" v-model="form.salvage_value" placeholder="How long will this asset be valuable to your business (in years)" required>
+          <input type="number" step="any" class="form-control" v-model="form.salvage_value" placeholder="0%" required>
         </div>
         <button class="btn btn-success col-8" type="submit">Submit</button>
       </form>

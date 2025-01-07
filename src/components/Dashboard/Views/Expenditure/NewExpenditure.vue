@@ -14,8 +14,12 @@
         </div>
 
         <div class="form-group">
-          <label for="">Amount</label>
+          <label for="">Amount <small>(total amount)</small></label>
           <input type="number" step="any" class="form-control" v-model="form.amount" required>
+        </div>
+        <div class="form-group">
+          <label for="">Quantity</label>
+          <input type="number" step="any" class="form-control" v-model="form.qty" required>
         </div>
         <button class="btn btn-success col-8" type="submit">Submit</button>
       </form>
@@ -34,6 +38,7 @@ import Swal from 'sweetalert2';
         form:{
           expenditure_type_id:null,
           amount:null,
+          qty:1
         },
         types: null
       }

@@ -38,9 +38,9 @@
               <td>{{dateTime(expenditure.created_at)}}</td>
               <td>{{expenditure.user.fullname}}</td>
               <td>
-                <!-- <p-button class="mr-2" title="update" type="info" size="sm" icon @click.native="openModal('classic', 'Update Expenditure', 'update', expenditure)">
-                  <i class="fa fa-edit"></i>
-                </p-button> -->
+                <p-button class="mr-2" title="update product plan" type="info" size="sm" @click.prevent="openModal('update '+ expenditure.type.name+' Plan', expenditure)">
+                  <i class="fa fa-wrench"></i>
+                </p-button>
                 <p-button class="mr-2" title="delete" type="danger" size="sm" icon @click.prevent="delete_expenditure(expenditure)">
                   <i class="fa fa-trash"></i>
                 </p-button>
@@ -54,27 +54,49 @@
     </div>
 
      <!-- update modal -->
-     <modal :show.sync="modals.classic" headerClasses="justify-content-center">
-      <h4 slot="header" class="title title-up" v-show="updateMode">{{ modalTitle }}</h4>
-      <h4 slot="header" class="title title-up" v-show="!updateMode">{{ modalTitle }}</h4>
+     <Modal :show.sync="modalOpen" headerClasses="justify-content-center">
+      <h4 slot="header" class="title title-up">{{ modalTitle }}</h4>
         <div>
-          <fieldset v-if="updateMode">
-            <form action=""  @submit.prevent="update_expenditue">
+          <form @submit.prevent="updatePlan" enctype="multipart/form-data" >
               <div class="form-group">
-                <label for="">Amount</label>
-                <input required type="text" name="password" class="form-control col-8" v-model="form.amount">
+                <!-- fund wallet -->
+                <label for="">Payment Method</label>
+                <select name="" class="form-control" id="" v-model="payment_method" @change="setStatus">
+                  <option value="cash">cash</option>
+                  <option value="transfer">transfer</option>
+                  <option value="on_credit">on_credit</option>
+                  <option value="part_payment">part payment</option>
+                  <option value="is_accrual">accrual</option>
+                </select>
               </div>
+              
+              <div class="form-group" v-if="payment_method == 'part_payment'">
+                <label for="">Part Payment Amount</label>
+                <input type="number" step="any" class="form-control" v-model="part_payment_amount">
+              </div>
+
               <div class="form-group">
-                <button type="submit" class="btn btn-success">Update</button>
+                <label for="">Payment Status</label>
+                <select name="" class="form-control" v-model="payment_status" id="">
+                  <option value="paid">Paid</option>
+                  <option value="not_paid">Not Paid</option>
+                </select>
               </div>
-            </form>
-          </fieldset>
+             
+              
+              <div class="form-group" v-if="payment_method == 'is_accrual'">
+                <label for="">Duration <small>(duration in months)</small></label>
+                <input type="number" step="any" class="form-control" v-model="duration">
+              </div>
+
+              <button class="btn btn-success" type="submit">UPDATE</button>
+          </form>
         </div>
       <template slot="footer">
-      <p-button type="default" link @click.prevent="modals.classic = false">Close</p-button>
+      <p-button type="default" link @click.prevent="modalOpen = false">Close</p-button>
 
       </template>
-    </modal>
+    </Modal>
 
   </div>
 </template>
@@ -106,21 +128,34 @@ import helpers from '@/javascript/helpers'
         modalTitle:null,
         modalAction:null,
         modalContent:null,
+        modalOpen: false,
+        // 
+        selectedId: null,
+        payment_method : 'cash',
+        payment_status : 'paid',
+        part_payment_amount : 0,
+        duration : 0
       }
     },
     methods: {
-      openModal(type, title, action, expenditure){
+      openModal(title, item){
+        this.modalOpen = true
         this.modalTitle = title
-        this.modals[type] = true
-        this.modalAction = action
-        if(action == 'update'){
-          this.updateMode = true
-          this.expenditure = expenditure.id
-          this.form = {
-            amount:expenditure.amount,
-          }
-        }
+        this.detail = item.id
+        this.selectedId = item.id
       },
+      // openModal(type, title, action, expenditure){
+      //   this.modalTitle = title
+      //   this.modals[type] = true
+      //   this.modalAction = action
+      //   if(action == 'update'){
+      //     this.updateMode = true
+      //     this.expenditure = expenditure.id
+      //     this.form = {
+      //       amount:expenditure.amount,
+      //     }
+      //   }
+      // },
       goToRoute(){
         this.$router.push('/expenditure/create/')
       },
@@ -147,6 +182,45 @@ import helpers from '@/javascript/helpers'
             })
         });
       },
+
+      updatePlan(){
+        let payload = {
+          payment_method: this.payment_method,
+          payment_status: this.payment_status,
+          part_payment_amount: this.part_payment_amount,
+          duration: this.duration
+        }
+
+        Expenditure.update_plan(payload, this.selectedId).then(res => {
+          Swal.fire({
+            position: 'top-end',
+            icon: 'success',
+            title: res.data.message,
+            customClass: 'Swal-wide',
+            showConfirmButton: false,
+            timer: 3000
+          })
+          this.modalOpen = false
+        }).catch(err => {
+          Swal.fire({
+            position: 'top-end',
+            icon: 'error',
+            title: "error",
+            customClass: 'Swal-wide',
+            showConfirmButton: false,
+            timer: 3000
+          })
+        })
+      },
+
+      setStatus(){
+        if (this.payment_method == 'cash' || this.payment_method == 'transfer' || this.payment_method == "is_accrual") {
+          this.payment_status = "paid"
+        }else{
+          this.payment_status = "not_paid"
+        }
+      },
+
       update_expenditue(){
         Expenditure.update(this.form, this.expenditure).then((result) => {
           Swal.fire({

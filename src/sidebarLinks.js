@@ -157,6 +157,10 @@ const menuItems = [
                 name: 'Periodic Report',
                 path: '/report/general'
             },
+            {
+                name: 'Bank Statement',
+                path: '/report/statement'
+            },
         ]
     },
     {

@@ -66,8 +66,15 @@
                   <td>{{index+1}}</td>
                   <td>{{order.name}}</td>
                   <td class="col-12 col-md-4">
-            <input type="number" min="1" :max="order.stock" step="any" v-model="order.qty" @input="updateOrder(order.qty, index, true)" class="form-control form-control-sm" style="width: 100%; min-width: 120px;">
-          </td>
+                    <input 
+  type="number" 
+  min="1" 
+  :max="order.stock" 
+  step="any" 
+  v-model="order.qty" 
+  @input="clampValue(order, index)" 
+  class="form-control form-control-sm" 
+  style="width: 100%; min-width: 120px;">          </td>
           <td class="col-12 col-md-4">
             <input type="number" v-model="order.price" step="any" @input="updateOrder(order.price, index, false)" class="form-control form-control-sm" style="width: 100%; min-width: 120px;">
           </td>
@@ -120,11 +127,15 @@
     <span v-if="this.customer_id > 0">
       <div class="row">
         <div class="col-6">
-          <input v-model="from_wallet" @change="setWallet" :disabled="this.total > this.customerWallet_balance" type="checkbox" value="1"> Wallet
+          <input v-model="from_wallet"  @change="setWallet" :disabled="this.total > this.customerWallet_balance || on_credit == true || part_payment == true" type="checkbox" value="1"> Wallet
           <small class="text-danger" v-if="this.total > this.customerWallet_balance">customer cannot afford this bill from wallet</small>
         </div>
         <div class="col-8">
-          <input v-model="on_credit" @change="setCredit" type="checkbox" value="1"> Credit
+          <input v-model="on_credit" :disabled="from_wallet == true"  @change="setCredit" type="checkbox" value="1"> Credit
+        </div>
+        <div class="col-8">
+          <input v-model="part_payment" :disabled="from_wallet == true" @change="setPartPayment" type="checkbox" value="1"> Part Payment
+          <input type="number" step="any" v-model="part_payment_amount" placeholder="0" v-if="part_payment"><small class="ml-2 text-dark">input part payment amount</small>
         </div>
       </div>
     </span>
@@ -163,6 +174,7 @@
       <option value="transfer">Transfer</option>
       <option value="card">POS</option>
       <option v-if="customer_id != null" value="on_credit">On Credit</option>
+      <option v-if="customer_id != null" value="part_payment">Part Payment</option>
       <option v-if="total <= customerWallet_balance && customer_id != null" value="wallet">Wallet</option>
     </select>
   </div>
@@ -207,6 +219,7 @@ import User from '@/javascript/Api/User'
         discount_code: null,
         from_wallet:false,
         on_credit:false,
+        part_payment:false,
         payment_method:"cash",
         products: [],
         allProducts: null,
@@ -221,6 +234,7 @@ import User from '@/javascript/Api/User'
         searchCustomer:"",
         subtotal:0,
         total:0,
+        part_payment_amount:0,
         customerWallet_balance:0,
         vat:0,
         compKey:0,
@@ -240,8 +254,24 @@ import User from '@/javascript/Api/User'
           this.searchProduct();
         }
       },
-      updateOrder(qty, index, isQty){
+      clampValue(order, index) {
+    const maxStock = order.stock;
+    const minStock = 1;
+    // Clamp the value in real time
+    if (order.qty > maxStock) {
+      order.qty = maxStock;
+    } else if (order.qty < minStock) {
+      order.qty = minStock;
+    }
+    // Call updateOrder to apply the logic
+    this.updateOrder(order.qty, index, true, maxStock);
+  },
+      updateOrder(qty, index, isQty, stock=null){
           if(isQty){
+            // check if stockqty is less than qty
+            if (stock != null && qty == stock) {
+              this.getTotal()
+            }
             this.products[index].qty = qty
             this.getTotal()
           }else{
@@ -271,6 +301,9 @@ import User from '@/javascript/Api/User'
 
       setCredit(){
         this.payment_method = "on_credit"
+      },
+      setPartPayment(){
+        this.payment_method = "part_payment"
       },
 
       cache(){
@@ -445,7 +478,8 @@ import User from '@/javascript/Api/User'
           "auth_code": this.user.access_code.code,
           "description": "new sale",
           "amount": this.total,
-          "is_order":false
+          "is_order":false,
+          "part_payment_amount": this.part_payment_amount
         }
         Sales.new_sale(post).then((result) => {
           this.response = {products: this.products, summary: result.data.data}

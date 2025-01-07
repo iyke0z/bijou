@@ -47,6 +47,7 @@ import Priviledges from '@/components/Dashboard/Views/Roles/Priviledges.vue'
 import Shops from '@/components/Dashboard/Views/Shops/Shops.vue'
 import axios from 'axios'
 import RolesPriviledge from '@/javascript/Api/RolesPriviledge'
+import BankStatement from '@/components/Dashboard/Views/Report/BankStatement.vue'
 
 
 let loginPage = {
@@ -329,6 +330,11 @@ let report = {
             path: 'general',
             name: 'general_report',
             component: GeneralReport
+        },
+        {
+            path: 'statement',
+            name: 'bank_statement',
+            component: BankStatement
         }
     ]
 }

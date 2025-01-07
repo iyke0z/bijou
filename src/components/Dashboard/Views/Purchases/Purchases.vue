@@ -72,7 +72,7 @@
               <th>Previous Stock</th>
               <th>Qty Purchased</th>
               <th>Current Stock</th>
-              <!-- <th>Action</th> -->
+              <th>Action</th>
             </tr>
           </thead>
           <tbody :key="purchaseKey">
@@ -92,16 +92,60 @@
               <td v-if="purchase.previous_stock != null">
                 {{purchase.qty + purchase.previous_stock}}
               </td>
-              <!-- <td>
-                <p-button class="mr-2" title="delete" type="danger" size="sm" icon @click.prevent="delete_purchase_detail(purchase)">
-                  <i class="fa fa-trash"></i>
+              <td>
+                <p-button class="mr-2" title="update product plan" type="info" size="sm" @click.prevent="openModal('update '+ purchase.product.name+' Plan', purchase)">
+                  <i class="fa fa-wrench"></i>
                 </p-button>
-              </td> -->
+              </td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
+
+    <Modal :show.sync="modalOpen" headerClasses="justify-content-center">
+      <h4 slot="header" class="title title-up">{{ modalTitle }}</h4>
+        <div>
+          <form @submit.prevent="updatePlan" enctype="multipart/form-data" >
+              <div class="form-group">
+                <!-- fund wallet -->
+                <label for="">Payment Method</label>
+                <select name="" class="form-control" id="" v-model="payment_method" @change="setStatus">
+                  <option value="cash">cash</option>
+                  <option value="transfer">transfer</option>
+                  <option value="on_credit">on_credit</option>
+                  <option value="part_payment">part payment</option>
+                  <option value="is_accrual">accrual</option>
+                </select>
+              </div>
+              
+              <div class="form-group" v-if="payment_method == 'part_payment'">
+                <label for="">Part Payment Amount</label>
+                <input type="number" step="any" class="form-control" v-model="part_payment_amount">
+              </div>
+
+              <div class="form-group">
+                <label for="">Payment Status</label>
+                <select name="" class="form-control" v-model="payment_status" id="">
+                  <option value="paid">Paid</option>
+                  <option value="not_paid">Not Paid</option>
+                </select>
+              </div>
+             
+              
+              <div class="form-group" v-if="payment_method == 'is_accrual'">
+                <label for="">Duration <small>(duration in months)</small></label>
+                <input type="number" step="any" class="form-control" v-model="duration">
+              </div>
+
+              <button class="btn btn-success" type="submit">UPDATE</button>
+          </form>
+        </div>
+      <template slot="footer">
+      <p-button type="default" link @click.prevent="modalOpen = false">Close</p-button>
+
+      </template>
+    </Modal>
 
   </div>
 </template>
@@ -111,6 +155,8 @@ import Category from '@/javascript/Api/Categories'
 import Purchases from '@/javascript/Api/Purchases'
 import Swal from 'sweetalert2'
 import helpers from '@/javascript/helpers'
+import Expenditure from '@/javascript/Api/Expenditure'
+import Product from '@/javascript/Api/Product'
   export default{
     components: {
       Modal
@@ -134,19 +180,62 @@ import helpers from '@/javascript/helpers'
         modalTitle:null,
         modalAction:null,
         modalContent:null,
+        detail: null,
+        modalOpen: false,
+        // 
+        selectedId: null,
+        payment_method : 'cash',
+        payment_status : 'paid',
+        part_payment_amount : 0,
+        duration : 0
       }
     },
     methods: {
-      openModal(type, title, action, category){
+      openModal(title, item){
+        this.modalOpen = true
         this.modalTitle = title
-        this.modals[type] = true
-        this.modalAction = action
-        if(action == 'update'){
-          this.updateMode = true
-          this.category = category.id
-          this.form = {name:category.name}
+        this.detail = item.id
+        this.selectedId = item.id
+      },
+
+      setStatus(){
+        if (this.payment_method == 'cash' || this.payment_method == 'transfer' || this.payment_method == "is_accrual") {
+          this.payment_status = "paid"
+        }else{
+          this.payment_status = "not_paid"
         }
       },
+
+      updatePlan(){
+        let payload = {
+          payment_method: this.payment_method,
+          payment_status: this.payment_status,
+          part_payment_amount: this.part_payment_amount,
+          duration: this.duration
+        }
+
+        Product.update_plan(payload, this.selectedId).then(res => {
+          Swal.fire({
+            position: 'top-end',
+            icon: 'success',
+            title: res.data.message,
+            customClass: 'Swal-wide',
+            showConfirmButton: false,
+            timer: 3000
+          })
+          this.modalOpen = false
+        }).catch(err => {
+          Swal.fire({
+            position: 'top-end',
+            icon: 'error',
+            title: "error",
+            customClass: 'Swal-wide',
+            showConfirmButton: false,
+            timer: 3000
+          })
+        })
+      },
+      
       createPurchaseRoute(){
         this.$router.push('/purchase/create')
       },

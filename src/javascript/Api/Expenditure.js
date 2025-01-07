@@ -27,5 +27,8 @@ export default {
     },
     report(form) {
         return Api.post('/expenditure/report'+'?shop_id='+localStorage.getItem('shopId'), form)
+    },
+    update_plan(form, id){
+        return Api.put('/expenditure/update-plan/'+id+'?shop_id='+localStorage.getItem('shopId'), form)
     }
 }

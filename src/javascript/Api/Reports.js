@@ -32,6 +32,17 @@ export default {
 
     get_profit_loss(form){
         return Api.post('/report/profit-loss'+'?shop_id='+localStorage.getItem('shopId'), form)
+    },
+    get_account_balance(){
+        return Api.get('/report/bank-balance'+'?shop_id='+localStorage.getItem('shopId'))
+    },
+    get_bank_statement(paylod){
+        return Api.post('/report/bank-statement'+'?shop_id='+localStorage.getItem('shopId'), paylod)
+    },
+    get_payables(){
+        return Api.post('/report/payables'+'?shop_id='+localStorage.getItem('shopId'))
     }
+    
+
 
 }

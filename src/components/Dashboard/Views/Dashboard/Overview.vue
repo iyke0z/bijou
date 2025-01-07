@@ -18,12 +18,14 @@
 
           <div>
             <label for="" class="mr-2">From: </label>
-            <input type="date" class="border border-gray text-primary mb-2" v-model="sales_performance_from" @input="getSalesPerformance()"> 
+            <input type="date" class="border border-gray text-primary mb-2" v-model="sales_performance_from"> 
           </div>
           <div>
             <label for="" class="mr-2">To: </label>
-            <input type="date" class="border border-gray text-primary mb-2" v-model="sales_performance_to" @input="getSalesPerformance()">
+            <input type="date" class="border border-gray text-primary mb-2" v-model="sales_performance_to">
           </div>
+          <button class="btn btn-dark text-light" @click.prevent="getSalesPerformance()">Get Report <span v-if="isLoading" class="loader"></span></button>
+
         </template>
         <bar-chart :labels="salesPerformanceChart.labels"
                    :height="250"
@@ -42,12 +44,13 @@
 
           <div>
             <label for="" class="mr-2">From: </label>
-            <input type="date" class="border border-gray text-primary mb-2" v-model="opex_performance_from" @input="getOpexPerformance()">
+            <input type="date" class="border border-gray text-primary mb-2" v-model="opex_performance_from">
           </div>
           <div>
             <label for="" class="mr-2">To: </label>
-            <input type="date" class="border border-gray text-primary mb-2" v-model="opex_performance_to" @input="getOpexPerformance()">
+            <input type="date" class="border border-gray text-primary mb-2" v-model="opex_performance_to">
           </div>
+          <button class="btn btn-dark text-light" @click.prevent="getOpexPerformance()">Get Report <span v-if="isLoading" class="loader"></span></button>
         </template>
         
         <line-chart :labels="opexPerformanceChart.labels"
@@ -78,17 +81,20 @@
           <p class="category">COGS refers to the direct costs incurred in producing or purchasing the goods or services that a company sells during a specific period.</p>
           <div>
             <label for="" class="mr-2">From: </label>
-            <input type="date" class="border border-gray text-primary mb-2" v-model="cogs_performance_from" @input="getCogs()">
+            <input type="date" class="border border-gray text-primary mb-2" v-model="cogs_performance_from">
           </div>
           <div>
             <label for="" class="mr-2">To: </label>
-            <input type="date" class="border border-gray text-primary mb-2" v-model="cogs_performance_to" @input="getCogs()">
+            <input type="date" class="border border-gray text-primary mb-2" v-model="cogs_performance_to">
           </div>
+          <button class="btn btn-dark text-light" @click.prevent="getCogs()">Get Report <span v-if="isLoading" class="loader"></span></button>
+
         </template>
         <bar-chart :labels="cogsActivityChart.labels"
                    :height="250"
                    :extra-options="cogsActivityChart.options"
-                   :datasets="cogsActivityChart.datasets" :key="cogsKey">
+                   :datasets="cogsActivityChart.datasets" 
+                   :key="cogsKey">
         </bar-chart>
       </card>
     </div>
@@ -104,12 +110,14 @@
 
           <div>
             <label for="" class="mr-2">From: </label>
-            <input type="date" class="border border-gray text-primary mb-2" v-model="method_performance_from" @input="getMethodPerformance()">
+            <input type="date" class="border border-gray text-primary mb-2" v-model="method_performance_from">
           </div>
           <div>
             <label for="" class="mr-2">To: </label>
-            <input type="date" class="border border-gray text-primary mb-2" v-model="method_performance_to" @input="getMethodPerformance()">
+            <input type="date" class="border border-gray text-primary mb-2" v-model="method_performance_to">
           </div>
+          <button class="btn btn-dark text-light" @click.prevent="getMethodPerformance()">Get Report <span v-if="isLoading" class="loader"></span></button>
+
         </template>
         <template slot="footer">
           <hr>
@@ -130,12 +138,14 @@
               <div class="card-body">
                 <div>
                   <label for="" class="mr-2">From: </label>
-                  <input type="date" class="border border-gray text-primary mb-2" v-model="profit_loss_from" @input="getProfitLoss()">
+                  <input type="date" class="border border-gray text-primary mb-2" v-model="profit_loss_from">
                 </div>
                 <div>
                   <label for="" class="mr-2">To: </label>
-                  <input type="date" class="border border-gray text-primary mb-2" v-model="profit_loss_to" @input="getProfitLoss()">
+                  <input type="date" class="border border-gray text-primary mb-2" v-model="profit_loss_to">
                 </div>
+                <button class="btn btn-dark text-light" @click.prevent="getProfitLoss()">Get Report <span v-if="isLoading" class="loader"></span></button>
+
                 <div class="table-responsive">
                   <table class="table">
                   <tr>
@@ -261,6 +271,7 @@
         method_performance_to: null, 
         profit_loss_from: null,
         profit_loss_to: null, 
+        isLoading:false,
 
         salesPerformanceChart: {
           labels: [],
@@ -362,7 +373,7 @@
             {
               label: "Data",
               borderColor: '#a2b9bc',
-              fill: true,
+              fill: false,
               backgroundColor: '#a2b9bc',
               hoverBorderColor: '#a2b9bc',
               borderWidth: 8,
@@ -495,10 +506,17 @@
         }
         if (payload.start_date !== null && payload.end_date !== null) {
             Reports.get_sales_performance(payload).then((res) => {
-            res.data.data.forEach(element => {
-              this.salesPerformanceChart.labels.push(element.sale_date)
-              this.salesPerformanceChart.datasets[0].data.push(element.total_amount)
-            });
+
+              if ((res.data.data).length > 0) {
+                res.data.data.forEach(element => {
+                  this.salesPerformanceChart.labels.push(element.sale_date)
+                  this.salesPerformanceChart.datasets[0].data.push(element.total_amount)
+                });
+              }else{
+                this.salesPerformanceChart.labels = []
+                  this.salesPerformanceChart.datasets[0].data = []
+              }
+            
             this.salesKey ++
           }).catch(() => {
           })
@@ -522,6 +540,7 @@
           })
         }
       },
+
       getDebtPerformance(){
         Reports.get_debt_report().then((res) => {
             res.data.data[0].forEach(element => {
@@ -535,15 +554,22 @@
 
       getCogs(){
         let payload = {
-          start_date: this.opex_performance_from,
-          end_date: this.opex_performance_to
+          start_date: this.cogs_performance_from,
+          end_date: this.cogs_performance_to
         }
         if (payload.start_date !== null && payload.end_date !== null) {
             Reports.get_cogs(payload).then((res) => {
-            res.data.data.forEach(element => {
-              this.cogsActivityChart.labels.push(element.purchase_date)
-              this.cogsActivityChart.datasets[0].data.push(element.total_amount + element.other_cogs)
-            });
+              console.log(res.data.data)
+              if ((res.data.data).length > 0) {
+                res.data.data.forEach(element => {
+                  this.cogsActivityChart.labels.push(element.purchase_date)
+                  this.cogsActivityChart.datasets[0].data.push(element.total_amount + element.other_cogs)
+                });
+              }else{
+                  this.cogsActivityChart.labels = []
+                  this.cogsActivityChart.datasets[0].data = []
+              }
+            
             this.cogsKey ++
           }).catch(() => {
           })
@@ -583,8 +609,6 @@
         }
       },
     },
-
-   
 
     created(){
       this.setDefaultDate()

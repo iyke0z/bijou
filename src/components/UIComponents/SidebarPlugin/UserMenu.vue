@@ -25,6 +25,13 @@
           </small>
         </span>
       </a>
+      <small>
+        <p class="text-white text-sm" v-if="role == 1">
+          System Bank: &#8358; {{balance.toLocaleString()}} 
+        </p>
+      </small>
+      
+        
       <div class="clearfix"></div>
     </div>
   </div>
@@ -33,6 +40,7 @@
 <script>
 import { CollapseTransition } from "vue2-transitions";
 import User from "@/javascript/Api/User";
+import Reports from "@/javascript/Api/Reports";
 
 export default {
   components: {
@@ -46,6 +54,7 @@ export default {
         title: "All",
         id: 0,
       },
+      balance: 0,
       currentShopId: null,
       currentName: null,
       role:null
@@ -54,6 +63,11 @@ export default {
   methods: {
     toggleMenu() {
       this.isClosed = !this.isClosed;
+    },
+    getBankBalance(){
+      Reports.get_account_balance().then(res => {
+        this.balance = res.data.data
+      })
     },
     getAuth() {
       User.auth()
@@ -82,6 +96,7 @@ export default {
     this.selectedShop.id = storedShopId ? parseInt(storedShopId) : 0;
     this.selectedShop.title = storedShopName || "All";
     this.role = localStorage.getItem("role")
+    this.getBankBalance()
   },
 };
 </script>
