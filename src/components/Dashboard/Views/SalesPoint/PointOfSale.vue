@@ -67,14 +67,15 @@
                   <td>{{order.name}}</td>
                   <td class="col-12 col-md-4">
                     <input 
-  type="number" 
-  min="1" 
-  :max="order.stock" 
-  step="any" 
-  v-model="order.qty" 
-  @input="clampValue(order, index)" 
-  class="form-control form-control-sm" 
-  style="width: 100%; min-width: 120px;">          </td>
+                      type="number" 
+                      min="1" 
+                      :max="order.stock" 
+                      step="any" 
+                      v-model="order.qty" 
+                      @input="clampValue(order, index, order.has_stock)" 
+                      class="form-control form-control-sm" 
+                      style="width: 100%; min-width: 120px;"> 
+                  </td>
           <td class="col-12 col-md-4">
             <input type="number" v-model="order.price" step="any" @input="updateOrder(order.price, index, false)" class="form-control form-control-sm" style="width: 100%; min-width: 120px;">
           </td>
@@ -254,18 +255,24 @@ import User from '@/javascript/Api/User'
           this.searchProduct();
         }
       },
-      clampValue(order, index) {
-    const maxStock = order.stock;
-    const minStock = 1;
-    // Clamp the value in real time
-    if (order.qty > maxStock) {
-      order.qty = maxStock;
-    } else if (order.qty < minStock) {
-      order.qty = minStock;
-    }
-    // Call updateOrder to apply the logic
-    this.updateOrder(order.qty, index, true, maxStock);
-  },
+      clampValue(order, index, hasStock) {
+        if (hasStock != 1) {
+          this.updateOrder(order.qty, index, true);
+
+        }else{
+          const maxStock = order.stock;
+        const minStock = 1;
+        // Clamp the value in real time
+        if (order.qty > maxStock) {
+          order.qty = maxStock;
+        } else if (order.qty < minStock) {
+          order.qty = minStock;
+        }
+        // Call updateOrder to apply the logic
+        this.updateOrder(order.qty, index, true, maxStock);
+        }
+        
+      },
       updateOrder(qty, index, isQty, stock=null){
           if(isQty){
             // check if stockqty is less than qty
@@ -391,6 +398,7 @@ import User from '@/javascript/Api/User'
           this.products.push({
               product_id: product.product_id,
               name:product.name,
+              has_stock:product.has_stock,
               qty: 1,
               stock: product.stock,
               price: product.price,
@@ -402,6 +410,7 @@ import User from '@/javascript/Api/User'
             this.products.push({
               product_id: product.product_id,
               name:product.name,
+              has_stock:product.has_stock,
               qty: 1,
               stock: product.stock,
               price: product.price,
