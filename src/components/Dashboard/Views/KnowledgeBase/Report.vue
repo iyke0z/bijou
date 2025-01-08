@@ -3,6 +3,10 @@
     <h4>Reports Dashboard</h4> 
     <article> 
         <div class="ml-4"> 
+            <li class="lead">Cashflow?</li> 
+                <p> (A). This shows information on the flow of actual liquid cash in and out of your account both for sales and expenditure.</p>
+                <p> (B). The report on the cash flow is located under reports/Bank Statment.</p>
+            
             <li class="lead">What is the Sales Report Performance?</li> 
                 <p> (A). It shows a total of the goods or services that a company sells during a specific period.</p>
             

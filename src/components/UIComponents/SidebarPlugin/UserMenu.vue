@@ -27,7 +27,7 @@
       </a>
       <small>
         <p class="text-white text-sm" v-if="role == 1">
-          System Bank: &#8358; {{balance.toLocaleString()}} 
+          Cashflow: &#8358; {{balance.toLocaleString()}} 
         </p>
       </small>
       
