@@ -44,6 +44,8 @@ jobs:
             folder: "business_sites/ugbommaintefarms"
           - subdomain: "dreambarbers"
             folder: "business_sites/dreambarbers"
+          - subdomain: "24hrs"
+            folder: "business_sites/24hrs"
 
       fail-fast: false  # Continue if one matrix job fails
 
@@ -111,6 +113,9 @@ jobs:
               ;;
             "dreambarbers")
               API_URL="https://api.dreambarbers.ngmkt.site"
+              ;;
+            "24hrs")
+              API_URL="https://api.24hrs.ngmkt.site"
               ;;
             *)
               echo "Unknown subdomain!"
