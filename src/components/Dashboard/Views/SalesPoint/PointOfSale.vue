@@ -9,7 +9,8 @@
     </div>
     
     <div class="nav col-12 bg-info" style="height:70px">
-      <li class="navBrand mt-3 d-none d-md-block">
+      <li class="navBrand mt-3 d-none d-md-block" style="cursor: pointer;">
+          <a @click.prevent="goHome"> {{shopName}}</a> -
           <a @click.prevent="goHome"> {{business_name}}</a>
         </li>
         <li class="col-2 col-md-1 ml-2 mt-4 pb-0">
@@ -245,7 +246,8 @@ import User from '@/javascript/Api/User'
         tempStock:0,
         user:null,
         ref:null,
-        expiry_response:null
+        expiry_response:null,
+        shopName:null
       }
     },
 
@@ -614,6 +616,8 @@ import User from '@/javascript/Api/User'
       this.getProducts()
       this.getCustomers()
       this.getExpiry()
+      this.shopName = localStorage.getItem('shopName')
+
     },
   }
 </script>
