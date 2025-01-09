@@ -108,7 +108,7 @@ import Swal from 'sweetalert2';
 
     const deleteRole = async(role) => {
         const {status, data} = await RolesPriviledge.delete_role(role.id)
-        if(status == 200 || status === 201){
+        if(status === 200 || status === 201){
             Swal.fire({
                 position: 'top-end',
                 icon: 'success',
@@ -129,8 +129,11 @@ import Swal from 'sweetalert2';
     }
 
     const create = async() => {
+      try {
         loading.value = true
         const {status, data} = await RolesPriviledge.create_role([name.value])
+        console.log(status)
+
         if(status == 200 || status === 201){
          roles.value = data
          loading.value = false  
@@ -145,6 +148,7 @@ import Swal from 'sweetalert2';
          name.value = null
          modalOpen.value = false
          getRoles()
+         window.location.reload()
        }else{
         Swal.fire({
             position: 'top-end',
@@ -153,7 +157,19 @@ import Swal from 'sweetalert2';
             showConfirmButton: false,
             timer: 1500
         })
+        window.location.reload()
+
        }
+      } catch (error) {
+        Swal.fire({
+            position: 'top-end',
+            icon: 'error',
+            title: 'Error creating role',
+            showConfirmButton: false,
+            timer: 1500
+        })
+      }
+
 
     }
 
