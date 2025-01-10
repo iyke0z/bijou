@@ -93,11 +93,11 @@ let user = {
     beforeEnter: (to, from, next) => {
         User.auth().then((result) => {
             if (result) {
-                if (result.data.role_id == 1) {
+                // if (result.data.role_id == 1) {
                     next()
-                } else {
-                    return next({ name: 'dashboard' })
-                }
+                // } else {
+                //     return next({ name: 'dashboard' })
+                // }
             } else {
                 return next({ name: 'Login' })
             }
