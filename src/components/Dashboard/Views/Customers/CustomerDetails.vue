@@ -1,5 +1,7 @@
 <template>
   <div class="table-responsive"><br>
+    <div class="loader" v-if="loading"></div>
+
     <div class="card">
       <div class="card-body">
         <h5 class="card-title">Customer Details</h5>
@@ -77,11 +79,14 @@ import helpers from '@/javascript/helpers';
           wallet_balance:null
         },
         transactions:null,
-        discounts:null
+        discounts:null,
+        loading: false
       }
     },
     methods: {
       submit(){
+        this.loading = true
+
         Customer.update(this.form, this.$route.params.id).then((result) => {
           Swal.fire({
             position: 'top-end',
@@ -101,9 +106,12 @@ import helpers from '@/javascript/helpers';
               showConfirmButton: false,
               timer: 3000
             })
+        this.loading = false
         });
       },
       get_customer(){
+        this.loading = true
+
         Customer.details(this.$route.params.id).then((result) => {
           this.form.fullname = result.data.data['fullname']
           this.form.email = result.data.data['email']
@@ -113,6 +121,8 @@ import helpers from '@/javascript/helpers';
           this.transactions = result.data.data['transactions']
           this.discounts = result.data.data['discounts']
           this.datatable()
+        this.loading = false
+
         })
       },
       dateTime(date){

@@ -1,5 +1,7 @@
 <template>
   <div class="table-responsive"><br>
+    <div class="loader" v-if="loading"></div>
+
     <h3>Customers</h3>
     <table id="table" class="table table-striped">
       <thead>
@@ -75,6 +77,7 @@
         filter:1,
         tableKey:0,
         customer:null,
+        loading: false,
         fund:{
           amount:null,
           platform: 'offline'
@@ -101,6 +104,8 @@
         this.$router.push('/customer/update/'+customer.id)
       },
       delete_customer(customer){
+        this.loading = true
+
         Customer.delete(customer.id).then((result) => {
           Swal.fire({
             position: 'top-end',
@@ -110,6 +115,7 @@
             showConfirmButton: false,
             timer: 3000
           })
+          this.loading = false
           this.allCustomers()
         }).catch((err) => {
           Swal.fire({
@@ -120,9 +126,12 @@
             showConfirmButton: false,
             timer: 3000
           })
+          this.loading = false
         });
       },
       fund_wallet(){
+        this.loading = true
+
         Customer.fund_wallet(this.fund, this.customer).then((result) => {
           Swal.fire({
             position: 'top-end',
@@ -134,6 +143,8 @@
           })
           this.allCustomers()
           this.modals.classic = false
+          this.loading = false
+
         }).catch((err) => {
           Swal.fire({
             position: 'top-end',
@@ -143,13 +154,19 @@
             showConfirmButton: false,
             timer: 3000
           })
+          this.loading = false
+
         });
       },
       allCustomers(){
+        this.loading = true
+
         Customer.customers().then((result) => {
             this.all_customers = result.data.data
             this.tableKey++
             this.datatable()
+            this.loading = false
+
         })
       },
 

@@ -1,5 +1,7 @@
 <template>
   <div><br>
+    <div class="loader" v-if="loading"></div>
+
     <div class="card">
       <div class="card-body">
         <h5 class="card-title">User Details</h5>
@@ -205,7 +207,7 @@
               <option value="online">Online</option>
             </select>
           </div>
-          <button class="btn btn-success sm:col-span-2" type="submit">Generate <span v-if="isLoading" class="loader"></span></button>
+          <button class="btn btn-success sm:col-span-2" type="submit">Generate <span v-if="loading" class="loader"></span></button>
         </form>
 
         <!-- Sales Tables -->
@@ -285,7 +287,7 @@ import Purchases from '@/javascript/Api/Purchases';
         oustanding: [],
         void_items: [],
         sold_items: [],
-        isLoading: false
+        loading: false
       }
     },
     methods: {
@@ -298,7 +300,7 @@ import Purchases from '@/javascript/Api/Purchases';
     },
     
     sales() {
-      this.isLoading = true;
+      this.loading = true;
       User.generate_user_report(this.form, this.$route.params.id).then((result) => {
         this.all_sales = result.data.data
         var res = []
@@ -328,9 +330,9 @@ import Purchases from '@/javascript/Api/Purchases';
         localStorage.setItem('form', JSON.stringify(this.form))
 
         this.datatable()
-        this.isLoading = false;
+        this.loading = false;
       }).catch(() => {
-        this.isLoading = false;
+        this.loading = false;
       });
     },
     getVoidItems(data) {

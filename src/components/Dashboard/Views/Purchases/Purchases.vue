@@ -1,10 +1,12 @@
 <template>
   <div class="table-responsive"><br>
+    <div class="loader" v-if="loading"></div>
+
     <p-button type="success" size="lg" icon @click.native="createPurchaseRoute()">
       Add New
     </p-button>
     <div>
-      <span class="loader" v-if="loading"></span>
+      
     </div>
     <div class="card">
       <div class="card-body">
@@ -207,6 +209,7 @@ import Product from '@/javascript/Api/Product'
       },
 
       updatePlan(){
+        this.loading = true
         let payload = {
           payment_method: this.payment_method,
           payment_status: this.payment_status,
@@ -224,6 +227,7 @@ import Product from '@/javascript/Api/Product'
             timer: 3000
           })
           this.modalOpen = false
+          this.loading = false
         }).catch(err => {
           Swal.fire({
             position: 'top-end',
@@ -233,6 +237,7 @@ import Product from '@/javascript/Api/Product'
             showConfirmButton: false,
             timer: 3000
           })
+          this.loading = false
         })
       },
       

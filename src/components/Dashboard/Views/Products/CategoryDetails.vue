@@ -1,5 +1,7 @@
 <template>
   <div class="table-responsive"><br>
+    <div class="loader" v-if="loading"></div>
+
     <div class="card">
       <div class="card-body">
         <h5 class="card-title">products under <b>{{category.name}}</b> category</h5>
@@ -43,7 +45,8 @@ import Purchases from '@/javascript/Api/Purchases';
     data(){
       return {
         category:null,
-        products:null
+        products:null,
+        loading:false
       }
     },
     methods: {
@@ -51,6 +54,7 @@ import Purchases from '@/javascript/Api/Purchases';
         return helpers.dateTime(date)
       },
       get_category(){
+        this.loading = true
         Categories.categories().then((result) => {
             var categories = result.data.data
             for (let index = 0; index < categories.length; index++) {
@@ -59,6 +63,7 @@ import Purchases from '@/javascript/Api/Purchases';
                 this.products = categories[index]['products']
               }
             }
+            this.loading = false
             this.datatable()
         })
       },

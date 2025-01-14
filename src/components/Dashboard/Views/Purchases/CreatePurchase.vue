@@ -1,5 +1,7 @@
 <template>
   <div class="table-responsive"><br>
+    <div class="loader" v-if="loading"></div>
+
     <h4>New Purchase</h4>
     <form action="" @submit.prevent="submit">
       <div class="form-group">

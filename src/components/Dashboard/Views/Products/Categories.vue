@@ -7,7 +7,7 @@
       Add New
     </p-button>
     <div>
-      <span class="loader" v-if="loading"></span>
+      
     </div>
     <table id="table" class="table table-striped" v-if="!loading">
       <thead>

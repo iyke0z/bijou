@@ -1,5 +1,7 @@
 <template>
   <div class="table-responsive">
+    <div class="loader" v-if="loading"></div>
+
     <div class="mb-2" v-if="expiry_response[0] != 'active'">
         <span v-if="expiry_response[0] == 'expired'" class="text-white bg-danger pr-2 pl-2 pt-2 pb-2">Subscription Expired <small>Subscribe to continue </small></span>
         <span v-if="expiry_response[0] == 'active'" class="text-light bg-success pr-2 pl-2 pt-2 pb-2">Subscription Active</span>
@@ -247,7 +249,8 @@ import User from '@/javascript/Api/User'
         user:null,
         ref:null,
         expiry_response:null,
-        shopName:null
+        shopName:null,
+        loading:false
       }
     },
 
@@ -297,8 +300,10 @@ import User from '@/javascript/Api/User'
       },
       
       getProducts(){
+        this.loading = true
         Product.products().then((result) => {
           this.allProducts = result.data.data
+          this.loading = false
         })
       },
 
@@ -473,6 +478,7 @@ import User from '@/javascript/Api/User'
         this.products.splice(index, 1)
       },
       pay(){
+        this.loading = true
         var post = {
           "customer_id": this.customer_id,
           "discount_pctge": this.discount_pctge,
@@ -514,6 +520,7 @@ import User from '@/javascript/Api/User'
             showConfirmButton: false,
             timer: 3000
           })
+          this.loading = false
         }).catch((err) => {
           Swal.fire({
             position: 'top-end',
@@ -523,6 +530,7 @@ import User from '@/javascript/Api/User'
             showConfirmButton: false,
             timer: 3000
           })
+          this.loading = false
         });
 
       },

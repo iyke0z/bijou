@@ -1,5 +1,7 @@
 <template>
   <div class="table-responsive"><br>
+    <div class="loader" v-if="loading"></div>
+
     <h4>Create New Product</h4>
     <form action="" @submit.prevent="submit">
           <div v-for="(product, index) in rows.products"  :key="index">

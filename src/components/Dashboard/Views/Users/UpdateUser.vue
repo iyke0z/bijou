@@ -1,5 +1,7 @@
 <template>
   <div class="table-responsive"><br>
+    <div class="loader" v-if="loading"></div>
+
     <h4>Update User</h4>
     <section class="col-12">
       <form @submit.prevent="submit">

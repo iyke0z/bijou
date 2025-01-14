@@ -1,5 +1,6 @@
 <template>
   <div class="table-responsive"><br>
+
     <h3>Products</h3>
      <div v-if="!loading">
        <table id="table" class="table table-striped">

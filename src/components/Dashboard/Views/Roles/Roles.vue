@@ -1,5 +1,6 @@
 <template>
     <div class="table-responsive"><br>
+
       <h3>Manage Roles</h3>
 
       <button class="btn btn-info" @click.prevent="openModal('New Role', 'create')">Create New Role</button>

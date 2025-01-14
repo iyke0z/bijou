@@ -1,5 +1,7 @@
 <template>
   <div><br>
+    <div class="loader" v-if="loading"></div>
+
       <h4>Support & Communication</h4>
      
       <!-- </div> -->
@@ -20,7 +22,7 @@
               </textarea>
           </div>
           <button class="btn btn-success col-12 col-md-8" type="submit">
-            Send Message <span class="loader" v-if="loading"></span>
+            Send Message 
           </button>
         </form>
       </section>

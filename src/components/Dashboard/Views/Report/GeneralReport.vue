@@ -39,7 +39,7 @@
                 </select>
               </div>
               <button class="btn btn-success btn-block" type="submit">
-                Generate <span class="loader" v-if="loading"></span>
+                Generate 
               </button>
             </form>
           </div>

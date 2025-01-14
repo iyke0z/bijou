@@ -1,5 +1,7 @@
 <template>
   <div class="table-responsive"><br>
+    <div class="loader" v-if="loading"></div>
+
     <p-button type="success" size="lg" icon @click.native="goToRoute()">
       Add New
     </p-button>
@@ -129,7 +131,7 @@ import helpers from '@/javascript/helpers'
         modalAction:null,
         modalContent:null,
         modalOpen: false,
-        // 
+        loading: false,
         selectedId: null,
         payment_method : 'cash',
         payment_status : 'paid',
@@ -160,6 +162,7 @@ import helpers from '@/javascript/helpers'
         this.$router.push('/expenditure/create/')
       },
       delete_expenditure(expenditure){
+        this.loading = true
         Expenditure.delete(expenditure.id).then((result) => {
           Swal.fire({
             position: 'top-end',
@@ -171,6 +174,7 @@ import helpers from '@/javascript/helpers'
           })
           this.allexpenditures()
           this.expenditure_details = null
+          this.loading = false
         }).catch((err) => {
           Swal.fire({
               position: 'top-end',
@@ -180,6 +184,7 @@ import helpers from '@/javascript/helpers'
               showConfirmButton: false,
               timer: 3000
             })
+            this.loading = false
         });
       },
 
@@ -222,6 +227,7 @@ import helpers from '@/javascript/helpers'
       },
 
       update_expenditue(){
+        this.loading = true
         Expenditure.update(this.form, this.expenditure).then((result) => {
           Swal.fire({
             position: 'top-end',
@@ -235,6 +241,7 @@ import helpers from '@/javascript/helpers'
           this.form = {start_date:null, end_date:null}
           this.modals.classic = false
           this.allexpenditures()
+          this.loading = false
         }).catch((err) => {
           Swal.fire({
               position: 'top-end',
@@ -244,13 +251,16 @@ import helpers from '@/javascript/helpers'
               showConfirmButton: false,
               timer: 3000
             })
+            this.loading = false
         });
       },
       allexpenditures(){
+        this.loading = true
         Expenditure.all_expenditures().then((result) => {
             this.all_expenditures = result.data.data
             this.tableKey++
             this.datatable()
+            this.loading = false
         })
       },
       datatable(){

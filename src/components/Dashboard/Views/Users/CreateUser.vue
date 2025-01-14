@@ -1,5 +1,6 @@
 <template>
   <div><br>
+    <div class="loader" v-if="loading"></div>
     <h4>Create User</h4>
     <section class="col-12">
       <form @submit.prevent="submit">
@@ -55,7 +56,7 @@
              </div>
              </div>
         </div>
-        <button class="btn btn-success col-8" type="submit">Submit <span class="loader" v-if="loading"></span></button>
+        <button class="btn btn-success col-8" type="submit">Submit </button>
       </form>
     </section>
   </div>

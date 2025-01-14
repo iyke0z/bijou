@@ -1,5 +1,7 @@
 <template>
   <div><br>
+    <div class="loader" v-if="loading"></div>
+
     <h4>New Expenditure Type</h4>
     <section class="col-12">
       <form @submit.prevent="submit">
@@ -43,11 +45,13 @@ import Swal from 'sweetalert2';
           useful_life: null,
           salvage_value: null
         },
+        loading:false,
         types: null
       }
     },
     methods: {
       submit(){
+        this.loading = true
         Expenditure.create_type(this.form).then((result) => {
           Swal.fire({
             position: 'top-end',
@@ -62,6 +66,7 @@ import Swal from 'sweetalert2';
             expenditure_type:'cogs'
 
         }
+        this.loading = false
         }).catch((err) => {
          Swal.fire({
               position: 'top-end',
@@ -71,6 +76,7 @@ import Swal from 'sweetalert2';
               showConfirmButton: false,
               timer: 3000
             })
+            this.loading = false
         });
       },
 

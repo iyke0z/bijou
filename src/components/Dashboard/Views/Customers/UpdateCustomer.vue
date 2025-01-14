@@ -1,5 +1,7 @@
 <template>
   <div class="table-responsive"><br>
+    <div class="loader" v-if="loading"></div>
+
     <h4>Create Customer</h4>
     <section class="col-6">
       <form @submit.prevent="submit">
@@ -43,6 +45,8 @@ import Swal from 'sweetalert2';
     },
     methods: {
       submit(){
+        this.loading = true
+
         Customer.update(this.form, this.$route.params.id).then((result) => {
           Swal.fire({
             position: 'top-end',
@@ -53,6 +57,7 @@ import Swal from 'sweetalert2';
             timer: 3000
           })
            this.$router.push("/customer/all")
+           
         }).catch((err) => {
          Swal.fire({
               position: 'top-end',
@@ -62,15 +67,21 @@ import Swal from 'sweetalert2';
               showConfirmButton: false,
               timer: 3000
             })
+            this.loading = false
+
+
         });
       },
       get_customer(){
+        this.loading = true
         Customer.details(this.$route.params.id).then((result) => {
           this.form.fullname = result.data.data['fullname']
           this.form.email = result.data.data['email']
           this.form.phone = result.data.data['phone']
           this.form.address = result.data.data['address']
         })
+        this.loading = false
+
       }
 
     },
