@@ -179,6 +179,8 @@
         }
       },
       update(){
+        this.loading = true
+
         Product.update(this.form, this.form.id).then((result) => {
             Swal.fire({
               position: 'top-end',
@@ -193,8 +195,12 @@
             this.tableKey++
             this.datatable()
             window.location.reload()
+        this.loading = false
+
           }).catch(err => {
           this.modals.classic = false
+        this.loading = false
+
           Swal.fire({
             position: 'top-end',
             icon: 'error',
@@ -216,6 +222,8 @@
       },
 
       delete_user(user){
+        this.loading = true
+
         Product.delete(user.id).then((result) => {
           Swal.fire({
             position: 'top-end',
@@ -226,7 +234,11 @@
             timer: 3000
           })
           this.get_product()
+        this.loading = false
+
         }).catch((err) => {
+        this.loading = false
+
           Swal.fire({
               position: 'top-end',
               icon: 'error',

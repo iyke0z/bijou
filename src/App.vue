@@ -21,8 +21,8 @@
  .loader {
     width: 18px;
     height: 18px;
-    border: 5px solid #FFF;
-    border-bottom-color: black;
+    border: 5px solid #000;
+    border-bottom-color: gray;
     border-radius: 50%;
     display: inline-block;
     box-sizing: border-box;

@@ -2,7 +2,7 @@ import Api from "./Api"
 
 export default {
     create_role(form) {
-        return Api.post('/role/create'+'?shop_id='+localStorage.getItem('shopId'), form)
+        return Api.post('/role/create'+'?package_id='+localStorage.getItem('packageId')+'&&shop_id='+localStorage.getItem('shopId'), form)
     },
 
     delete_role(id) {

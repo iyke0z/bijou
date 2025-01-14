@@ -5,7 +5,7 @@ export default {
         return Api.get('/shop/all'+'?shop_id='+localStorage.getItem('shopId'))
     },
     create_shop(form) {
-        return Api.post('/shop/create'+'?shop_id='+localStorage.getItem('shopId'), form)
+        return Api.post('/shop/create'+'?package_id='+localStorage.getItem('packageId')+'&&shop_id='+localStorage.getItem('shopId'), form)
     },
     update_shop(form, id) {
         return Api.put('/shop/update/' + id+'?shop_id='+localStorage.getItem('shopId'), form)

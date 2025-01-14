@@ -127,6 +127,8 @@ import Shops from '@/javascript/Api/Shops';
         this.$router.push('/user/update/'+user.id)
       },
       generateCode(user){
+        this.loading = true
+
         var post = {"user_id":user}
         User.generate_code(post).then(result => {
           Swal.fire({
@@ -138,6 +140,8 @@ import Shops from '@/javascript/Api/Shops';
             timer: 3000
           })
           this.allUsers()
+        this.loading = false
+
         }).catch((err) => {
           Swal.fire({
             position: 'top-end',
@@ -147,10 +151,14 @@ import Shops from '@/javascript/Api/Shops';
             showConfirmButton: false,
             timer: 3000
           })
+        this.loading = false
+
         });
         
       },
       delete_user(user){
+        this.loading = true
+
         User.delete(user.id).then((result) => {
           Swal.fire({
             position: 'top-end',
@@ -161,6 +169,8 @@ import Shops from '@/javascript/Api/Shops';
             timer: 3000
           })
           this.allUsers()
+        this.loading = false
+
         }).catch((err) => {
           Swal.fire({
             position: 'top-end',
@@ -170,11 +180,13 @@ import Shops from '@/javascript/Api/Shops';
             showConfirmButton: false,
             timer: 3000
           })
+        this.loading = false
+
         });
       },
 
       allUsers(){
-        this.loading = false
+        this.loading = true
         User.all_users().then((result) => {
             this.all_users = result.data.data
             this.tableKey++

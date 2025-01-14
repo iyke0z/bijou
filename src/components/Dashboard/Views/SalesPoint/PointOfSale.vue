@@ -1,11 +1,11 @@
 <template>
   <div class="table-responsive">
-    <div class="mb-2" v-if="expiry_response != 'active'">
-        <span v-if="expiry_response == 'expired'" class="text-white bg-danger pr-2 pl-2 pt-2 pb-2">Subscription Expired <small>Subscribe to continue </small></span>
-        <span v-if="expiry_response == 'active'" class="text-light bg-success pr-2 pl-2 pt-2 pb-2">Subscription Active</span>
-        <span v-if="expiry_response == 'expires_today'" class="text-light bg-danger pr-2 pl-2 pt-2 pb-2">Subscription Expires Today</span>
-        <span v-if="expiry_response == 'expires_tomorrow'" class="text-dark bg-info pr-2 pl-2 pt-2 pb-2">Subscription Expiring Tomorrow</span>
-        <span v-if="expiry_response == 'expires_in_two_days'" class="text-dark bg-warning pr-2 pl-2 pt-2 pb-2">Subscription Expiring In Two Days</span>
+    <div class="mb-2" v-if="expiry_response[0] != 'active'">
+        <span v-if="expiry_response[0] == 'expired'" class="text-white bg-danger pr-2 pl-2 pt-2 pb-2">Subscription Expired <small>Subscribe to continue </small></span>
+        <span v-if="expiry_response[0] == 'active'" class="text-light bg-success pr-2 pl-2 pt-2 pb-2">Subscription Active</span>
+        <span v-if="expiry_response[0] == 'expires_today'" class="text-light bg-danger pr-2 pl-2 pt-2 pb-2">Subscription Expires Today</span>
+        <span v-if="expiry_response[0] == 'expires_tomorrow'" class="text-dark bg-info pr-2 pl-2 pt-2 pb-2">Subscription Expiring Tomorrow</span>
+        <span v-if="expiry_response[0] == 'expires_in_two_days'" class="text-dark bg-warning pr-2 pl-2 pt-2 pb-2">Subscription Expiring In Two Days</span>
     </div>
     
     <div class="nav col-12 bg-info" style="height:70px">
@@ -15,8 +15,8 @@
         </li>
         <li class="col-2 col-md-1 ml-2 mt-4 pb-0">
           <label for="flexSwitchCheckChecked" class="text-light">
-            <span class="d-none d-md-block">Click to scan</span>
-          <i class="fa fa-barcode"></i></label>
+            <span class="d-none d-md-block"><i class="fa fa-barcode"></i> Click to scan</span>
+          </label>
           <input class="form-check-input ml-2 mt-1" type="checkbox" role="switch" id="flexSwitchCheckChecked" 
                 @click="barcodeMode = !barcodeMode" :checked="barcodeMode">
         </li>
@@ -290,6 +290,8 @@ import User from '@/javascript/Api/User'
       getExpiry(){
         Auth.get_expiry().then((result) => {
           this.expiry_response = result.data.data
+          localStorage.setItem('packageId', result.data.data[1]?.package_id)
+
 
         })
       },

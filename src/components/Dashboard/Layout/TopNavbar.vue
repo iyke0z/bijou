@@ -16,32 +16,32 @@
   {{details?.name}}
   <!-- <span class="d-block text-wrap"> -->
     <span
-      v-if="expiry_response == 'expired'"
+      v-if="expiry_response[0] == 'expired'"
       class="text-white bg-danger px-2 py-2 d-inline-block"
     >
       Subscription Expired, 
       <small class="text-light">Click to continue</small>
     </span>
     <span
-      v-if="expiry_response == 'active'"
+      v-if="expiry_response[0] == 'active'"
       class="text-light bg-success px-2 py-2 d-inline-block"
     >
       Subscription Active
     </span>
     <span
-      v-if="expiry_response == 'expires_today'"
+      v-if="expiry_response[0] == 'expires_today'"
       class="text-light bg-danger px-2 py-2 d-inline-block"
     >
       Subscription Expires Today
     </span>
     <span
-      v-if="expiry_response == 'expires_tomorrow'"
+      v-if="expiry_response[0] == 'expires_tomorrow'"
       class="text-dark bg-info px-2 py-2 d-inline-block"
     >
       Subscription Expiring Tomorrow
     </span>
     <span
-      v-if="expiry_response == 'expires_in_two_days'"
+      v-if="expiry_response[0] == 'expires_in_two_days'"
       class="text-dark bg-warning px-2 py-2 d-inline-block"
     >
       Subscription Expiring In Two Days
@@ -122,6 +122,7 @@
       getExpiry(){
         Auth.get_expiry().then((result) => {
           this.expiry_response = result.data.data
+          localStorage.setItem('packageId', result.data.data[1]?.package_id)
 
         })
       }

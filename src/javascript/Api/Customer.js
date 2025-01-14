@@ -2,7 +2,7 @@ import Api from "./Api"
 
 export default {
     create(form) {
-        return Api.post('/customer/create'+'?shop_id='+localStorage.getItem('shopId'), form)
+        return Api.post('/customer/create'+'?package_id='+localStorage.getItem('packageId')+'&&shop_id='+localStorage.getItem('shopId'), form)
     },
     update(form, id) {
         return Api.post('/customer/update/' + id+'?shop_id='+localStorage.getItem('shopId'), form)

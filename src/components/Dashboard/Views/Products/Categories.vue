@@ -1,5 +1,7 @@
 <template>
   <div class="table-responsive"><br>
+    <span v-if="loading" class="loader"></span>
+    
     <h3>Categories</h3> <br/>
     <p-button type="success" size="lg" icon @click.native="openModal('classic', 'New Category', 'create')">
       Add New
@@ -143,6 +145,7 @@ import helpers from '@/javascript/helpers'
         this.$router.push('/category/details/'+category.id)
       },
       delete_category(category){
+        this.loading = true
         Category.delete(category.id).then((result) => {
           Swal.fire({
             position: 'top-end',
@@ -153,6 +156,8 @@ import helpers from '@/javascript/helpers'
             timer: 3000
           })
           this.allcategories()
+        this.loading = false
+
         }).catch((err) => {
           Swal.fire({
               position: 'top-end',
@@ -162,6 +167,8 @@ import helpers from '@/javascript/helpers'
               showConfirmButton: false,
               timer: 3000
             })
+        this.loading = false
+
         });
       },
       submit(){

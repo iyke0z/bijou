@@ -1,5 +1,6 @@
 <template>
   <div class="row"><br><br>
+    <div class="loader" v-if="loading"></div>
    
       <marquee class="col-12 mt-4 mb-3" behavior="" direction="LEFT">
         <b class="mr-3">OPENING BALANCE: &#8358; {{ (profitLoss?.accounting_balance?.opening_cash_balance).toLocaleString() }}</b> | 
@@ -261,6 +262,7 @@
     },
     data() {
       return {
+        loading:false,
         sales_performance_from:null,
         sales_performance_to:null,
         opex_performance_from:null,
@@ -438,6 +440,7 @@
               }
             ]
           },
+
           options: {
             tooltips: tooltipOptions,
             scales: {
@@ -456,6 +459,7 @@
                 }
 
               }],
+
 
               xAxes: [{
                 barPercentage: 1.6,
@@ -499,7 +503,7 @@
         this.profit_loss_to = formattedToday
       },
       getSalesPerformance(){
-        // getCost
+        this.loading = true
         let payload = {
           start_date: this.sales_performance_from,
           end_date: this.sales_performance_to
@@ -521,9 +525,12 @@
           }).catch(() => {
           })
         }
+        this.loading = false
+
       },
 
       getOpexPerformance(){
+        this.loading = true
         // getCost
         let payload = {
           start_date: this.opex_performance_from,
@@ -538,10 +545,12 @@
             this.opexKey ++
           }).catch(() => {
           })
-        }
+        this.loading = false
+      }
       },
 
       getDebtPerformance(){
+        this.loading = true
         Reports.get_debt_report().then((res) => {
             res.data.data[0].forEach(element => {
               this.debReportChart.labels.push(element.fullname)
@@ -549,10 +558,12 @@
             });
             this.debtKey ++
           }).catch(() => {
-        })
+        this.loading = false
+      })
       },
 
       getCogs(){
+        this.loading = true
         let payload = {
           start_date: this.cogs_performance_from,
           end_date: this.cogs_performance_to
@@ -573,11 +584,13 @@
             this.cogsKey ++
           }).catch(() => {
           })
+          this.loading = false
         }
         
       },
 
       getMethodPerformance(){
+        this.loading = true
         let payload = {
           start_date: this.method_performance_from,
           end_date: this.method_performance_to
@@ -592,9 +605,11 @@
             this.performanceKey ++
           }).catch(() => {
           })
+          this.loading = false
         }
       },
       getProfitLoss(){
+        this.loading = true
         let payload = {
           start_date: this.profit_loss_from,
           end_date: this.profit_loss_to
@@ -606,6 +621,7 @@
             this.pnlKey ++
           }).catch(() => {
           })
+          this.loading = false
         }
       },
     },
@@ -622,4 +638,21 @@
   }
 </script>
 <style>
+    .loader {
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        border: 16px solid black;
+        border-top: 16px solid gray;
+        border-radius: 50%;
+        width: 120px;
+        height: 120px;
+        animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
 </style>

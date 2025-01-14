@@ -191,38 +191,38 @@ const menuItems = [
 ];
 
 const filterMenu = (menuItems, access) => {
-    const filteredMenu = [];
+    // Function to check if an item has required permissions
+    const hasAccess = (itemPermissions, access) => {
+        return access.some(accessItem => 
+            itemPermissions.includes(accessItem.priviledge.name)
+        );
+    };
 
-    access.forEach(element => {
-        menuItems.forEach(item => {
-            // Check if the item does not require permission
-            if (!item.perimssionRequired) {
-                // Check if the item is already in the filteredMenu
-                const exists = filteredMenu.some(filteredItem => filteredItem.name === item.name);
-                if (!exists) {
-                    filteredMenu.push(item);
+    // Recursive function to filter menu items
+    const filterMenuItems = (items) => {
+        return items
+            .map(item => {
+                // Check if the item doesn't require permission or has required permissions
+                const hasPermission = !item.perimssionRequired || hasAccess(item.permissions, access);
+
+                // If the item has children, filter them recursively
+                const children = item.children ? filterMenuItems(item.children) : [];
+
+                // Include the item if it has permission or any valid children
+                if (hasPermission || children.length > 0) {
+                    return {
+                        ...item,
+                        children: children.length > 0 ? children : undefined,
+                    };
                 }
-            }
 
+                return null;
+            })
+            .filter(Boolean); // Remove null values
+    };
 
-            // Additional logic to filter based on permissions
-            // Uncomment and modify this part if needed
-            item.permissions.forEach(permission => {
-                // console.log(permission, element.priviledge.name)
-                // return filteredMenu
-                if (element.priviledge.name === permission) {
-                    const exists = filteredMenu.some(filteredItem => filteredItem.name === item.name);
-                    if (!exists) {
-                        filteredMenu.push(item);
-                    }
-                }
-            });
-        });
-    });
-
-    return filteredMenu;
+    return filterMenuItems(menuItems);
 };
-
 
 const getMenu = async () => {
     const role = localStorage.getItem('role');
@@ -232,6 +232,5 @@ const getMenu = async () => {
         return filterMenu(menuItems, access);
     }
 };
-
 
 export default getMenu;

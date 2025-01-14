@@ -2,7 +2,7 @@ import Api from "./Api"
 
 export default {
     create_type(form) {
-        return Api.post('/expenditure/type/create'+'?shop_id='+localStorage.getItem('shopId'), form)
+        return Api.post('/expenditure/type/create'+'?package_id='+localStorage.getItem('packageId')+'&&shop_id='+localStorage.getItem('shopId'), form)
     },
     update_type(form, id) {
         return Api.post('/expenditure/type/update/' + id+'?shop_id='+localStorage.getItem('shopId'), form)
@@ -14,7 +14,7 @@ export default {
         return Api.post('/expenditure/type/delete/' + id+'?shop_id='+localStorage.getItem('shopId'))
     },
     create(form) {
-        return Api.post('/expenditure/create'+'?shop_id='+localStorage.getItem('shopId'), form)
+        return Api.post('/expenditure/create'+'?package_id='+localStorage.getItem('packageId')+'&&shop_id='+localStorage.getItem('shopId'), form)
     },
     update(form, id) {
         return Api.post('/expenditure/update' + id+'?shop_id='+localStorage.getItem('shopId'), form)

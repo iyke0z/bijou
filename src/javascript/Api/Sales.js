@@ -2,7 +2,7 @@ import Api from "./Api"
 
 export default {
     new_sale(form) {
-        return Api.post('/sell'+'?shop_id='+localStorage.getItem('shopId'), form)
+        return Api.post('/sell'+'?package_id='+localStorage.getItem('packageId')+'&&shop_id='+localStorage.getItem('shopId'), form)
     },
     update_sale(form) {
         return Api.post('sell/update'+'?shop_id='+localStorage.getItem('shopId'), form)
