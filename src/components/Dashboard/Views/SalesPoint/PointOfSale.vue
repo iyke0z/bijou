@@ -473,11 +473,6 @@ import User from '@/javascript/Api/User'
         this.products.splice(index, 1)
       },
       pay(){
-        try {
-          
-        } catch (error) {
-          
-        }
         var post = {
           "customer_id": this.customer_id,
           "discount_pctge": this.discount_pctge,

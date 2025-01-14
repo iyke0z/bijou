@@ -79,7 +79,7 @@
               </div>
 
             <template slot="footer">
-            <p-button type="default"  link @click.prevent="modalOpen = false" v-if="!loading">Close</p-button> <span class="loader" v-if="loading"></span>
+            <p-button type="default"  link @click.prevent="modalOpen = false">Close</p-button>
             </template>
            </Modal>
     </div>
@@ -124,23 +124,27 @@
                 icon: 'success',
                 title: 'Shop deleted successfully',
                 showConfirmButton: false,
-                timer: 1500
+                timer: 3000
             })
+            window.location.reload()
             getShops()
         }else{
+          window.location.reload()
+
             Swal.fire({
                 position: 'top-end',
                 icon: 'error',
                 title: 'Error deleting shop',
                 showConfirmButton: false,
-                timer: 1500
+                timer: 3000,
             })
         }
     }
 
     const create = async() => {
         loading.value = true
-        const {status, data} = await Shops.create_shop({
+        try {
+          const {status, data} = await Shops.create_shop({
             title: title.value,
             address: address.value,
             contact_person: contact_person.value,
@@ -160,21 +164,25 @@
             icon: 'success',
             title: 'Shop created successfully',
             showConfirmButton: false,
-            timer: 1500
+            timer: 3000
          })
          modalOpen.value = false
          getShops()
-window.location.reload()
+        window.location.reload()
 
-       }else{
-        Swal.fire({
-            position: 'top-end',
-            icon: 'error',
-            title: 'Error creating shop',
-            showConfirmButton: false,
-            timer: 1500
-        })
        }
+        } catch (error) {
+          loading.value = false
+
+          Swal.fire({
+              position: 'top-end',
+              icon: 'error',
+              title: error.response.data.message,
+              showConfirmButton: false,
+              timer: 3000
+          })
+        }
+       
 
     }
 
@@ -217,7 +225,7 @@ window.location.reload()
             icon: 'success',
             title: 'Shop updated successfully',
             showConfirmButton: false,
-            timer: 1500
+            timer: 3000
          })
          modalOpen.value = false
          getShops()
@@ -229,7 +237,7 @@ window.location.reload()
             icon: 'error',
             title: 'Error updating shop',
             showConfirmButton: false,
-            timer: 1500
+            timer: 3000
         })
        }
     }   
@@ -241,7 +249,7 @@ window.location.reload()
             icon: 'success',
             title: 'Success',
             showConfirmButton: false,
-            timer: 1500
+            timer: 3000
          })
     }
     

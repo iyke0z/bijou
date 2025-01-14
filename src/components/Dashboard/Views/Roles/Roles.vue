@@ -114,7 +114,7 @@ import Swal from 'sweetalert2';
                 icon: 'success',
                 title: 'Role deleted successfully',
                 showConfirmButton: false,
-                timer: 1500
+                timer: 3000
             })
             getRoles()
         }else{
@@ -123,7 +123,7 @@ import Swal from 'sweetalert2';
                 icon: 'error',
                 title: 'Error deleting role',
                 showConfirmButton: false,
-                timer: 1500
+                timer: 3000
             })
         }
     }
@@ -143,30 +143,20 @@ import Swal from 'sweetalert2';
             icon: 'success',
             title: 'Role created successfully',
             showConfirmButton: false,
-            timer: 1500
+            timer: 3000
          })
          name.value = null
          modalOpen.value = false
          getRoles()
          window.location.reload()
-       }else{
-        Swal.fire({
-            position: 'top-end',
-            icon: 'error',
-            title: 'Error creating role',
-            showConfirmButton: false,
-            timer: 1500
-        })
-        window.location.reload()
-
        }
       } catch (error) {
         Swal.fire({
             position: 'top-end',
             icon: 'error',
-            title: 'Error creating role',
+            title: error?.response?.data?.error ?? error.response.data.message,
             showConfirmButton: false,
-            timer: 1500
+            timer: 3000
         })
       }
 
@@ -239,7 +229,7 @@ const assignPriviledges = (role) => {
             title: result.data.message,
             customClass: 'Swal-wide',
             showConfirmButton: false,
-            timer: 3000,
+            timer: 3000
         });
         getRoles();
         modalOpen.value = false;
@@ -250,7 +240,7 @@ const assignPriviledges = (role) => {
             title: err?.response?.data?.error ?? err.response.data.message,
             customClass: 'Swal-wide',
             showConfirmButton: false,
-            timer: 3000,
+            timer: 3000
         });
     });
 };
