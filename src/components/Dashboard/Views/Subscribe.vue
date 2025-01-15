@@ -165,7 +165,7 @@ export default {
     },
     fundWallet(price) {
       const handler = PaystackPop.setup({
-        key: "pk_live_a0d5def75f9107fd5fe5346be015d9f824f24a97",
+        key: "pk_live_6b2011a0749092a1e3e831ee0c9f732a25ab3b6a",
         email: this.business.email,
         amount: price * 100,
         currency: "NGN",
