@@ -189,6 +189,8 @@ import helpers from '@/javascript/helpers'
       },
 
       updatePlan(){
+        this.loading = true
+
         let payload = {
           payment_method: this.payment_method,
           payment_status: this.payment_status,
@@ -206,6 +208,8 @@ import helpers from '@/javascript/helpers'
             timer: 3000
           })
           this.modalOpen = false
+          this.loading = false
+
         }).catch(err => {
           Swal.fire({
             position: 'top-end',
@@ -215,6 +219,8 @@ import helpers from '@/javascript/helpers'
             showConfirmButton: false,
             timer: 3000
           })
+          this.loading = false
+
         })
       },
 
