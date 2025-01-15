@@ -38,7 +38,8 @@
             <li class="productList" v-for="product in searchResult" :key="product" @click="addProduct(product)">
               {{ product.name}}
               <b>
-                <small class="bg-dark w-100 text-light"> {{product.price.toLocaleString()}}</small>
+                &#8358; <small class="bg-dark w-100 text-light"> {{product.price.toLocaleString()}} </small>
+                <strong><span class="ml-2 w-100 text-dark" v-if="product.has_stock == 1">(stock: {{ product.stock }})</span></strong>
               </b>
             </li>
             <li>
@@ -59,7 +60,7 @@
                   <th>#</th>
                   <th>Name</th>
                   <th>Qty</th>
-                  <th>Price (&#8358;)</th>
+                  <th>Selling Price (&#8358;)</th>
                   <th>Total (&#8358;)</th>
                   <th>Action</th>
                 </tr>
@@ -135,7 +136,7 @@
           <small class="text-danger" v-if="this.total > this.customerWallet_balance">customer cannot afford this bill from wallet</small>
         </div>
         <div class="col-8">
-          <input v-model="on_credit" :disabled="from_wallet == true"  @change="setCredit" type="checkbox" value="1"> Credit
+          <input v-model="on_credit" :disabled="from_wallet == true || part_payment == true" @change="setCredit" type="checkbox" value="1"> Credit
         </div>
         <div class="col-8">
           <input v-model="part_payment" :disabled="from_wallet == true" @change="setPartPayment" type="checkbox" value="1"> Part Payment
@@ -186,7 +187,7 @@
     <label for=""></label><br />
     <button class="btn btn-success mr-2" @click.prevent="pay">Pay <i class="fa fa-money" aria-hidden="true"></i></button>
     <button class="btn btn-secondary" @click.prevent="reset">Reset <i class="fa fa-refresh" aria-hidden="true"></i></button>
-    <button class="btn btn-secondary" @click.prevent="printReceipt">Print Receipt <i class="fa fa-print" aria-hidden="true"></i></button>
+    <a class="btn btn-secondary" @click.prevent="printReceipt" target="_blank">Print Receipt <i class="fa fa-print" aria-hidden="true"></i></a>
   </div>
 </div>
 
@@ -318,8 +319,13 @@ import User from '@/javascript/Api/User'
       setCredit(){
         this.payment_method = "on_credit"
       },
-      setPartPayment(){
-        this.payment_method = "part_payment"
+      setPartPayment() {
+          if (this.part_payment) {
+              this.payment_method = "part_payment";
+              this.on_credit = false; // Ensure `on_credit` is false when selecting `part_payment`
+          } else {
+              this.payment_method = null; // Reset payment method if `part_payment` is unchecked
+          }
       },
 
       cache(){
@@ -347,7 +353,9 @@ import User from '@/javascript/Api/User'
       },
 
       printReceipt(){
-        this.$router.push('/receipt')
+        const receiptUrl = '/receipt'
+        window.open(receiptUrl, "_blank"); // Opens the URL in a new tab
+
       },
 
       searchProduct(){

@@ -50,7 +50,7 @@ const menuItems = [
                 path: '/category/all'
             },
             {
-                name: 'Products',
+                name: 'Product & Stock',
                 path: '/product/all'
             },
             {

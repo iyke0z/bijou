@@ -4,7 +4,7 @@
 
     <h4>New Purchase</h4>
     <form action="" @submit.prevent="submit">
-      <div class="form-group">
+      <div class="form-group" hidden>
         <label for="">Added Cost</label>
         <input type="text" class="form-control col-5" v-model="rows.added_cost" required>
       </div>
@@ -25,12 +25,12 @@
               <input type="text" class="form-control" required v-model="rows.purchase[index].qty" placeholder="qty">
             </td>
             <td>
-              <label for="">Price</label>
+              <label for="">Cost Price</label>
               <input type="number" placeholder="0.00" step="any" required class="form-control" v-model="rows.purchase[index].cost">
             </td>
             <td>
-              <button class="btn btn-info mr-2 mt-4" type="button" @click.prevent="addRow">+</button>
-              <button class="btn btn-danger mt-4" type="button" v-if="index > 0" @click="deleteRow(index)">x</button>
+              <button class="btn btn-info mr-2 mt-4" type="button" @click.prevent="addRow">+ Add More</button>
+              <button class="btn btn-danger mt-4" type="button" v-if="index > 0" @click="deleteRow(index)">x Remove</button>
             </td>
           </tr>
         </thead>

@@ -29,7 +29,7 @@
             <tr>
               <th></th>
               <th>price</th>
-              <th>added costs</th>
+              <!-- <th>added costs</th> -->
               <th>date</th>
               <th>Logged By</th>
               <th>actions</th>
@@ -38,10 +38,10 @@
           <tbody :key="tableKey">
             <tr v-for="(purchase, index) in all_purchases" :key="purchase.id">
               <td>{{index+1}}</td>
-              <td>{{purchase.price.toLocaleString()}}</td>
-              <td>{{purchase.added_costs.toLocaleString()}}</td>
-              <td>{{dateTime(purchase.created_at)}}</td>
-              <td>{{purchase.user.fullname}}</td>
+              <td>{{purchase?.price?.toLocaleString()}}</td>
+              <!-- <td>{{purchase?.added_costs?.toLocaleString()}}</td> -->
+              <td>{{dateTime(purchase?.created_at)}}</td>
+              <td>{{purchase?.user?.fullname}}</td>
               <td>
                 <!-- <p-button class="mr-2" title="details" type="warning" size="sm" icon @click.prevent="goToRoute(purchase)">
                   <i class="fa fa-eye"></i>

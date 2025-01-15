@@ -58,27 +58,102 @@ let loginPage = {
 let waiter = {
     path: '/waiter',
     name: 'waiter',
-    component: Waiter
+    component: Waiter,
+    beforeEnter: (to, from, next) => {
+        User.auth().then((result) => {
+            if (result) {
+                // if (result.data.role_id == 1) {
+                    next()
+                // } else {
+                //     return next({ name: 'dashboard' })
+                // }
+            } else {
+                return next({ name: 'Login' })
+            }
+        }).catch((err) => {
+            return next({ name: 'Login' })
+        })
+    },
 }
 let kitchen = {
     path: '/kitchen',
     name: 'kitchen',
-    component: Kitchen
+    component: Kitchen,
+    beforeEnter: (to, from, next) => {
+        User.auth().then((result) => {
+            if (result) {
+                // if (result.data.role_id == 1) {
+                    next()
+                // } else {
+                //     return next({ name: 'dashboard' })
+                // }
+            } else {
+                return next({ name: 'Login' })
+            }
+        }).catch((err) => {
+            return next({ name: 'Login' })
+        })
+    },
 }
 let bar = {
     path: '/bar',
     name: 'bar',
-    component: Bar
+    component: Bar,
+    beforeEnter: (to, from, next) => {
+        User.auth().then((result) => {
+            if (result) {
+                // if (result.data.role_id == 1) {
+                    next()
+                // } else {
+                //     return next({ name: 'dashboard' })
+                // }
+            } else {
+                return next({ name: 'Login' })
+            }
+        }).catch((err) => {
+            return next({ name: 'Login' })
+        })
+    },
 }
 let receipt = {
     path: '/receipt',
     name: 'receipt',
-    component: Receipt
+    component: Receipt,
+    beforeEnter: (to, from, next) => {
+        User.auth().then((result) => {
+            if (result) {
+                // if (result.data.role_id == 1) {
+                    next()
+                // } else {
+                //     return next({ name: 'dashboard' })
+                // }
+            } else {
+                return next({ name: 'Login' })
+            }
+        }).catch((err) => {
+            return next({ name: 'Login' })
+        })
+    },
 }
 let reporprint = {
     path: '/report-print',
     name: 'print',
-    component: ReportPrint
+    component: ReportPrint,
+    beforeEnter: (to, from, next) => {
+        User.auth().then((result) => {
+            if (result) {
+                // if (result.data.role_id == 1) {
+                    next()
+                // } else {
+                //     return next({ name: 'dashboard' })
+                // }
+            } else {
+                return next({ name: 'Login' })
+            }
+        }).catch((err) => {
+            return next({ name: 'Login' })
+        })
+    },
 }
 let lockPage = {
     path: '/lock',
@@ -133,6 +208,21 @@ let roles = {
     path: "/",
     name: 'roles',
     component: DashboardLayout,
+    beforeEnter: (to, from, next) => {
+        User.auth().then((result) => {
+            if (result) {
+                // if (result.data.role_id == 1) {
+                    next()
+                // } else {
+                //     return next({ name: 'dashboard' })
+                // }
+            } else {
+                return next({ name: 'Login' })
+            }
+        }).catch((err) => {
+            return next({ name: 'Login' })
+        })
+    },
     children: [{
         path: 'roles',
         name: 'all-roles',
@@ -145,6 +235,21 @@ let priviledges = {
     path: "/",
     name: 'priviledges',
     component: DashboardLayout,
+    beforeEnter: (to, from, next) => {
+        User.auth().then((result) => {
+            if (result) {
+                // if (result.data.role_id == 1) {
+                    next()
+                // } else {
+                //     return next({ name: 'dashboard' })
+                // }
+            } else {
+                return next({ name: 'Login' })
+            }
+        }).catch((err) => {
+            return next({ name: 'Login' })
+        })
+    },
     children: [{
         path: 'priviledges',
         name: 'all-priviledges',
@@ -156,6 +261,21 @@ let shops = {
     path: "/",
     name: 'shops',
     component: DashboardLayout,
+    beforeEnter: (to, from, next) => {
+        User.auth().then((result) => {
+            if (result) {
+                // if (result.data.role_id == 1) {
+                    next()
+                // } else {
+                //     return next({ name: 'dashboard' })
+                // }
+            } else {
+                return next({ name: 'Login' })
+            }
+        }).catch((err) => {
+            return next({ name: 'Login' })
+        })
+    },
     children: [{
         path: 'shops',
         name: 'all-shops',
@@ -167,6 +287,21 @@ let category = {
     path: '/category',
     name: 'Category',
     component: DashboardLayout,
+    beforeEnter: (to, from, next) => {
+        User.auth().then((result) => {
+            if (result) {
+                // if (result.data.role_id == 1) {
+                    next()
+                // } else {
+                //     return next({ name: 'dashboard' })
+                // }
+            } else {
+                return next({ name: 'Login' })
+            }
+        }).catch((err) => {
+            return next({ name: 'Login' })
+        })
+    },
     children: [{
         path: 'all',
         name: 'all categories',
@@ -182,6 +317,21 @@ let product = {
     path: '/product',
     name: 'products',
     component: DashboardLayout,
+    beforeEnter: (to, from, next) => {
+        User.auth().then((result) => {
+            if (result) {
+                // if (result.data.role_id == 1) {
+                    next()
+                // } else {
+                //     return next({ name: 'dashboard' })
+                // }
+            } else {
+                return next({ name: 'Login' })
+            }
+        }).catch((err) => {
+            return next({ name: 'Login' })
+        })
+    },
     children: [{
             path: 'all',
             name: 'all products',
@@ -210,6 +360,21 @@ let purchase = {
     path: '/purchase',
     name: 'purchases',
     component: DashboardLayout,
+    beforeEnter: (to, from, next) => {
+        User.auth().then((result) => {
+            if (result) {
+                // if (result.data.role_id == 1) {
+                    next()
+                // } else {
+                //     return next({ name: 'dashboard' })
+                // }
+            } else {
+                return next({ name: 'Login' })
+            }
+        }).catch((err) => {
+            return next({ name: 'Login' })
+        })
+    },
     children: [{
             path: 'all',
             name: 'all_purchases',
@@ -233,6 +398,21 @@ let customers = {
     path: '/customer',
     name: 'Customers',
     component: DashboardLayout,
+    beforeEnter: (to, from, next) => {
+        User.auth().then((result) => {
+            if (result) {
+                // if (result.data.role_id == 1) {
+                    next()
+                // } else {
+                //     return next({ name: 'dashboard' })
+                // }
+            } else {
+                return next({ name: 'Login' })
+            }
+        }).catch((err) => {
+            return next({ name: 'Login' })
+        })
+    },
     children: [{
             path: 'all',
             name: 'all_customers',
@@ -261,6 +441,21 @@ let expenditure = {
     path: '/expenditure',
     name: 'Expenditure',
     component: DashboardLayout,
+    beforeEnter: (to, from, next) => {
+        User.auth().then((result) => {
+            if (result) {
+                // if (result.data.role_id == 1) {
+                    next()
+                // } else {
+                //     return next({ name: 'dashboard' })
+                // }
+            } else {
+                return next({ name: 'Login' })
+            }
+        }).catch((err) => {
+            return next({ name: 'Login' })
+        })
+    },
     children: [{
             path: 'all',
             name: 'all_expenditure',
@@ -343,6 +538,21 @@ let settings = {
     path: '/business',
     name: 'Settings',
     component: DashboardLayout,
+    beforeEnter: (to, from, next) => {
+        User.auth().then((result) => {
+            if (result) {
+                // if (result.data.role_id == 1) {
+                    next()
+                // } else {
+                //     return next({ name: 'dashboard' })
+                // }
+            } else {
+                return next({ name: 'Login' })
+            }
+        }).catch((err) => {
+            return next({ name: 'Login' })
+        })
+    },
     children: [{
         path: 'settings',
         name: 'settings',
