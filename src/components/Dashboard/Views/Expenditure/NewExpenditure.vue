@@ -1,5 +1,6 @@
 <template>
   <div><br>
+    <div class="loader" v-if="loading"></div>
     <h4>New Expenditure</h4>
     <section class="col-12">
       <form @submit.prevent="submit">
@@ -40,11 +41,13 @@ import Swal from 'sweetalert2';
           amount:null,
           qty:1
         },
-        types: null
+        types: null,
+        loading:false
       }
     },
     methods: {
       submit(){
+        this.loading = true
         Expenditure.create(this.form).then((result) => {
           Swal.fire({
             position: 'top-end',
@@ -54,11 +57,14 @@ import Swal from 'sweetalert2';
             showConfirmButton: false,
             timer: 3000
           })
+        this.loading = false
           this.form = {
             expenditure_type_id:null,
             amount:null,
         }
         }).catch((err) => {
+        this.loading = false
+
          Swal.fire({
               position: 'top-end',
               icon: 'error',
