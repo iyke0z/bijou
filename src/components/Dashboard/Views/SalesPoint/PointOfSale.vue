@@ -174,12 +174,12 @@
 <div class="row ml-1">
   <div class="form-group col-12 col-md-5">
     <label for="">Payment Method</label>
-    <select v-model="payment_method" :disabled="payment_method == 'on_credit' || payment_method == 'part_payment'" class="form-control">
+    <select v-model="payment_method" :disabled="on_credit && part_payment" class="form-control">
       <option value="cash">Cash</option>
       <option value="transfer">Transfer</option>
       <option value="card">POS</option>
-      <option v-if="customer_id != null" value="on_credit">On Credit</option>
-      <option v-if="customer_id != null" value="part_payment">Part Payment</option>
+      <option v-if="on_credit" value="on_credit">On Credit</option>
+      <option v-if="part_payment" value="part_payment">Part Payment</option>
       <option v-if="total <= customerWallet_balance && customer_id != null" value="wallet">Wallet</option>
     </select>
   </div>
@@ -592,7 +592,7 @@ import User from '@/javascript/Api/User'
     },
     computed:{
       read_scan(){
-        alert('scan')
+        // alert('scan')
       }
     },
     watch:{
@@ -607,6 +607,16 @@ import User from '@/javascript/Api/User'
           this.payment_method = "part_payment";
         }
       },
+      on_credit(newVal) {
+        if (!newVal && !this.part_payment) {
+            this.payment_method = "cash";
+        }
+    },
+    part_payment(newVal) {
+        if (!newVal && !this.on_credit) {
+            this.payment_method = "cash";
+        }
+    },
       barcodeMode(newValue) {
     // Focus the input element when barcodeMode changes to true
     this.$nextTick(() => {
