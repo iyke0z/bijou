@@ -40,9 +40,10 @@
               <td>{{dateTime(expenditure.created_at)}}</td>
               <td>{{expenditure.user.fullname}}</td>
               <td>
-                <p-button class="mr-2" title="update product plan" type="info" size="sm" @click.prevent="openModal('update '+ expenditure.type.name+' Plan', expenditure)">
+                <p-button v-if="expenditure.payment_status != 'paid'" class="mr-2" title="update product plan" type="info" size="sm" @click.prevent="openModal('update '+ expenditure.type.name+' Plan', expenditure)">
                   <i class="fa fa-wrench"></i>
                 </p-button>
+                <span v-else class="mr-4">Item has been paid for</span>
                 <p-button class="mr-2" title="delete" type="danger" size="sm" icon @click.prevent="delete_expenditure(expenditure)">
                   <i class="fa fa-trash"></i>
                 </p-button>

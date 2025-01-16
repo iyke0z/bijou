@@ -174,7 +174,7 @@
 <div class="row ml-1">
   <div class="form-group col-12 col-md-5">
     <label for="">Payment Method</label>
-    <select v-model="payment_method" class="form-control">
+    <select v-model="payment_method" :disabled="payment_method == 'on_credit' || payment_method == 'part_payment'" class="form-control">
       <option value="cash">Cash</option>
       <option value="transfer">Transfer</option>
       <option value="card">POS</option>

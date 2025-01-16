@@ -80,25 +80,26 @@
           <tbody :key="purchaseKey">
             <tr v-for="purchase in purchase_details" :key="purchase.id">
               <td>
-                {{ purchase.product.name}}
+                {{ purchase?.product.name}}
               </td>
               <td>
-                {{purchase.cost.toLocaleString()}}
+                {{purchase?.cost.toLocaleString()}}
               </td>
               <td>
-                {{ purchase.previous_stock.toLocaleString()}}
+                {{ purchase?.previous_stock.toLocaleString()}}
               </td>
               <td>
-                {{purchase.qty.toLocaleString()}}
+                {{purchase?.qty.toLocaleString()}}
               </td>
               <td v-if="purchase.previous_stock != null">
                 {{purchase.qty + purchase.previous_stock}}
               </td>
-              <td>
+              <td v-if="payment_status != 'paid'">
                 <p-button class="mr-2" title="update product plan" type="info" size="sm" @click.prevent="openModal('update '+ purchase.product.name+' Plan', purchase)">
                   <i class="fa fa-wrench"></i>
                 </p-button>
               </td>
+              <td v-else>Item has been paid for</td>
             </tr>
           </tbody>
         </table>
