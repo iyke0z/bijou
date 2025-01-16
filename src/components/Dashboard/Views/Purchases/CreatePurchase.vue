@@ -30,7 +30,7 @@
             </td>
             <td>
               <button class="btn btn-info mr-2 mt-4" type="button" @click.prevent="addRow">+ Add More</button>
-              <button class="btn btn-danger mt-4" type="button" v-if="index > 0" @click="deleteRow(index)">x Remove</button>
+              <button class="btn btn-danger mt-4" type="button" v-if="index > 0" @click="deleteRow(index)">x Remove Item</button>
             </td>
           </tr>
         </thead>

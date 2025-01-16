@@ -69,12 +69,12 @@
         <table id="purchase" class="table table-stripped">
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Cost</th>
-              <th>Previous Stock</th>
-              <th>Qty Purchased</th>
-              <th>Current Stock</th>
-              <th>Action</th>
+              <th>name</th>
+              <th>cost</th>
+              <th>previous stock</th>
+              <th>qty purchased</th>
+              <th>current stock</th>
+              <th>action</th>
             </tr>
           </thead>
           <tbody :key="purchaseKey">

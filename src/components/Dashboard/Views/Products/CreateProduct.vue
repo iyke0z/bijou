@@ -27,8 +27,8 @@
               <input type="text" placeholder="barcode" class="form-control" v-model="rows.products[index].code">
             </div>
             <div>
-              <button class="btn btn-info mr-2 mt-4" @click.prevent="addRow">+</button>
-              <button class="btn btn-danger mt-4" v-if="index > 0" @click="deleteRow(index)">x</button>
+              <button class="btn btn-info mr-2 mt-4" @click.prevent="addRow">+ Add More</button>
+              <button class="btn btn-danger mt-4" v-if="index > 0" @click="deleteRow(index)">x Remove Item</button>
             </div>
           </div>
       <button class="btn btn-success col-12" type="submit">Submit <span v-if="loading" class="loader"></span></button>

@@ -4,7 +4,8 @@
   <div class="orderNo">
     <b>{{ this.details }}</b><br/>
     {{getDate()}} <br/>
-    Customer Receipt ID# <span id="Order #">{{ String(summary?.ref_no).padStart(7, 0)}}</span>
+    {{ summary.payment_method }} receipt <br>
+   Receipt ID# <span id="Order #">{{ String(summary?.ref_no).padStart(7, 0)}}</span>
   </div>
   <div class="body">
     <div class="tableArea">
@@ -44,11 +45,21 @@
         <div class="col-4">Total</div>
         <div class="col-4"> <b>&#8358; {{Math.ceil(summary?.total).toLocaleString()}}</b></div>
       </div>
+      <div class="row"  v-if="summary?.payment_method == 'part_payment'">
+        <div class="col-4">Paid</div>
+        <div class="col-4">&#8358; {{Math.ceil((summary?.part_payment)).toLocaleString()}}</div>
+      </div>
+      <div class="row" v-if="summary?.payment_method == 'part_payment'">
+        <div class="col-4" >Balance</div>
+        <div class="col-4">&#8358; {{Math.ceil((summary?.total - summary?.part_payment)).toLocaleString()}}</div>
+      </div>
     </div>
   </div>
 
  <div class="keepIt">
-  <i>thank you for your patronage! see you next time.</i>
+  <i>{{ numberToWords(Math.ceil(summary?.total)) }} naira only</i><br>
+
+  <i>thank you for your patronage! <br>see you next time.</i>
 
   </div>
 
@@ -65,6 +76,39 @@ import helpers from '@/javascript/helpers'
       }
     },
     methods: {
+      numberToWords(num) {
+    if (num === 0) return "zero";
+
+    const belowTwenty = [
+        "", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
+        "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"
+    ];
+    const tens = [
+        "", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"
+    ];
+    const thousands = ["", "thousand", "million", "billion", "trillion"];
+
+    function helper(n) {
+        if (n === 0) return "";
+        else if (n < 20) return belowTwenty[n] + " ";
+        else if (n < 100) return tens[Math.floor(n / 10)] + " " + helper(n % 10);
+        else return belowTwenty[Math.floor(n / 100)] + " hundred " + helper(n % 100);
+    }
+
+    let result = "";
+    let i = 0;
+
+    while (num > 0) {
+        if (num % 1000 !== 0) {
+            result = helper(num % 1000) + thousands[i] + " " + result;
+        }
+        num = Math.floor(num / 1000);
+        i++;
+    }
+
+    return result.trim();
+},
+
       getDate(){
         var date = new Date()
         return date.toDateString()

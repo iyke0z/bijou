@@ -136,22 +136,22 @@
           <small class="text-danger" v-if="this.total > this.customerWallet_balance">customer cannot afford this bill from wallet</small>
         </div>
         <div class="col-8">
-          <input v-model="on_credit" :disabled="from_wallet == true || part_payment == true" @change="setCredit" type="checkbox" value="1"> Credit
+          <input v-model="on_credit" :disabled="from_wallet == true" @change="setCredit" type="checkbox" value="1"> Credit
+          <input type="number" step="any" v-model="part_payment_amount" placeholder="0" v-if="on_credit"><small class="ml-2 text-dark">input part payment amount</small>
         </div>
-        <div class="col-8">
-          <input v-model="part_payment" :disabled="from_wallet == true" @change="setPartPayment" type="checkbox" value="1"> Part Payment
-          <input type="number" step="any" v-model="part_payment_amount" placeholder="0" v-if="part_payment"><small class="ml-2 text-dark">input part payment amount</small>
-        </div>
+        
       </div>
     </span>
   </div>
 </div>
+<div style="margin-left: 35%;">
+  <ul class="col-8">
+    <li class="productList" v-for="customer in customerSearch" :key="customer" @click="addCustomer(customer)">
+      {{ customer.name}}
+    </li>
+  </ul>
+</div>
 
-<ul class="col-12">
-  <li class="productList" v-for="customer in customerSearch" :key="customer" @click="addCustomer(customer)">
-    {{ customer.name}}
-  </li>
-</ul>
 
 <div class="row">
   <div class="col-4 col-md-4">
@@ -295,8 +295,6 @@ import User from '@/javascript/Api/User'
         Auth.get_expiry().then((result) => {
           this.expiry_response = result.data.data
           localStorage.setItem('packageId', result.data.data[1]?.package_id)
-
-
         })
       },
       
@@ -319,6 +317,7 @@ import User from '@/javascript/Api/User'
       setCredit(){
         this.payment_method = "on_credit"
       },
+
       setPartPayment() {
           if (this.part_payment) {
               this.payment_method = "part_payment";
@@ -339,6 +338,8 @@ import User from '@/javascript/Api/User'
             discount: this.discount_pctge,
             vat: this.vat,
             total:total,
+            payment_method: this.payment_method,
+            part_payment:this.part_payment_amount
           }
           localStorage.setItem('products', JSON.stringify(this.products))
           localStorage.setItem('summary', JSON.stringify(summary))
@@ -598,6 +599,12 @@ import User from '@/javascript/Api/User'
       searchParam(){
         if(this.searchParam == ""){
           this.searchResult = []
+        }
+      },
+      part_payment_amount(){
+        if (this.part_payment_amount > 0) {
+          this.part_payment = true
+          this.payment_method = "part_payment";
         }
       },
       barcodeMode(newValue) {

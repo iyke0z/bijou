@@ -44,14 +44,23 @@
             <div class="col-8">{{summary?.vat}}</div>
           </div>
           <div class="row">
-            <div class="col-8">Total</div>
-            <div class="col-8">&#8358; {{Math.ceil(summary?.total)}}</div>
+            <div class="col-8">To</div>
+            <div class="col-8">&#8358; {{Math.ceil(summary?.total)}} {{ summary.payment_method }}</div>
+          </div>
+          <div class="row"  v-if="summary?.payment_method == 'part_payment'">
+            <div class="col-8">Paid</div>
+            <div class="col-8">&#8358; {{Math.ceil(summary?.part_payment)}}</div>
+          </div>
+          <div class="row" v-if="summary?.payment_method == 'part_payment'">
+            <div class="col-8" >Balance</div>
+            <div class="col-8">&#8358; {{Math.ceil(summary?.total - summary?.part_payment)}}</div>
           </div>
         </div>
       </div>
       <div class="footnote mt-5">
         <center>
           <small>
+            <p>{{ numberToWords(Math.ceil(summary?.total)) }}</p>
             <p><i>thank you for your patronage! see you next time.</i></p>
             <b>{{ this.details }}</b>
           </small>
@@ -77,20 +86,54 @@
         this.products = JSON.parse(product)
         this.summary = JSON.parse(summary)
         this.details = localStorage.getItem('details')
-        setTimeout(()=> {
-        window.print()
-          localStorage.removeItem('products')
-        localStorage.removeItem('summary')
-        localStorage.removeItem('details')
 
-        this.$router.push('/sales-point')
-        }, 2000)
+        // setTimeout(()=> {
+        //   window.print()
+        //   localStorage.removeItem('products')
+        //   localStorage.removeItem('summary')
+        //   localStorage.removeItem('details')
+        //   this.$router.push('/sales-point')
+        // }, 2000)
 
       }
     },
     created(){
       this.printReceipt()
     }
+,numberToWords(num) {
+    if (num === 0) return "zero";
+
+    const belowTwenty = [
+        "", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
+        "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"
+    ];
+    const tens = [
+        "", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"
+    ];
+    const thousands = ["", "thousand", "million", "billion", "trillion"];
+
+    function helper(n) {
+        if (n === 0) return "";
+        else if (n < 20) return belowTwenty[n] + " ";
+        else if (n < 100) return tens[Math.floor(n / 10)] + " " + helper(n % 10);
+        else return belowTwenty[Math.floor(n / 100)] + " hundred " + helper(n % 100);
+    }
+
+    let result = "";
+    let i = 0;
+
+    while (num > 0) {
+        if (num % 1000 !== 0) {
+            result = helper(num % 1000) + thousands[i] + " " + result;
+        }
+        num = Math.floor(num / 1000);
+        i++;
+    }
+
+    return result.trim();
+}
+
+
     // watch: {
     //   items(){
 

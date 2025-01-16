@@ -25,10 +25,10 @@
           <thead>
             <tr>
               <th></th>
-              <th>Expenditure Type</th>
-              <th>Amount</th>
+              <th>expenditure type</th>
+              <th>amount</th>
               <th>date</th>
-              <th>Logged By</th>
+              <th>logged by</th>
               <th>actions</th>
             </tr>
           </thead>
