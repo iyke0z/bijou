@@ -92,7 +92,7 @@ export default {
         return
       }
       const PerfectScroll = await import('perfect-scrollbar')
-      PerfectScroll.initialize(this.$refs.sidebarScrollArea)
+      // PerfectScroll.initialize(this.$refs.sidebarScrollArea)
     },
     async fetchMenuLinks() {
       this.dynamicSidebarLinks = await getMenu() // Fetch and store menu links
