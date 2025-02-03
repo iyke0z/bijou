@@ -6,45 +6,194 @@
         <!--   you can change the color of the filter page using: data-color="blue | azure | green | orange | red | purple" -->
         <div class="content">
           <div class="container">
-            <div v-show="getDetails == []">
+            <div v-if="getDetails == []">
               <center>
-                <form @submit.prevent="saveDetails">
-                    <h3 slot="header" class="header text-center text-light">Add Business Details</h3>
+                <div v-if="currentStep === 1 && getDetails.length === 0">
+      <h3 class="header text-center text-light">Step 1: Business Setup</h3>
+      <form @submit.prevent="saveDetails">
+        <div class="form-group">
+          <label class="text-light" for="business-name">Business Name *</label>
+          <input
+            type="text"
+            id="business-name"
+            class="form-control col-6"
+            v-model="details.name"
+            required
+            placeholder="Business Name..."
+          />
+        </div>
 
-                      <div class="form-group">
-                        <input type="text" class="form-control col-6" v-model="details.name" required placeholder="Business Name...">
-                      </div>
+        <div class="form-group">
+          <label class="text-light" for="email">Email Address (Optional)</label>
+          <input
+            type="email"
+            id="email"
+            class="form-control col-6"
+            v-model="details.email"
+            placeholder="Email Address..."
+          />
+        </div>
 
-                      <div class="form-group">
-                        <input type="email" class="form-control col-6" v-model="details.email" placeholder="Email Address...">
-                      </div>
+        <div class="form-group">
+          <label class="text-light" for="website">Website (Optional)</label>
+          <input
+            type="text"
+            id="website"
+            class="form-control col-6"
+            v-model="details.website"
+            placeholder="Website..."
+          />
+        </div>
 
-                      <div class="form-group">
-                        <input type="text" class="form-control col-6" v-model="details.website" placeholder="Website...">
-                      </div>
+        <div class="form-group">
+          <label class="text-light" for="phone-one">Phone Number 1 *</label>
+          <input
+            type="text"
+            id="phone-one"
+            class="form-control col-6"
+            v-model="details.phone_one"
+            required
+            placeholder="Phone Number 1..."
+          />
+        </div>
 
-                      <div class="form-group">
-                        <input type="text" class="form-control col-6" v-model="details.phone_one" required placeholder="Phone Number 1...">
-                      </div>
+        <div class="form-group">
+          <label class="text-light" for="phone-two">Phone Number 2 (Optional)</label>
+          <input
+            type="text"
+            id="phone-two"
+            class="form-control col-6"
+            v-model="details.phone_two"
+            placeholder="Phone Number 2..."
+          />
+        </div>
 
-                      <div class="form-group">
-                        <input type="text" class="form-control col-6" v-model="details.phone_two" required placeholder="Phone Number 2...">
-                      </div>
+        <div class="form-group">
+          <label class="text-light" for="motto">Motto (Optional)</label>
+          <input
+            type="text"
+            id="motto"
+            class="form-control col-6"
+            v-model="details.motto"
+            placeholder="Motto..."
+          />
+        </div>
 
-                      <div class="form-group">
-                        <input type="text" class="form-control col-6" v-model="details.motto" placeholder="Motto...">
-                      </div>
+        <div class="form-group">
+          <label class="text-light" for="vat">VAT *</label>
+          <input
+            type="number"
+            id="vat"
+            step="any"
+            class="form-control col-6"
+            v-model="details.vat"
+            required
+            placeholder="VAT..."
+          />
+        </div>
 
-                      <div class="form-group">
-                        <input type="number" step="any" class="form-control col-6" v-model="details.vat" required placeholder="VAT...">
-                      </div>
-                      <div class="form-group">
-                        <button type="submit" class="btn btn-warning mb-3 col-sm-6">Create</button>
-                      </div>
-                </form>
+        <div class="form-group">
+          <button type="submit" class="btn btn-warning mb-3 col-sm-6">
+            Create
+          </button>
+        </div>
+      </form>
+                </div>
+
+                <!-- Step 2: Admin Account Creation -->
+                <div v-if="currentStep === 2 || getDetails.length !== 0 && userCount === 0">
+                  <h3 class="header text-center text-light">Step 2: Admin Account Creation</h3>
+                  <form @submit.prevent="createAdmin">
+                    <div class="form-group">
+                      <label class="text-light" for="fullname">Full Name *</label>
+                      <input
+                        type="text"
+                        id="fullname"
+                        class="form-control col-6"
+                        v-model="admin.fullname"
+                        required
+                        placeholder="Full Name..."
+                      />
+                    </div>
+
+                    <div class="form-group">
+                      <label class="text-light" for="admin-email">Email *</label>
+                      <input
+                        type="email"
+                        id="admin-email"
+                        class="form-control col-6"
+                        v-model="admin.email"
+                        required
+                        placeholder="Email..."
+                      />
+                    </div>
+
+                    <div class="form-group">
+                      <label class="text-light" for="phone">Phone *</label>
+                      <input
+                        type="text"
+                        id="phone"
+                        class="form-control col-6"
+                        v-model="admin.phone"
+                        required
+                        placeholder="Phone..."
+                      />
+                    </div>
+
+                    <div class="form-group">
+                      <label class="text-light" for="address">Address *</label>
+                      <input
+                        type="text"
+                        id="address"
+                        class="form-control col-6"
+                        v-model="admin.address"
+                        required
+                        placeholder="Address..."
+                      />
+                    </div>
+
+                    <div class="form-group">
+                      <label class="text-light" for="password">Password *</label>
+                      <input
+                        type="password"
+                        id="password"
+                        class="form-control col-6"
+                        v-model="admin.password"
+                        required
+                        placeholder="Password..."
+                      />
+                    </div>
+
+                    <div class="form-group">
+                      <label class="text-light" for="dob">Date of Birth *</label>
+                      <input
+                        type="date"
+                        id="dob"
+                        class="form-control col-6"
+                        v-model="admin.dob"
+                        required
+                      />
+                    </div>
+
+                    <div class="form-group">
+                      <label class="text-light" for="gender">Gender *</label>
+                      <select id="gender" class="form-control col-6" v-model="admin.gender" required>
+                        <option value="">Select Gender...</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group">
+                      <button type="submit" class="btn btn-warning mb-3 col-sm-6">
+                        Create Admin Account
+                      </button>
+                    </div>
+                  </form>
+                </div>
               </center>
             </div>
-            <div class="col-lg-4 col-md-6 ml-auto mr-auto" v-if="getDetails != []">
+            <div class="col-lg-4 col-md-6 ml-auto mr-auto"  v-if="getDetails != [] &&  userCount > 0">
               <form @submit.prevent="login">
                 <card type="login">
                   <h3 slot="header" class="header text-center">Login</h3>
@@ -100,10 +249,48 @@ import RolesPriviledge from '@/javascript/Api/RolesPriviledge';
           this.getDetails = result.data
         })
       },
-
+      getUsers(){
+        BusinessDetails.get_users().then((result) => {
+          this.userCount = result.data
+          console.log(this.userCount)
+        })
+      },
+      goToStep(step) {
+      this.currentStep = step;
+    },
       saveDetails(){
         BusinessDetails.create(this.details).then((result) => {
-          location.reload()
+          this.goToStep(2)
+          
+          // location.reload()
+        })
+      },
+
+      createAdmin(){
+        BusinessDetails.create_user(this.admin).then((res) => {
+          if (res.status == 200) {
+            Swal.fire({
+              position: 'top-end',
+              icon: 'success',
+              title: 'Admin account created successfully!',
+              customClass: 'Swal-wide',
+              showConfirmButton: false,
+              timer: 3000
+            })
+            
+            location.reload()
+
+          } else {
+            Swal.fire({
+              position: 'top-end',
+              icon: 'error',
+              title: 'An error occurred!',
+              customClass: 'Swal-wide',
+              showConfirmButton: false,
+              timer: 3000
+            })
+            
+          }
         })
       },
 
@@ -163,17 +350,32 @@ import RolesPriviledge from '@/javascript/Api/RolesPriviledge';
           website:'',
           phone_one:'',
           phone_two:'',
-          motto:'',
-          vat:'',
+          motto:'Personalized shopping experience',
+          vat:0,
           status:'active',
+        },
+        currentStep: 1,
+        admin: {
+          fullname: '',
+          email: '',
+          phone: '',
+          address: '',
+          role_id: 1,
+          password: '',
+          picture:"",
+          dob: '',
+          gender: '',
+          shop_id: 1, // Default value, not shown in the form
         },
         getDetails:[],
         componentKey:0,
-        loading: false
+        loading: false,
+        userCount:0
       }
     },
     created() {
       this.checkDetails()
+      this.getUsers()
     },
     beforeDestroy() {
       this.closeMenu()

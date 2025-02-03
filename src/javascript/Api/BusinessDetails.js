@@ -2,7 +2,7 @@ import Api from "./Api"
 
 export default {
     create(form) {
-        return Api.post('/business/create', form)
+        return Api.post('/admin/business/create', form)
     },
     update(form, id) {
         return Api.post('/business/update/' + id, form)
@@ -36,5 +36,11 @@ export default {
     },
     activate(form) {
         return Api.post('/activation/activate', form)
+    },
+    create_user(form){
+        return Api.post('/admin/create/user', form)
+    },
+    get_users(){
+        return Api.get('/user-count')
     }
 }
