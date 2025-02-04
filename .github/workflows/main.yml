@@ -119,8 +119,7 @@ jobs:
             "24hrs")
               API_URL="https://api.24hrs.ngmkt.site"
               ;;
-            *)
-             "jtsforte")
+            "jtsforte")
               API_URL="https://api.jtsforte.ngmkt.site"
               ;;
             *)
