@@ -48,6 +48,7 @@ import Shops from '@/components/Dashboard/Views/Shops/Shops.vue'
 import axios from 'axios'
 import RolesPriviledge from '@/javascript/Api/RolesPriviledge'
 import BankStatement from '@/components/Dashboard/Views/Report/BankStatement.vue'
+import Prompt from '@/components/Dashboard/Views/AI/Prompt.vue'
 
 
 let loginPage = {
@@ -94,6 +95,31 @@ let kitchen = {
             return next({ name: 'Login' })
         })
     },
+}
+let prompt = {
+    path: '/',
+    name: 'prompt',
+    component: DashboardLayout,
+    beforeEnter: (to, from, next) => {
+        User.auth().then((result) => {
+            if (result) {
+                // if (result.data.role_id == 1) {
+                    next()
+                // } else {
+                //     return next({ name: 'dashboard' })
+                // }
+            } else {
+                return next({ name: 'Login' })
+            }
+        }).catch((err) => {
+            return next({ name: 'Login' })
+        })
+    },
+    children: [{
+        path: 'prompt',
+        name: 'prompt',
+        component: Prompt
+    }],
 }
 let bar = {
     path: '/bar',
@@ -594,6 +620,7 @@ const routes = [
     reporprint,
     shops,
     lockPage,
+    prompt,
     settings,
     {
         path: '/admin',

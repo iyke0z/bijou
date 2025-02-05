@@ -16,6 +16,13 @@ const menuItems = [
         path: '/business/knowledge-base'
     },
     {
+        name: 'AI Agent',
+        icon: 'fa fa-comment',
+        perimssionRequired: false,
+        permissions: [],
+        path: '/prompt'
+    },
+    {
         name: 'Shops',
         icon: 'fa fa-home',
         perimssionRequired: true,
