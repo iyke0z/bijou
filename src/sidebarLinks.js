@@ -9,6 +9,13 @@ const menuItems = [
         path: '/admin/overview'
     },
     {
+        name: 'How to use',
+        icon: 'fa fa-question',
+        perimssionRequired: false,
+        permissions: [],
+        path: '/business/knowledge-base'
+    },
+    {
         name: 'Shops',
         icon: 'fa fa-home',
         perimssionRequired: true,

@@ -38,7 +38,7 @@
           v-for="single_package in displayedPackages"
           :key="single_package.id"
         >
-          <div class="card card-stats">
+          <div class="card card-stats" v-if="network == null">
             <div class="card-header lead">
               <center>
                 <h5 class="text-muted">{{ single_package.name }}</h5><br />
@@ -80,6 +80,9 @@
               </div>
             </center>
           </div>
+        </div>
+        <div v-if="error != null" style="justify-items: center;">
+        {{ error }}, cannot load packages
         </div>
       </div>
     </div>
@@ -132,6 +135,7 @@ export default {
       loading: false,
       categories: null,
       details: null,
+      error: null, 
       packages: null,
       business: null,
       code: null,
@@ -154,7 +158,7 @@ export default {
           this.loading = false;
         })
         .catch((error) => {
-          console.error(error);
+          this.error = error.message;
           this.loading = false;
         });
     },
@@ -216,3 +220,23 @@ export default {
   },
 };
 </script>
+
+<style>
+    .loader {
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        border: 16px solid black;
+        border-top: 16px solid gray;
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+</style>

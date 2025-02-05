@@ -20,31 +20,32 @@
       class="text-white bg-danger px-2 py-2 d-inline-block"
     >
       Subscription Expired, 
-      <small class="text-light">Click to continue</small>
+      <small class="text-light">Click to subscribe</small>
     </span>
     <span
       v-if="expiry_response[0] == 'active'"
       class="text-light bg-success px-2 py-2 d-inline-block"
     >
-      Subscription Active
+      Subscription Active 
+
     </span>
     <span
       v-if="expiry_response[0] == 'expires_today'"
       class="text-light bg-danger px-2 py-2 d-inline-block"
     >
-      Subscription Expires Today
+      Subscription Expires Today <small class="text-light">Click to renew</small>
     </span>
     <span
       v-if="expiry_response[0] == 'expires_tomorrow'"
       class="text-dark bg-info px-2 py-2 d-inline-block"
     >
-      Subscription Expiring Tomorrow
+      Subscription Expiring Tomorrow <small class="text-light">Click to renew</small>
     </span>
     <span
       v-if="expiry_response[0] == 'expires_in_two_days'"
       class="text-dark bg-warning px-2 py-2 d-inline-block"
     >
-      Subscription Expiring In Two Days
+      Subscription Expiring In Two Days <small class="text-light">Click to renew</small>
     </span>
   <!-- </span> -->
 </a>
