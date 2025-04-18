@@ -2,7 +2,7 @@
   <div class="table-responsive">
     <div class="loader" v-if="loading"></div>
 
-    <div class="mb-2" v-if="expiry_response && expiry_response[0] != 'active'">
+    <div class="mb-2" v-if="expiry_response[0] != 'active'">
         <span v-if="expiry_response[0] == 'expired'" class="text-white bg-danger pr-2 pl-2 pt-2 pb-2">Subscription Expired <small>Subscribe to continue </small></span>
         <span v-if="expiry_response[0] == 'active'" class="text-light bg-success pr-2 pl-2 pt-2 pb-2">Subscription Active</span>
         <span v-if="expiry_response[0] == 'expires_today'" class="text-light bg-danger pr-2 pl-2 pt-2 pb-2">Subscription Expires Today</span>
@@ -169,16 +169,12 @@
     <p class="lead">Total:</p>
   </div>
   <div class="col-8 col-md-8">
-    <p class="lead">&#8358; {{ (this.total + parseFloat(this.logistics)).toLocaleString() }}</p>
+    <p class="lead">&#8358; {{ this.total.toLocaleString() }}</p>
   </div>
 </div>
 
 <div class="row ml-1">
-  <div class="form-group">
-    <label for="">Logistics Amount</label>
-    <input type="number" step="any" v-model="logistics" class="form-control"/>
-  </div>
-  <div class="form-group col-4">
+  <div class="form-group col-12 col-md-5">
     <label for="">Payment Method</label>
     <select v-model="payment_method" :disabled="on_credit && part_payment" class="form-control">
       <option value="cash">Cash</option>
@@ -192,9 +188,8 @@
   <div class="form-group col-6 col-md-6">
     <label for=""></label><br />
     <button class="btn btn-success mr-2" @click.prevent="pay">Pay <i class="fa fa-money" aria-hidden="true"></i></button>
-    <button class="btn btn-primary" @click.prevent="reset">Reset <i class="fa fa-refresh" aria-hidden="true"></i></button>
-    <a class="btn btn-warning" @click.prevent="generateInvoice" target="_blank">Generate Invoice <i class="fa fa-print" aria-hidden="true"></i></a>
-    <a class="btn btn-danger" @click.prevent="printReceipt" target="_blank">Print Receipt <i class="fa fa-print" aria-hidden="true"></i></a>
+    <button class="btn btn-secondary" @click.prevent="reset">Reset <i class="fa fa-refresh" aria-hidden="true"></i></button>
+    <a class="btn btn-secondary" @click.prevent="printReceipt" target="_blank">Print Receipt <i class="fa fa-print" aria-hidden="true"></i></a>
   </div>
 </div>
 
@@ -208,26 +203,9 @@
     <!-- <ImageBarcodeReader @decode="onDecode" @error="onError"></ImageBarcodeReader> -->
 
       <!-- <receipt :key="receiptKey" v-show="receipt" :items="response" :details="business_name"/> -->
-       <div>
-        <center><h3>Create New Customer</h3>
-          <form @submit.prevent="createCustomer">
-          <label>Fullname</label><br/>
-        <input type="text" v-model="customer_form.fullname" step="any" class="form-control col-4  mb-2 form-control-sm" style="width: 100%; min-width: 120px;" required>
-          <label>Biling Address</label><br/>
-        <input type="text" v-model="customer_form.address" step="any" class="form-control col-4 mb-2 form-control-sm" style="width: 100%; min-width: 120px;" required>
-          <label>Phone Number</label><br/>
-        <input type="text" v-model="customer_form.phone" step="any" class="form-control col-4 mb-2 form-control-sm" style="width: 100%; min-width: 120px;" required>
-          <label>Email Address</label><br/>
-        <input type="text" v-model="customer_form.email" step="any" class="form-control col-4 mb-2 form-control-sm" style="width: 100%; min-width: 120px;" required>
-        <button class="btn btn-success" type="submit">Submit</button></form>
-
-      </center>
-       </div>
   </div >
-  
 </template>
 <script>
-
 import Product from '@/javascript/Api/Product'
 import Customer from '@/javascript/Api/Customer'
 import Vat from '@/javascript/Api/BusinessDetails'
@@ -242,13 +220,6 @@ import User from '@/javascript/Api/User'
     components:{ Calculator, Receipt},
     data() {
       return {
-        customer_form: {
-          fullname: null,
-          address: null,
-          phone: null,
-          email: null,
-          wallet_balance: 0
-        },
         customer_id: null,
         discount_pctge:0,
         is_discount_code: 0,
@@ -283,45 +254,11 @@ import User from '@/javascript/Api/User'
         expiry_response:null,
         shopName:null,
         loading:false,
-        negative_stock: false,
-        logistics: 0
+        negative_stock: false
       }
     },
 
     methods: {
-      createCustomer(){
-        this.loading = true
-        Customer.create(this.customer_form).then((result) => {
-          Swal.fire({
-            position: 'top-end',
-            icon: 'success',
-            title: result.data.message,
-            customClass: 'Swal-wide',
-            showConfirmButton: false,
-            timer: 3000
-          })
-          this.customer_form = {
-          fullname:null,
-          email:null,
-          phone:null,
-          address:null,
-          wallet_balance:0
-        }
-        this.loading = false
-        }).catch((err) => {
-         Swal.fire({
-              position: 'top-end',
-              icon: 'error',
-              title: err?.response?.data?.error ?? err.response.data.message,
-              customClass: 'Swal-wide',
-              showConfirmButton: false,
-              timer: 3000
-            })
-            this.loading = false
-        });
-
-        this.getCustomers()
-      },
       handleInput() {
         if (!this.barcodeMode) {
           this.searchProduct();
@@ -397,7 +334,7 @@ import User from '@/javascript/Api/User'
         if(this.products.length > 0){
           this.getTotal()
             var vatAmt = this.vat/100 * this.subtotal
-            var total = this.subtotal + vatAmt + parseFloat(this.logistics)
+            var total = this.subtotal + vatAmt
           var summary = {
             ref_no:this.ref,
             amount: this.subtotal,
@@ -405,8 +342,7 @@ import User from '@/javascript/Api/User'
             vat: this.vat,
             total:total,
             payment_method: this.payment_method,
-            part_payment:this.part_payment_amount,
-            logistics:this.logistics
+            part_payment:this.part_payment_amount
           }
           localStorage.setItem('products', JSON.stringify(this.products))
           localStorage.setItem('summary', JSON.stringify(summary))
@@ -423,15 +359,7 @@ import User from '@/javascript/Api/User'
       printReceipt(){
         const receiptUrl = '/receipt'
         window.open(receiptUrl, "_blank"); // Opens the URL in a new tab
-      },
 
-      newSalesOrder(){
-        const salesOrderUrl = '/sales-order'
-        window.open(salesOrderUrl, "_blank"); // Opens the URL in a new tab
-      },
-      generateInvoice(){
-        const invoiceUrl = '/invoice'
-        window.open(invoiceUrl, "_blank"); // Opens the URL in a new tab
       },
 
       searchProduct(){
@@ -578,10 +506,7 @@ import User from '@/javascript/Api/User'
           "description": "new sale",
           "amount": this.total,
           "is_order":false,
-          "part_payment_amount": this.part_payment_amount,
-          "discount": this.discount_pctge,
-          "vat": this.vat,
-          "logistics": this.logistics
+          "part_payment_amount": this.part_payment_amount
         }
         Sales.new_sale(post).then((result) => {
           this.response = {products: this.products, summary: result.data.data}
@@ -631,7 +556,6 @@ import User from '@/javascript/Api/User'
         this.on_credit = false
         this.payment_method = "cash"
         this.products = []
-        this.logistics = 0
       },
       getTotal(){
         var sum = []

@@ -1,6 +1,7 @@
 <template>
+  <!-- :data-color="backgroundColor" -->
   <div class="sidebar"
-       :data-color="backgroundColor"
+      style="background-color: black;"
        :data-active-color="activeColor">
     <div class="logo">
       <a class="simple-text logo-mini"
@@ -21,7 +22,7 @@
         <slot name="links">
           <sidebar-item v-for="(link, index) in dynamicSidebarLinks"
                         :key="link.name + index"
-                        :link="link">
+                        :link="link" :title="link.title">
             <sidebar-item v-for="(subLink, subIndex) in link.children"
                           :key="subLink.name + subIndex"
                           :link="subLink">
@@ -42,7 +43,7 @@ export default {
   props: {
     title: {
       type: String,
-      default: 'Business Management Solution',
+      default: 'ngmkt',
     },
     backgroundColor: {
       type: String,
@@ -56,10 +57,10 @@ export default {
     },
     logo: {
       type: String,
-      default: '/static/img/shoppingCart.png',
+      default: '/static/img/logo.png',
     },
     sidebarLinks: {
-      type: Array,
+      type: Function,
       default: () => [],
     },
     autoClose: {
@@ -84,6 +85,7 @@ export default {
     getDetails() {
       Details.details().then((result) => {
         this.details = result.data
+        localStorage.setItem('details', this.details?.name)
       })
     },
     async initScrollBarAsync() {

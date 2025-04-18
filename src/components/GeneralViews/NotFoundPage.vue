@@ -22,7 +22,7 @@
           </div>
         </div>
         <app-footer></app-footer>
-        <div class="full-page-background" style="background-image: url(static/img/shoppingCart.png) "></div>
+        <div class="full-page-background" style="background-image: url(static/img/background.jpg) "></div>
       </div>
     </div>
   </div>

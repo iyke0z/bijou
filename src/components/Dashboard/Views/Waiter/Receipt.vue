@@ -28,36 +28,40 @@
         </tbody>
       </table>
     </div>
-    <div class="TotalCalc" v-if="summary != null">
+    <div class="TotalCalc bordered border-dark" v-if="summary != null">
       <div class="row">
         <div class="col-4">Subotal:</div>
-        <div class="col-4"><b>&#8358; {{(summary?.amount).toLocaleString()}}</b></div>
+        <div class="col-8"><b>&#8358; {{(summary?.amount).toLocaleString()}}</b></div>
       </div>
       <div class="row">
         <div class="col-4">Discount</div>
-        <div class="col-4">{{summary?.discount}} %</div>
+        <div class="col-8">{{summary?.discount}} %</div>
       </div>
       <div class="row">
         <div class="col-4">V.A.T</div>
-        <div class="col-4">{{summary?.vat}}</div>
+        <div class="col-8">{{summary?.vat}}</div>
+      </div>
+      <div class="row">
+        <div class="col-4">Logistics</div>
+        <div class="col=8">{{summary?.logistics}}</div>
       </div>
       <div class="row">
         <div class="col-4">Total</div>
-        <div class="col-4"> <b>&#8358; {{Math.ceil(summary?.total).toLocaleString()}}</b></div>
+        <div class="col-8"> <b>&#8358; {{Math.ceil(summary?.total + parseFloat(summary?.logistics)).toLocaleString()}}</b></div>
       </div>
       <div class="row"  v-if="summary?.payment_method == 'part_payment'">
         <div class="col-4">Paid</div>
-        <div class="col-4">&#8358; {{Math.ceil((summary?.part_payment)).toLocaleString()}}</div>
+        <div class="col-8">&#8358; {{Math.ceil((summary?.part_payment)).toLocaleString()}}</div>
       </div>
       <div class="row" v-if="summary?.payment_method == 'part_payment'">
         <div class="col-4" >Balance</div>
-        <div class="col-4">&#8358; {{Math.ceil((summary?.total - summary?.part_payment)).toLocaleString()}}</div>
+        <div class="col-8">&#8358; {{Math.ceil((summary?.total - summary?.part_payment)).toLocaleString()}}</div>
       </div>
     </div>
   </div>
 
  <div class="keepIt">
-  <i>{{ numberToWords(Math.ceil(summary?.total)) }} naira only</i><br>
+  <i>{{ numberToWords(Math.ceil(summary?.total  + parseFloat(summary?.logistics))) }} naira only</i><br>
 
   <i>thank you for your patronage! <br>see you next time.</i>
 

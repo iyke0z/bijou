@@ -1,7 +1,7 @@
 <template>
   <navbar navbar-menu-classes="navbar-right" v-model="showMenu">
     <div class="navbar-wrapper">
-      <a class="navbar-brand" href="#pablo">Business Managment System</a>
+      <a class="navbar-brand" style="text-transform: lowercase;" href="#pablo">ngmkt</a>
     </div>
     <template slot="navbar-menu">
       <!-- <router-link to="/admin" class="nav-item" tag="li">

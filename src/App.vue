@@ -27,6 +27,7 @@
     display: inline-block;
     box-sizing: border-box;
     animation: rotation 1s linear infinite;
+    z-index: 1000;
     }
   
     @keyframes rotation {

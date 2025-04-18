@@ -15,6 +15,7 @@
             <option value="cogs">COGS</option>
             <option value="opex">OPEX</option>
             <option value="capex">CAPEX</option>
+            <option value="marketing_cost">Marketing Cost</option>
           </select>
         </div>
         <div class="form-group" v-if="form.expenditure_type == 'capex'">

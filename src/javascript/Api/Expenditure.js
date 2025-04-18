@@ -30,5 +30,16 @@ export default {
     },
     update_plan(form, id){
         return Api.put('/expenditure/update-plan/'+id+'?shop_id='+localStorage.getItem('shopId'), form)
-    }
+    },
+        upload_documents(form) {
+            return Api.post('/expenditure/documents/upload'+'?shop_id='+localStorage.getItem('shopId'), form)
+        },
+        delete_documents(id) {
+            return Api.delete('/expenditure/documents/delete/' + id+'?shop_id='+localStorage.getItem('shopId'))
+        },
+        download_documents(purchase_id) {
+            return Api.get('/expenditure/documents/download/' + purchase_id+'?shop_id='+localStorage.getItem('shopId'),  {
+                responseType: 'blob'
+              })
+        },
 }

@@ -28,6 +28,14 @@
             <input type="email" step="any" min="0" class="form-control col-8"  placeholder="Email Address" v-model="details.email"  required>
         </div> -->
         <br>
+        <div >
+            <label for="">Set Negative Stock</label>
+            <select v-model="details.is_negative_stock" class="form-control col-8">
+              <option :value="1">Yes</option>
+              <option :value="0">No</option>
+            </select>
+        </div>
+        <br>
 
         <div >
             <label for="">Motto</label>
@@ -35,15 +43,15 @@
         </div>
         <br>
 
-        <div >
+        <div>
             <label for="">Business Opening Time</label>
-            <input type="time" step="any" min="0" class="form-control col-8"  placeholder="Motto" v-model="details.motto"  required>
+            <input type="time" step="any" min="0" class="form-control col-8"  placeholder="Motto" v-model="details.times.start_time"  required>
         </div>
         <br>
 
-        <div >
-            <label for="">Business Closing Time</label>
-            <input type="time" step="any" min="0" class="form-control col-8"  placeholder="Motto" v-model="details.motto"  required>
+        <div>
+          <label for="">Business Closing Time</label>
+            <input type="time" step="any" min="0" class="form-control col-8"  placeholder="Motto" v-model="details.times.closing_time"  required>
         </div>
         <button class="btn btn-success" type="submit">Update <span v-if="loading" class="loader"></span></button>
       </form>
@@ -63,7 +71,7 @@
               category_id:null,
               stock:0,
               price:null,
-              code:null
+              code:null,
             }]},
             loading: false,
             categories:null,
@@ -88,7 +96,7 @@
               showConfirmButton: false,
               timer: 3000
             })
-            window.location.reload()
+            // window.location.reload()
           this.loading = false
           }).catch((err) => {
             Swal.fire({

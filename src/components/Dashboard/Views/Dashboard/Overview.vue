@@ -3,10 +3,10 @@
     <div class="loader" v-if="loading"></div>
    
       <marquee class="col-12 mt-4 mb-3" behavior="" direction="LEFT">
-        <b class="mr-3">OPENING BALANCE: &#8358; {{ (profitLoss?.accounting_balance?.opening_cash_balance).toLocaleString() }}</b> | 
-        <b class="mr-3">OPENING RECIEVABLE BALANCE: &#8358; {{ (profitLoss?.accounting_balance?.opening_receivables_balance).toLocaleString() }}</b> |
-        <b class="mr-3">CLOSING BALANCE: &#8358; {{ (profitLoss?.accounting_balance?.closing_cash_balance).toLocaleString() }}</b> |
-        <b class="mr-3">CLOSING RECIEVABLE BALANCE: &#8358; {{ (profitLoss?.accounting_balance?.closing_receivables_balance).toLocaleString() }}</b> |
+        <b class="mr-3">OPENING BALANCE: &#8358; {{ (profitLoss?.accounting_balance?.opening_cash_balance)?.toLocaleString() }}</b> | 
+        <b class="mr-3">OPENING RECIEVABLE BALANCE: &#8358; {{ (profitLoss?.accounting_balance?.opening_receivables_balance)?.toLocaleString() }}</b> |
+        <b class="mr-3">CLOSING BALANCE: &#8358; {{ (profitLoss?.accounting_balance?.closing_cash_balance)?.toLocaleString() }}</b> |
+        <b class="mr-3">CLOSING RECIEVABLE BALANCE: &#8358; {{ (profitLoss?.accounting_balance?.closing_receivables_balance)?.toLocaleString() }}</b> |
       </marquee>
     <div class="col-md-12">
       
@@ -25,7 +25,7 @@
             <label for="" class="mr-2">To: </label>
             <input type="date" class="border border-gray text-primary mb-2" v-model="sales_performance_to">
           </div>
-          <button class="btn btn-dark text-light" @click.prevent="getSalesPerformance()">Get Report <span v-if="isLoading" class="loader"></span></button>
+          <button class="btn btn-dark text-light" @click.prevent="getSalesPerformance()">Get Report <span v-if="loading" class="loader"></span></button>
 
         </template>
         <bar-chart :labels="salesPerformanceChart.labels"
@@ -51,7 +51,7 @@
             <label for="" class="mr-2">To: </label>
             <input type="date" class="border border-gray text-primary mb-2" v-model="opex_performance_to">
           </div>
-          <button class="btn btn-dark text-light" @click.prevent="getOpexPerformance()">Get Report <span v-if="isLoading" class="loader"></span></button>
+          <button class="btn btn-dark text-light" @click.prevent="getOpexPerformance()">Get Report <span v-if="loading" class="loader"></span></button>
         </template>
         
         <line-chart :labels="opexPerformanceChart.labels"
@@ -88,7 +88,7 @@
             <label for="" class="mr-2">To: </label>
             <input type="date" class="border border-gray text-primary mb-2" v-model="cogs_performance_to">
           </div>
-          <button class="btn btn-dark text-light" @click.prevent="getCogs()">Get Report <span v-if="isLoading" class="loader"></span></button>
+          <button class="btn btn-dark text-light" @click.prevent="getCogs()">Get Report <span v-if="loading" class="loader"></span></button>
 
         </template>
         <bar-chart :labels="cogsActivityChart.labels"
@@ -100,7 +100,7 @@
       </card>
     </div>
 
-    <div class="col-md-4">
+    <!-- <div class="col-md-4">
       <chart-card :chart-data="paymentMethodChart"
                   chart-type="Pie"
                   title="Payment Method Performane Chart"
@@ -117,15 +117,15 @@
             <label for="" class="mr-2">To: </label>
             <input type="date" class="border border-gray text-primary mb-2" v-model="method_performance_to">
           </div>
-          <button class="btn btn-dark text-light" @click.prevent="getMethodPerformance()">Get Report <span v-if="isLoading" class="loader"></span></button>
+          <button class="btn btn-dark text-light" @click.prevent="getMethodPerformance()">Get Report <span v-if="loading" class="loader"></span></button>
 
         </template>
         <template slot="footer">
           <hr>
         </template>
       </chart-card>
-    </div>
-    <div class="col-md-8">
+    </div> -->
+    <div class="col-md-12">
     
 
       <div class="card card-stats">
@@ -134,8 +134,9 @@
 
         <div class="col-12 col-md-12" :key="pnlKey">
             <div>
-            <center>
-              <p class="card-title"><h3>Profit & Loss Account</h3></p></center>
+              <div class="card-title">
+                <h3>Profit & Loss Account</h3>
+              </div>
               <div class="card-body">
                 <div>
                   <label for="" class="mr-2">From: </label>
@@ -145,43 +146,43 @@
                   <label for="" class="mr-2">To: </label>
                   <input type="date" class="border border-gray text-primary mb-2" v-model="profit_loss_to">
                 </div>
-                <button class="btn btn-dark text-light" @click.prevent="getProfitLoss()">Get Report <span v-if="isLoading" class="loader"></span></button>
+                <button class="btn btn-dark text-light" @click.prevent="getProfitLoss()">Get Report <span v-if="loading" class="loader"></span></button>
 
                 <div class="table-responsive">
                   <table class="table">
                   <tr>
                     <td>Turnover <br><small>Refers to the total revenue or sales <br>generated by the business during a specific period.
                     <br>Represents the income before any <br>costs or expenses are deducted.</small></td>
-                    <td>&#8358;{{ (profitLoss?.turnover).toLocaleString() }}</td>
+                    <td>&#8358;{{ (profitLoss?.turnover)?.toLocaleString() }}</td>
                   </tr>
                   <tr>
                     <td>Less: COGS <br><small>Stands for Cost of Goods Sold, which includes the direct costs <br> of producing or purchasing the goods or services sold by the company</small></td>
-                    <td>&#8358;{{ (profitLoss?.cogs).toLocaleString() }}</td>
+                    <td>&#8358;{{ (profitLoss?.cogs)?.toLocaleString() }}</td>
                   </tr>
                   <tr>
                     <td>Gross Profit <br><small>Gross Profit= Turnover − COGS.</small></td>
-                    <td>&#8358;{{ (profitLoss?.gross_profit).toLocaleString() }}</td>
+                    <td>&#8358;{{ (profitLoss?.gross_profit)?.toLocaleString() }}</td>
                   </tr>
                   <tr>
                     <td>Less: Operating Expenses <br><small>Short for Operating Expenses, which are the indirect costs involved in running the business.</small></td>
-                    <td>&#8358;{{ (profitLoss?.opex).toLocaleString() }}</td>
+                    <td>&#8358;{{ (profitLoss?.opex)?.toLocaleString() }}</td>
                   </tr>
                   <tr>
                     <td>Net Profit <br><small>Net Profit= Turnover − Total Expenditure</small></td>
-                    <td>&#8358;{{ (profitLoss?.net_profit).toLocaleString() }}</td>
+                    <td>&#8358;{{ (profitLoss?.net_profit)?.toLocaleString() }}</td>
                   </tr>
                   <tr>
                     <td>Depreciation <br><small>Value of assets</small></td>
-                    <td>&#8358;{{ (profitLoss?.depreciation).toLocaleString() }}</td>
+                    <td>&#8358;{{ (profitLoss?.depreciation)?.toLocaleString() }}</td>
                   </tr>
                   <tr>
                     <td>Total Expense <br><small>Total Expenditure= COGS + OPEX.</small></td>
-                    <td>&#8358;{{ (profitLoss?.total_expenditure).toLocaleString() }}</td>
+                    <td>&#8358;{{ (profitLoss?.total_expenditure)?.toLocaleString() }}</td>
                   </tr>
                   <!-- <tr>
                     <td>Profit Before Tax <br><small>Refers to the total revenue or sales <br>generated by the business during a specific period.
 <br>Represents the income before any <br>costs or expenses are deducted.</small></td>
-                    <td>&#8358;{{ (profitLoss?.net_profit).toLocaleString() }}</td>
+                    <td>&#8358;{{ (profitLoss?.net_profit)?.toLocaleString() }}</td>
                   </tr> -->
                   <tr>
                     <td>Gross Profit Margin <br><small>A percentage that measures the proportion of revenue left as Gross Profit after covering COGS.</small></td>
@@ -193,19 +194,19 @@
                   </tr>
                   <tr>
                       <td>OPENING BALANCE <br><small>Amount of cash available at the beginning of a financial period.</small></td>
-                      <td style="width:30%">&#8358; {{ (profitLoss?.accounting_balance?.opening_cash_balance).toLocaleString() }}</td>
+                      <td style="width:30%">&#8358; {{ (profitLoss?.accounting_balance?.opening_cash_balance)?.toLocaleString() }}</td>
                   </tr>
                   <tr>
                       <td>OPENING RECEIVABLE BALANCE <br><small>Total amount owed to the business by customers at the beginning of a financial period.</small></td>
-                      <td style="width:30%">&#8358; {{ (profitLoss?.accounting_balance?.opening_receivables_balance).toLocaleString() }}</td>
+                      <td style="width:30%">&#8358; {{ (profitLoss?.accounting_balance?.opening_receivables_balance)?.toLocaleString() }}</td>
                   </tr>
                   <tr>
                       <td>CLOSING BALANCE <br><small>Amount of cash available at the end of a financial period.</small></td>
-                      <td style="width:30%">&#8358; {{ (profitLoss?.accounting_balance?.closing_cash_balance).toLocaleString() }}</td>
+                      <td style="width:30%">&#8358; {{ (profitLoss?.accounting_balance?.closing_cash_balance)?.toLocaleString() }}</td>
                   </tr>
                   <tr>
                       <td>CLOSING RECEIVABLE BALANCE <br><small>Total amount owed to the business by customers at the end of a financial period.</small></td>
-                      <td style="width:30%">&#8358; {{ (profitLoss?.accounting_balance?.closing_receivables_balance).toLocaleString() }}</td>
+                      <td style="width:30%">&#8358; {{ (profitLoss?.accounting_balance?.closing_receivables_balance)?.toLocaleString() }}</td>
                   </tr>
                 </table>
                 </div>
@@ -262,7 +263,6 @@
     },
     data() {
       return {
-        loading:false,
         sales_performance_from:null,
         sales_performance_to:null,
         opex_performance_from:null,
@@ -273,7 +273,7 @@
         method_performance_to: null, 
         profit_loss_from: null,
         profit_loss_to: null, 
-        isLoading:false,
+        loading:false,
 
         salesPerformanceChart: {
           labels: [],
@@ -637,22 +637,3 @@
     }
   }
 </script>
-<style>
-    .loader {
-        position: fixed;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        border: 16px solid black;
-        border-top: 16px solid gray;
-        border-radius: 50%;
-        width: 120px;
-        height: 120px;
-        animation: spin 1s linear infinite;
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-</style>

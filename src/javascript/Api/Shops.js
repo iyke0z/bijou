@@ -22,6 +22,18 @@ export default {
     },
     assign_shops(form, id){
         return Api.post('/shop/assign/'+id+'?shop_id='+localStorage.getItem('shopId'), form)
-    }
+    },
+    initiate_transfer(form){
+        return Api.post('/shop/initiate-transfer', form )
+    },
+    recent_transfers(id){
+        return Api.get('/shop/recent-transfers/'+id+'?shop_id='+localStorage.getItem('shopId'))
+    },
+    approve_transfer(id){
+        return Api.post('/shop/approve-transfer/'+id )
+    },
+    reject_transfer(id){
+        return Api.post('/shop/reject-transfer/'+id )
+    },
 
 }

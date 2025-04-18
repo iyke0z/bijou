@@ -1,0 +1,297 @@
+<template>
+    <div class="table-responsive"><br>
+      <span class="loader" v-if="loading"></span>
+  
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Expenditures</h5>
+          <h6>Filter</h6>
+          <form action="" @submit.prevent="filter()">
+            <div class="form-group">
+              <label for="">Start Date</label>
+            <input type="date" v-model="form.start_date" class="form-control col-6"  required>
+            </div>
+            <div class="form-group">
+              <label for="">End Date</label>
+              <input type="date" v-model="form.end_date" class="form-control col-6" required>
+            </div>
+            <button class="btn btn-success" type="submit">Fiter</button>
+          </form>
+          <div class="table-responsive">
+            <table id="table" class="table table-striped">
+            <thead>
+              <tr>
+                <th></th>
+                <th>expenditure type</th>
+                <th>amount</th>
+                <th>date</th>
+                <th>logged by</th>
+                <th>Payment Method</th>
+                <th>Amount Expected</th>
+                <th>Balance</th>
+                <th>Amount Deposited</th>
+                <th>actions</th>
+              </tr>
+            </thead>
+            <tbody :key="tableKey">
+              <tr v-for="(expenditure, index) in all_expenditures" :key="expenditure.id">
+                <td>{{index+1}}</td>
+                <td>{{expenditure.type.name}}</td>
+                <td>{{expenditure.amount.toLocaleString()}}</td>
+                <td>{{dateTime(expenditure.created_at)}}</td>
+                <td>{{expenditure.user.fullname}}</td>
+                <td>{{expenditure.payment_method}}</td>
+                <td>
+                  {{ ((expenditure.amount)).toLocaleString() }}
+                </td>
+                <td v-if="payment_method !== 'cash' && payment_method !== 'pos' && payment_method !== 'transfer'">
+                  {{ ((expenditure.amount) - expenditure.part_payment_amount).toLocaleString() }}
+                </td>
+                <td v-else>
+                  0
+                </td>
+                <td v-if="payment_method !== 'cash' && payment_method !== 'pos' && payment_method !== 'transfer'">
+                  {{ (expenditure.part_payment_amount).toLocaleString() }}
+                </td>
+                <td v-else>
+                  {{ ((expenditure.amount)).toLocaleString() }}
+                </td>
+                <td>
+                  <p-button class="mr-2" title="delete" type="danger" size="sm" icon @click.prevent="delete_expenditure(expenditure)">
+                    <i class="fa fa-trash"></i>
+                  </p-button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          </div>
+        </div>
+      </div>
+  
+    </div>
+  </template>
+  <script>
+  import { Button, Modal } from '@/components/UIComponents'
+  import Category from '@/javascript/Api/Categories'
+  import Expenditure from '@/javascript/Api/Expenditure'
+  import Swal from 'sweetalert2'
+  import helpers from '@/javascript/helpers'
+    export default{
+      components: {
+        Modal
+      },
+      data() {
+        return {
+          updateMode:false,
+          tableKey:0,
+          purchaseKey:0,
+          rowCount:1,
+          expenditure:null,
+          form:{start_date:null, end_date:null},
+          modals: {
+            classic: false,
+            notice: false,
+            mini: false
+          },
+          expenditure_details:null,
+          all_expenditures: null,
+          modalTitle:null,
+          modalAction:null,
+          modalContent:null,
+          modalOpen: false,
+          loading: false,
+          selectedId: null,
+          payment_method : 'cash',
+          payment_status : 'paid',
+          part_payment_amount : 0,
+          duration : 0,
+          expenditureId:null,
+          docForm: {
+            document_type: '',
+            files: []
+          },
+        documentModal: {
+          classic: false,
+            notice: false,
+            mini: false
+        },
+        uploadedDocuments: [], // fetched previously or after upload
+        }
+      },
+      methods: {
+        openModal(title, item){
+          this.modalOpen = true
+          this.modalTitle = title
+          this.detail = item.id
+          this.selectedId = item.id
+        },
+        // openModal(type, title, action, expenditure){
+        //   this.modalTitle = title
+        //   this.modals[type] = true
+        //   this.modalAction = action
+        //   if(action == 'update'){
+        //     this.updateMode = true
+        //     this.expenditure = expenditure.id
+        //     this.form = {
+        //       amount:expenditure.amount,
+        //     }
+        //   }
+        // },
+        goToRoute(){
+          this.$router.push('/expenditure/create/')
+        },
+        delete_expenditure(expenditure){
+          this.loading = true
+          Expenditure.delete(expenditure.id).then((result) => {
+            Swal.fire({
+              position: 'top-end',
+              icon: 'success',
+              title: result.data.message,
+              customClass: 'Swal-wide',
+              showConfirmButton: false,
+              timer: 3000
+            })
+            this.allexpenditures()
+            this.expenditure_details = null
+            this.loading = false
+          }).catch((err) => {
+            Swal.fire({
+                position: 'top-end',
+                icon: 'error',
+                title: err?.response?.data?.error ?? err.response.data.message,
+                customClass: 'Swal-wide',
+                showConfirmButton: false,
+                timer: 3000
+              })
+              this.loading = false
+          });
+        },
+  
+        openUploadModal(expenditure){
+          this.documentModal.classic = true
+          this.expenditureId = expenditure
+        },
+  
+        updatePlan(){
+          this.loading = true
+  
+          let payload = {
+            payment_method: this.payment_method,
+            payment_status: this.payment_status,
+            part_payment_amount: this.part_payment_amount,
+            duration: this.duration
+          }
+  
+          Expenditure.update_plan(payload, this.selectedId).then(res => {
+            Swal.fire({
+              position: 'top-end',
+              icon: 'success',
+              title: res.data.message,
+              customClass: 'Swal-wide',
+              showConfirmButton: false,
+              timer: 3000
+            })
+            this.modalOpen = false
+            this.loading = false
+  
+          }).catch(err => {
+            Swal.fire({
+              position: 'top-end',
+              icon: 'error',
+              title: "error",
+              customClass: 'Swal-wide',
+              showConfirmButton: false,
+              timer: 3000
+            })
+            this.loading = false
+  
+          })
+        },
+  
+        setStatus(){
+          if (this.payment_method == 'cash' || this.payment_method == 'transfer' || this.payment_method == "is_accrual") {
+            this.payment_status = "paid"
+          }else{
+            this.payment_status = "not_paid"
+          }
+        },
+  
+        update_expenditue(){
+          this.loading = true
+          Expenditure.update(this.form, this.expenditure).then((result) => {
+            Swal.fire({
+              position: 'top-end',
+              icon: 'success',
+              title: result.data.message,
+              customClass: 'Swal-wide',
+              showConfirmButton: false,
+              timer: 3000
+            })
+            this.updateMode = false
+            this.form = {start_date:null, end_date:null}
+            this.modals.classic = false
+            this.allexpenditures()
+            this.loading = false
+          }).catch((err) => {
+            Swal.fire({
+                position: 'top-end',
+                icon: 'error',
+                title: err?.response?.data?.error ?? err.response.data.message,
+                customClass: 'Swal-wide',
+                showConfirmButton: false,
+                timer: 3000
+              })
+              this.loading = false
+          });
+        },
+        allexpenditures(){
+          this.loading = true
+          Expenditure.all_expenditures().then((result) => {
+              this.all_expenditures = result.data.data
+              this.tableKey++
+              this.datatable()
+              this.loading = false
+          })
+        },
+        datatable(){
+          $(function() {
+            $('#table').DataTable({
+              dom: 'Bfrtip',
+            buttons: ['excel', 'pdf', 'print'],
+              "bDestroy": true,
+                  pageLength: 5,
+                  lengthMenu: [[5,10,20], [5, 10, 20]],
+              });
+          });
+        },
+        dateTime(date){
+          return helpers.dateTime(date)
+        },
+        filter(){
+          Expenditure.report(this.form).then((result) => {
+            this.all_expenditures = result.data.data
+              this.tableKey++
+              this.datatable()
+          })
+        },
+          api_refresh(){
+              this.allexpenditures()
+          },
+      async fetchUploadedDocs() {
+        try {
+          const res = await axios.get(`/api/expenditure-documents/${this.expenditureId}`);
+          this.uploadedDocuments = res.data.documents;
+        } catch (error) {
+          console.error("Failed to fetch documents.");
+        }
+      }
+    
+      },
+      created(){
+        this.allexpenditures()
+      }
+  
+    }
+  </script>
+  
+  

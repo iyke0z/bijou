@@ -25,11 +25,11 @@
           </small>
         </span>
       </a>
-      <small>
-        <p class="text-white text-sm" v-if="role == 1">
-          Cashflow: &#8358; {{balance.toLocaleString()}} 
-        </p>
-      </small>
+      <!-- <small> -->
+        <a href="#" style="text-decoration: none;" class="text-white" v-if="role == 1"  data-toggle="collapse" :aria-expanded="!isClosed">
+          <i class="fa fa-bank"></i>: &#8358; {{balance.toLocaleString()}} 
+        </a>
+      <!-- </small> -->
       
         
       <div class="clearfix"></div>
@@ -73,6 +73,8 @@ export default {
       User.auth()
         .then((result) => {
           this.user = result.data;
+          localStorage.setItem('authUser', result.data.id)
+
         })
         .catch((err) => {
           console.error("Error fetching user data:", err);

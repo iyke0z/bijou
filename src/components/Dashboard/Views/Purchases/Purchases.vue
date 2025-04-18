@@ -28,33 +28,44 @@
           <thead>
             <tr>
               <th></th>
-              <th>price</th>
+              <th>amount</th>
               <!-- <th>added costs</th> -->
               <th>date</th>
               <th>Logged By</th>
+              <th>Deposit</th>
+              <th>Balance</th>
+              <th>Transaction Status</th>
               <th>actions</th>
             </tr>
           </thead>
           <tbody :key="tableKey">
             <tr v-for="(purchase, index) in all_purchases" :key="purchase.id">
               <td>{{index+1}}</td>
-              <td>{{purchase?.price?.toLocaleString()}}</td>
+              <td>₦{{purchase?.price?.toLocaleString()}}</td>
               <!-- <td>{{purchase?.added_costs?.toLocaleString()}}</td> -->
               <td>{{dateTime(purchase?.created_at)}}</td>
               <td>{{purchase?.user?.fullname}}</td>
+              <td>₦{{(purchase?.price - purchase.total_balance)?.toLocaleString()}}</td>
+              <td>₦{{(purchase.total_balance)?.toLocaleString()}}</td>
+              <td v-if="purchase.total_balance > 0">Open</td>
+              <td v-else>Closed</td>
               <td>
                 <!-- <p-button class="mr-2" title="details" type="warning" size="sm" icon @click.prevent="goToRoute(purchase)">
                   <i class="fa fa-eye"></i>
                 </p-button> -->
-                <p-button class="mr-2" title="update" type="info" size="sm" icon @click.native="goToRoute(purchase)">
+                <!-- <p-button class="mr-2" title="update" type="info" size="sm" icon @click.native="goToRoute(purchase)">
                   <i class="fa fa-edit"></i>
-                </p-button>
-                <p-button class="mr-2" title="delete" type="danger" size="sm" icon @click.prevent="delete_purchase(purchase)">
-                  <i class="fa fa-trash"></i>
-                </p-button>
+                </p-button> -->
                 <p-button class="mr-2" title="details" type="primary" size="sm" icon @click="purchase_detail(purchase.id)">
                   <i class="fa fa-search" aria-hidden="true"></i>
                 </p-button>
+                <p-button class="mr-2" title="upload documents" type="warning" size="sm" icon @click="openUploadModal(purchase.id)">
+                  <i class="fa fa-upload" aria-hidden="true"></i>
+                </p-button>
+                <p-button v-if="purchase.documents.length > 0" class="mr-2" title="download documents" type="secondary" size="sm" icon @click="downloadDocs(purchase.id)">
+                  <i class="fa fa-download" aria-hidden="true"></i>
+                </p-button>
+                
               </td>
             </tr>
           </tbody>
@@ -74,6 +85,9 @@
               <th>previous stock</th>
               <th>qty purchased</th>
               <th>current stock</th>
+              <th>Amount Expected</th>
+              <th>Balance</th>
+              <th>Amount Deposited</th>
               <th>action</th>
             </tr>
           </thead>
@@ -94,12 +108,30 @@
               <td v-if="purchase.previous_stock != null">
                 {{purchase.qty + purchase.previous_stock}}
               </td>
-              <td v-if="payment_status != 'paid'">
+              <!-- expected amount-->
+              <td>
+                {{ ((purchase.cost * purchase.qty)).toLocaleString() }}
+              </td>
+              <!-- balance -->
+              <td v-if="purchase.payment_status == 'not_paid' && (purchase.payment_method == 'part_payment' || purchase.payment_method == 'on_credit' || purchase.payment_method == 'cash')">
+                {{ ((purchase.cost * purchase.qty) - purchase.part_payment_amount).toLocaleString() }}
+              </td>
+              <td v-else>
+                0
+              </td>
+              <!-- deposited -->
+              <td v-if="purchase.payment_status === 'not_paid' && (purchase.payment_method === 'part_payment' || purchase.payment_method === 'on_credit' || purchase.payment_method == 'cash')">
+                {{ (purchase.part_payment_amount).toLocaleString() }}
+              </td>
+              <td v-else>
+                {{ (purchase.cost * purchase.qty).toLocaleString() }}
+              </td>
+              <td v-if="((purchase.cost * purchase.qty) - purchase.part_payment_amount) > 0 && purchase.payment_status == 'not_paid'">
                 <p-button class="mr-2" title="update product plan" type="info" size="sm" @click.prevent="openModal('update '+ purchase.product.name+' Plan', purchase)">
                   <i class="fa fa-wrench"></i>
                 </p-button>
               </td>
-              <td v-else>Item has been paid for</td>
+              <td v-else>Paid</td>
             </tr>
           </tbody>
         </table>
@@ -109,6 +141,14 @@
     <Modal :show.sync="modalOpen" headerClasses="justify-content-center">
       <h4 slot="header" class="title title-up">{{ modalTitle }}</h4>
         <div>
+          <div>
+            <h6>Payment History</h6>
+            <b><p>Deposit: ₦{{ (itemDetails?.part_payment_amount)?.toLocaleString()}}</p></b>
+            <b><p>Balance: ₦{{((itemDetails?.qty * itemDetails?.cost) - itemDetails?.part_payment_amount)?.toLocaleString()}}</p></b>
+          </div>
+          <br/>
+          <h6>Payment History</h6>
+
           <form @submit.prevent="updatePlan" enctype="multipart/form-data" >
               <div class="form-group">
                 <!-- fund wallet -->
@@ -150,6 +190,86 @@
       </template>
     </Modal>
 
+
+    <Modal :show.sync="documentModal.classic" headerClasses="justify-content-center">
+      <h4 slot="header" class="title title-up">{{ modalTitle }}</h4>
+
+      <div>
+        <h6>Upload Supporting Documents</h6>
+
+        <form @submit.prevent="submitDocuments" enctype="multipart/form-data">
+          <div class="form-group">
+            <label for="document_type">Document Type</label>
+            <select v-model="docForm.document_type" class="form-control" required>
+              <option disabled value="">-- Select Type --</option>
+              <option value="invoice">Invoice</option>
+              <option value="receipt">Receipt</option>
+              <option value="contract">Contract</option>
+              <option value="quote">Quote</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+      <label for="files">Click to upload {{ docForm.document_type || '' }} File(s)</label>
+      <input
+        type="file"
+        ref="fileInput"
+        class="form-control"
+        multiple
+        @change="handleFileUpload"
+        required
+      />
+
+      <!-- Preview of selected files -->
+      <div v-if="docForm.files.length" class="mt-3">
+        <h6>Selected Files:</h6>
+        <ul class="list-group">
+          <li
+            class="list-group-item d-flex justify-content-between align-items-center"
+            v-for="(file, index) in docForm.files"
+            :key="index"
+          >
+            <div>
+              <i class="fa fa-file mr-2 text-primary"></i>
+              {{ file.name }}
+            </div>
+            <button
+              class="btn btn-sm btn-outline-danger"
+              @click="removeSelectedFile(index)"
+              title="Remove"
+            >
+              <i class="fa fa-times"></i>
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+
+          <button class="btn btn-success" type="submit">Upload</button>
+        </form>
+
+        <hr v-if="uploadedDocuments.length">
+
+        <div v-if="uploadedDocuments.length">
+          <h6>Previously Uploaded Documents:</h6>
+          <ul>
+            <li v-for="(doc, index) in uploadedDocuments" :key="index">
+              {{ doc.document_type.toUpperCase() }} -
+              <a :href="doc.download_url" target="_blank">{{ doc.filename }}</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <template slot="footer">
+        <p-button type="default" link @click.prevent="documentModal.classic = false">Close</p-button>
+      </template>
+    </Modal>
+
+
+    
+
   </div>
 </template>
 <script>
@@ -160,6 +280,7 @@ import Swal from 'sweetalert2'
 import helpers from '@/javascript/helpers'
 import Expenditure from '@/javascript/Api/Expenditure'
 import Product from '@/javascript/Api/Product'
+import axios from 'axios'
   export default{
     components: {
       Modal
@@ -185,12 +306,23 @@ import Product from '@/javascript/Api/Product'
         modalContent:null,
         detail: null,
         modalOpen: false,
-        // 
+        docForm: {
+          document_type: '',
+          files: []
+        },
+      documentModal: {
+        classic: false,
+          notice: false,
+          mini: false
+      },
+      uploadedDocuments: [], // fetched previously or after upload
+      purchaseId: null,
         selectedId: null,
         payment_method : 'cash',
         payment_status : 'paid',
         part_payment_amount : 0,
-        duration : 0
+        duration : 0,
+        itemDetails:null
       }
     },
     methods: {
@@ -199,6 +331,11 @@ import Product from '@/javascript/Api/Product'
         this.modalTitle = title
         this.detail = item.id
         this.selectedId = item.id
+        this.itemDetails = item
+      },
+      openUploadModal(purchase){
+        this.documentModal.classic = true
+        this.purchaseId = purchase
       },
 
       setStatus(){
@@ -339,9 +476,109 @@ import Product from '@/javascript/Api/Product'
             });
         });
       },
-        api_refresh(){
-            this.allpurchases()
-        },
+      api_refresh(){
+        this.allpurchases()
+      },
+      
+      handleFileUpload(event) {
+        const newFiles = Array.from(event.target.files);
+
+        // Avoid duplicates (optional)
+        const existingFileNames = this.docForm.files.map(f => f.name);
+        const uniqueNewFiles = newFiles.filter(file => !existingFileNames.includes(file.name));
+
+        this.docForm.files.push(...uniqueNewFiles);
+      },
+    async submitDocuments() {
+      if (!this.docForm.document_type || !this.docForm.files.length) {
+        alert("Please select a document type and upload at least one file.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('document_type', this.docForm.document_type);
+      formData.append('purchase_id', this.purchaseId);
+      this.docForm.files.forEach((file, index) => {
+        formData.append(`files[]`, file);
+      });
+
+      try {
+        Purchases.upload_documents(formData).then(res => {
+          this.uploadedDocuments = res.data.documents || [];
+          Swal.fire({
+            position: 'top-end',
+            icon: 'success',
+            title: res.data.message,
+            customClass: 'Swal-wide',
+            showConfirmButton: false,
+            timer: 3000
+          });
+          this.resetForm();
+        });
+
+       
+      } catch (error) {
+        console.error(error);
+        alert('Upload failed.');
+      }
+    },
+    resetForm() {
+      this.docForm.document_type = '';
+      this.docForm.files = [];
+      this.$refs.fileInput.value = '';
+      this.documentModal.classic = false; // Close the modal after upload
+      window.location.reload(); // Reload the page to see the changes
+    },
+    openUploadModal(purchaseId) {
+      this.purchaseId = purchaseId;
+      this.fetchUploadedDocs();
+      this.documentModal.classic = true;
+    },
+    downloadDocs(id) {
+    this.loading = true;
+
+    Purchases.download_documents(id)
+    .then((response) => {
+      const blob = new Blob([response.data], { type: 'application/zip' });
+      const link = document.createElement('a');
+      const fileName = `purchase_documents_${id}.zip`;
+      
+      link.href = window.URL.createObjectURL(blob);
+      link.setAttribute('download', fileName);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      Swal.fire({
+        position: 'top-end',
+        icon: 'success',
+        title: 'Documents downloaded successfully.',
+        customClass: 'Swal-wide',
+        showConfirmButton: false,
+        timer: 3000
+      });
+    })
+    .catch((error) => {
+      console.error('Download error:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: error.response?.data?.error || 'Failed to download documents.',
+      });
+    })
+    .finally(() => {
+      this.loading = false;
+    });
+},
+    async fetchUploadedDocs() {
+      try {
+        const res = await axios.get(`/api/purchase-documents/${this.purchaseId}`);
+        this.uploadedDocuments = res.data.documents;
+      } catch (error) {
+        console.error("Failed to fetch documents.");
+      }
+    }
+  
     },
     created(){
       this.allpurchases()
@@ -349,4 +586,12 @@ import Product from '@/javascript/Api/Product'
 
   }
 </script>
+<style scoped>
+.list-group-item {
+  font-size: 14px;
+}
+.fa-file {
+  font-size: 16px;
+}
 
+</style>

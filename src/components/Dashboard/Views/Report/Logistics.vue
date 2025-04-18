@@ -14,9 +14,8 @@
             <thead>
                 <tr>
                     <th>previous balance</th>
-                    <th>current balance	</th>
                     <th>transaction amount</th>
-                    <th>remark</th>
+                    <th>current balance</th>
                     <th>transaction reference</th>
                     <th>transaction type</th>
                     <th>transaction date</th>
@@ -25,20 +24,16 @@
             <tbody>
                 <tr v-for="data in statement" :key="data.id">
                     <td>{{ (data.previous_balance).toLocaleString() }}</td>
+                    <td>{{ (data.amount).toLocaleString() }}</td>
                     <td>{{ (data.current_balance).toLocaleString() }}</td>
-                    <td>{{ (data.transaction_amount).toLocaleString() }}</td>
-                    <td>{{ data.remark }}</td>
-                    <td>#{{ data.transaction_reference }}</td>
-                    <td>{{ data.transaction_type }}</td>
+                    <td>#{{ data.transaction_id }}</td>
+                    <td>{{ data.type }}</td>
                     <td>{{ dateTime(data.created_at)}}</td>
                 </tr>
             </tbody>
 
         </table>
     </div>
-
-
-   
 </template>
 
 <script setup>
@@ -77,7 +72,7 @@ const getReport = async () => {
     };
 
     try {
-        const { status, data } = await Reports.get_bank_statement(payload); // Pass payload to API
+        const { status, data } = await Reports.get_logistics_statement(payload); // Pass payload to API
         if (status === 200) {
             statement.value = data.data; // Update statement with fetched 
             loading.value = false

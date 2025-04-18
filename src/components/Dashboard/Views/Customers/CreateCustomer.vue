@@ -24,6 +24,14 @@
           <textarea name="" class="form-control" id="" cols="30" rows="10" v-model="form.address" required></textarea>
         </div>
         <div class="form-group">
+          <label for="">customer type</label>
+          <select name="" class="form-control" v-model="form.customer_type" id="">
+            <option value="walk_in">Walk In</option>
+            <option value="dealer">Dealer</option>
+            <option value="institution">Institution</option>
+          </select>
+        </div>
+        <div class="form-group">
           <label for="">Wallet Balance</label>
           <input type="number" step="any" class="form-control" v-model="form.wallet_balance" required>
         </div>
@@ -47,7 +55,8 @@ import Swal from 'sweetalert2';
           email:null,
           phone:null,
           address:null,
-          wallet_balance:0
+          wallet_balance:0,
+          customer_type:'walk_in'
         },
       }
     },
@@ -68,6 +77,7 @@ import Swal from 'sweetalert2';
           email:null,
           phone:null,
           address:null,
+          customer_type:'walk_in',
           wallet_balance:0
         }
         this.loading = false

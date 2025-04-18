@@ -30,10 +30,10 @@
             </tbody>
           </table>
         </div>
-        <div class="TotalCalc" v-if="summary != null">
-          <div class="row">
-            <div class="col-8">Subotal:</div>
-            <div class="col-8">&#8358; {{summary?.amount}}</div>
+        <div class="TotalCalc bordered border-dark" v-if="summary != null">
+          <div class="row ">
+            <div class="col-8">Subotadl:</div>
+            <div class="col-12">&#8358; {{summary?.amount}}</div>
           </div>
           <div class="row">
             <div class="col-8">Discount</div>
@@ -45,15 +45,15 @@
           </div>
           <div class="row">
             <div class="col-8">To</div>
-            <div class="col-8">&#8358; {{Math.ceil(summary?.total)}} {{ summary.payment_method }}</div>
+            <div class="col-12">&#8358; {{Math.ceil(summary?.total)}} {{ summary.payment_method }}</div>
           </div>
           <div class="row"  v-if="summary?.payment_method == 'part_payment'">
             <div class="col-8">Paid</div>
-            <div class="col-8">&#8358; {{Math.ceil(summary?.part_payment)}}</div>
+            <div class="col-12">&#8358; {{Math.ceil(summary?.part_payment)}}</div>
           </div>
           <div class="row" v-if="summary?.payment_method == 'part_payment'">
             <div class="col-8" >Balance</div>
-            <div class="col-8">&#8358; {{Math.ceil(summary?.total - summary?.part_payment)}}</div>
+            <div class="col-12">&#8358; {{Math.ceil(summary?.total - summary?.part_payment)}}</div>
           </div>
         </div>
       </div>
@@ -71,6 +71,8 @@
   </div>
 </template>
 <script>
+import html2pdf from 'html2pdf.js';
+
   export default{
     data() {
       return {

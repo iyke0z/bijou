@@ -29,6 +29,10 @@
               <th>amount</th>
               <th>date</th>
               <th>logged by</th>
+              <th>Payment Method</th>
+              <th>Amount Expected</th>
+              <th>Balance</th>
+              <th>Amount Deposited</th>
               <th>actions</th>
             </tr>
           </thead>
@@ -39,13 +43,32 @@
               <td>{{expenditure.amount.toLocaleString()}}</td>
               <td>{{dateTime(expenditure.created_at)}}</td>
               <td>{{expenditure.user.fullname}}</td>
+              <td>{{expenditure.payment_method}}</td>
+              <td>
+                {{ ((expenditure.amount)).toLocaleString() }}
+              </td>
+              <td v-if="payment_method !== 'cash' && payment_method !== 'pos' && payment_method !== 'transfer'">
+                {{ ((expenditure.amount) - expenditure.part_payment_amount).toLocaleString() }}
+              </td>
+              <td v-else>
+                0
+              </td>
+              <td v-if="payment_method !== 'cash' && payment_method !== 'pos' && payment_method !== 'transfer'">
+                {{ (expenditure.part_payment_amount).toLocaleString() }}
+              </td>
+              <td v-else>
+                {{ ((expenditure.amount)).toLocaleString() }}
+              </td>
               <td>
                 <p-button v-if="expenditure.payment_status != 'paid'" class="mr-2" title="update product plan" type="info" size="sm" @click.prevent="openModal('update '+ expenditure.type.name+' Plan', expenditure)">
                   <i class="fa fa-wrench"></i>
                 </p-button>
-                <span v-else class="mr-4">Item has been paid for</span>
-                <p-button class="mr-2" title="delete" type="danger" size="sm" icon @click.prevent="delete_expenditure(expenditure)">
-                  <i class="fa fa-trash"></i>
+                <span v-else class="mr-4">Paid</span>
+                <p-button class="mr-2" title="upload documents" type="warning" size="sm" icon @click="openUploadModal(expenditure.id)">
+                  <i class="fa fa-upload" aria-hidden="true"></i>
+                </p-button>
+                <p-button v-if="expenditure.documents.length > 0" class="mr-2" title="download documents" type="secondary" size="sm" icon @click="downloadDocs(expenditure.id)">
+                  <i class="fa fa-download" aria-hidden="true"></i>
                 </p-button>
               </td>
             </tr>
@@ -100,6 +123,82 @@
       </template>
     </Modal>
 
+    <Modal :show.sync="documentModal.classic" headerClasses="justify-content-center">
+      <h4 slot="header" class="title title-up">{{ modalTitle }}</h4>
+
+      <div>
+        <h6>Upload Supporting Documents</h6>
+
+        <form @submit.prevent="submitDocuments" enctype="multipart/form-data">
+          <div class="form-group">
+            <label for="document_type">Document Type</label>
+            <select v-model="docForm.document_type" class="form-control" required>
+              <option disabled value="">-- Select Type --</option>
+              <option value="invoice">Invoice</option>
+              <option value="receipt">Receipt</option>
+              <option value="contract">Contract</option>
+              <option value="quote">Quote</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+      <label for="files">Click to upload {{ docForm.document_type || '' }} File(s)</label>
+      <input
+        type="file"
+        ref="fileInput"
+        class="form-control"
+        multiple
+        @change="handleFileUpload"
+        required
+      />
+
+      <!-- Preview of selected files -->
+      <div v-if="docForm.files.length" class="mt-3">
+        <h6>Selected Files:</h6>
+        <ul class="list-group">
+          <li
+            class="list-group-item d-flex justify-content-between align-items-center"
+            v-for="(file, index) in docForm.files"
+            :key="index"
+          >
+            <div>
+              <i class="fa fa-file mr-2 text-primary"></i>
+              {{ file.name }}
+            </div>
+            <button
+              class="btn btn-sm btn-outline-danger"
+              @click="removeSelectedFile(index)"
+              title="Remove"
+            >
+              <i class="fa fa-times"></i>
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+
+          <button class="btn btn-success" type="submit">Upload</button>
+        </form>
+
+        <hr v-if="uploadedDocuments.length">
+
+        <div v-if="uploadedDocuments.length">
+          <h6>Previously Uploaded Documents:</h6>
+          <ul>
+            <li v-for="(doc, index) in uploadedDocuments" :key="index">
+              {{ doc.document_type.toUpperCase() }} -
+              <a :href="doc.download_url" target="_blank">{{ doc.filename }}</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <template slot="footer">
+        <p-button type="default" link @click.prevent="documentModal.classic = false">Close</p-button>
+      </template>
+    </Modal>
+
   </div>
 </template>
 <script>
@@ -136,7 +235,18 @@ import helpers from '@/javascript/helpers'
         payment_method : 'cash',
         payment_status : 'paid',
         part_payment_amount : 0,
-        duration : 0
+        duration : 0,
+        expenditureId:null,
+        docForm: {
+          document_type: '',
+          files: []
+        },
+      documentModal: {
+        classic: false,
+          notice: false,
+          mini: false
+      },
+      uploadedDocuments: [], // fetched previously or after upload
       }
     },
     methods: {
@@ -186,6 +296,11 @@ import helpers from '@/javascript/helpers'
             })
             this.loading = false
         });
+      },
+
+      openUploadModal(expenditure){
+        this.documentModal.classic = true
+        this.expenditureId = expenditure
       },
 
       updatePlan(){
@@ -293,6 +408,106 @@ import helpers from '@/javascript/helpers'
         api_refresh(){
             this.allexpenditures()
         },
+
+        handleFileUpload(event) {
+        const newFiles = Array.from(event.target.files);
+
+        // Avoid duplicates (optional)
+        const existingFileNames = this.docForm.files.map(f => f.name);
+        const uniqueNewFiles = newFiles.filter(file => !existingFileNames.includes(file.name));
+
+        this.docForm.files.push(...uniqueNewFiles);
+      },
+    async submitDocuments() {
+      if (!this.docForm.document_type || !this.docForm.files.length) {
+        alert("Please select a document type and upload at least one file.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('document_type', this.docForm.document_type);
+      formData.append('expenditure_id', this.expenditureId);
+      this.docForm.files.forEach((file, index) => {
+        formData.append(`files[]`, file);
+      });
+
+      try {
+       Expenditure.upload_documents(formData).then(res => {
+          this.uploadedDocuments = res.data.documents || [];
+          Swal.fire({
+            position: 'top-end',
+            icon: 'success',
+            title: res.data.message,
+            customClass: 'Swal-wide',
+            showConfirmButton: false,
+            timer: 3000
+          });
+          this.resetForm();
+        });
+
+       
+      } catch (error) {
+        console.error(error);
+        alert('Upload failed.');
+      }
+    },
+    resetForm() {
+      this.docForm.document_type = '';
+      this.docForm.files = [];
+      this.$refs.fileInput.value = '';
+      this.documentModal.classic = false; // Close the modal after upload
+      window.location.reload(); // Reload the page to see the changes
+    },
+    openUploadModal(expenditureId) {
+      this.expenditureId = expenditureId;
+      this.fetchUploadedDocs();
+      this.documentModal.classic = true;
+    },
+    downloadDocs(id) {
+    this.loading = true;
+
+    Expenditure.download_documents(id)
+    .then((response) => {
+      const blob = new Blob([response.data], { type: 'application/zip' });
+      const link = document.createElement('a');
+      const fileName = `expenditure_documents_${id}.zip`;
+      
+      link.href = window.URL.createObjectURL(blob);
+      link.setAttribute('download', fileName);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      Swal.fire({
+        position: 'top-end',
+        icon: 'success',
+        title: 'Documents downloaded successfully.',
+        customClass: 'Swal-wide',
+        showConfirmButton: false,
+        timer: 3000
+      });
+    })
+    .catch((error) => {
+      console.error('Download error:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: error.response?.data?.error || 'Failed to download documents.',
+      });
+    })
+    .finally(() => {
+      this.loading = false;
+    });
+},
+    async fetchUploadedDocs() {
+      try {
+        const res = await axios.get(`/api/expenditure-documents/${this.expenditureId}`);
+        this.uploadedDocuments = res.data.documents;
+      } catch (error) {
+        console.error("Failed to fetch documents.");
+      }
+    }
+  
     },
     created(){
       this.allexpenditures()

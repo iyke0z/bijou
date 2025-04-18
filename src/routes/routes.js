@@ -49,6 +49,14 @@ import axios from 'axios'
 import RolesPriviledge from '@/javascript/Api/RolesPriviledge'
 import BankStatement from '@/components/Dashboard/Views/Report/BankStatement.vue'
 import Prompt from '@/components/Dashboard/Views/AI/Prompt.vue'
+import Invoice from '@/components/Dashboard/Views/SalesPoint/Invoice.vue'
+import SalesOrder from '@/components/Dashboard/Views/SalesPoint/SalesOrder.vue'
+import SaleOrder from '@/components/Dashboard/Views/Products/SalesOrder.vue'
+import GoodsRecievedNote from '@/components/Dashboard/Views/SalesPoint/GoodsRecievedNote.vue'
+import ProductDistribution from '@/components/Dashboard/Views/Products/ProductDistribution.vue'
+import Logistics from '@/components/Dashboard/Views/Report/Logistics.vue'
+import Backend from '@/components/Dashboard/Views/Backend.vue'
+import Budget from '@/components/Dashboard/Views/Budget/Budget.vue'
 
 
 let loginPage = {
@@ -161,6 +169,67 @@ let receipt = {
         })
     },
 }
+let goodsRecivedNote = {
+    path: '/goods-received-note',
+    name: 'goods-received-note',
+    component: GoodsRecievedNote,
+    beforeEnter: (to, from, next) => {
+        User.auth().then((result) => {
+            if (result) {
+                // if (result.data.role_id == 1) {
+                    next()
+                // } else {
+                //     return next({ name: 'dashboard' })
+                // }
+            } else {
+                return next({ name: 'Login' })
+            }
+        }).catch((err) => {
+            return next({ name: 'Login' })
+        })
+    },
+}
+let invoice = {
+    path: '/report/invoice',
+    name: 'invoice',
+    component: Invoice,
+    beforeEnter: (to, from, next) => {
+        User.auth().then((result) => {
+            if (result) {
+                // if (result.data.role_id == 1) {
+                    next()
+                // } else {
+                //     return next({ name: 'dashboard' })
+                // }
+            } else {
+                return next({ name: 'Login' })
+            }
+        }).catch((err) => {
+            return next({ name: 'Login' })
+        })
+    },
+}
+let salesOrder = {
+    path: '/report/sales-order',
+    name: 'sales-order',
+    component: SalesOrder,
+    beforeEnter: (to, from, next) => {
+        User.auth().then((result) => {
+            if (result) {
+                // if (result.data.role_id == 1) {
+                    next()
+                // } else {
+                //     return next({ name: 'dashboard' })
+                // }
+            } else {
+                return next({ name: 'Login' })
+            }
+        }).catch((err) => {
+            return next({ name: 'Login' })
+        })
+    },
+}
+
 let reporprint = {
     path: '/report-print',
     name: 'print',
@@ -373,6 +442,11 @@ let product = {
             name: 'product detail',
             component: ProductDetails
         },
+        {
+            path: 'transfer-products',
+            name: 'transfer-products',
+            component: ProductDistribution
+        }
         // {
         //     path: 'update/:id',
         //     name: 'update product',
@@ -542,7 +616,13 @@ let report = {
             return next({ name: 'Login' })
         })
     },
-    children: [{
+    children: [
+        {
+            path: 'sales-orders',
+            name: 'sales-orders',
+            component: SaleOrder
+        },
+        {
             path: 'sales',
             name: 'sales_report',
             component: SalesReport
@@ -556,6 +636,11 @@ let report = {
             path: 'statement',
             name: 'bank_statement',
             component: BankStatement
+        },
+        {
+            path: 'logistics',
+            name: 'logistics',
+            component: Logistics
         }
     ]
 }
@@ -600,12 +685,66 @@ let settings = {
     }]
 }
 
+let backend = {
+    path: '/backend',
+    name: 'backend',
+    component: DashboardLayout,
+    beforeEnter: (to, from, next) => {
+        User.auth().then((result) => {
+            if (result) {
+                // if (result.data.role_id == 1) {
+                    next()
+                // } else {
+                //     return next({ name: 'dashboard' })
+                // }
+            } else {
+                return next({ name: 'Login' })
+            }
+        }).catch((err) => {
+            return next({ name: 'Login' })
+        })
+    },
+    children: [{
+        path: 'manage',
+        name: 'manage',
+        component: Backend
+    },]
+}
+
+let budget = {
+    path: '/budget',
+    name: 'budget',
+    component: DashboardLayout,
+    beforeEnter: (to, from, next) => {
+        User.auth().then((result) => {
+            if (result) {
+                // if (result.data.role_id == 1) {
+                    next()
+                // } else {
+                //     return next({ name: 'dashboard' })
+                // }
+            } else {
+                return next({ name: 'Login' })
+            }
+        }).catch((err) => {
+            return next({ name: 'Login' })
+        })
+    },
+    children: [{
+        path: '/',
+        name: 'budget',
+        component: Budget
+    },]
+}
+
 
 const routes = [
     loginPage,
     roles,
+    budget,
     priviledges,
     user,
+    backend,
     report,
     category,
     product,
@@ -617,10 +756,13 @@ const routes = [
     kitchen,
     waiter,
     bar,
+    goodsRecivedNote,
     reporprint,
     shops,
     lockPage,
     prompt,
+    invoice,
+    salesOrder,
     settings,
     {
         path: '/admin',

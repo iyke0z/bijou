@@ -10,6 +10,7 @@
           <th>Fullname</th>
           <th>Telephone</th>
           <th>Email Address</th>
+          <th>Customer Type</th>
           <th>Wallet Balance</th>
           <th>Actions</th>
         </tr>
@@ -20,6 +21,7 @@
           <td>{{customer.fullname}}</td>
           <td>{{customer.phone}}</td>
           <td>{{customer.email}}</td>
+          <td>{{customer.customer_type}}</td>
           <td>{{customer.wallet_balance.toLocaleString()}}</td>
           <td>
             <p-button class="mr-2" title="details" type="warning" size="sm" icon @click.prevent="goToRoute(customer)">
@@ -27,9 +29,6 @@
             </p-button>
             <p-button class="mr-2" title="update" type="info" size="sm" icon @click.prevent="goToUpdate(customer)">
               <i class="fa fa-edit"></i>
-            </p-button>
-            <p-button class="mr-2" title="delete" type="danger" size="sm" icon @click.prevent="delete_customer(customer)">
-              <i class="fa fa-trash"></i>
             </p-button>
             <p-button class="mr-2" title="assign priviledge" type="secondary" size="sm" icon @click.prevent="openModal('classic', 'Fund Wallet', 'fund', customer)">
               <i class="fa fa-money"></i>
@@ -77,6 +76,7 @@
         filter:1,
         tableKey:0,
         customer:null,
+        modalTitle:null,
         loading: false,
         fund:{
           amount:null,

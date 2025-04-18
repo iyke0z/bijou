@@ -21,5 +21,8 @@ export default {
     },
     cancel_sale(form) {
         return Api.post('/sell/delete'+'?shop_id='+localStorage.getItem('shopId'), form)
+    },
+    delivery_note(form){
+        return Api.post('/goods_delivery_notes/'+'?shop_id='+localStorage.getItem('shopId'), form)
     }
 }

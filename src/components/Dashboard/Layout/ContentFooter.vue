@@ -1,5 +1,5 @@
 <template>
-  <footer class="footer">
+  <footer class="footer bg-dark text-light">
     <div class="container-fluid">
       <nav class="pull-left">
         <ul>
@@ -21,10 +21,9 @@
         </ul>
       </nav>
       <div class="copyright pull-right">
-        <!-- &copy;  -->
-        <!-- <i class="fa fa-heart heart"></i> by
-        <a href="https://binarcode.com" target="_blank" rel="noopener">BinarCode</a>.
-        <span>Designed by <a href="https://www.creative-tim.com/?ref=pdf-vuejs" rel="noopener" target="_blank">Creative Tim</a>.</span> -->
+        &copy; 2025
+        <i class="fa fa-tachometer"></i> by
+        <span>efteck</span>
       </div>
     </div>
   </footer>

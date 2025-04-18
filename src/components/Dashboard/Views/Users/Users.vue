@@ -2,18 +2,7 @@
   <div class="table-responsive"><br>
     <h3>Users </h3>
     <span v-if="loading" class="loader"></span>
-    <!-- <div v-if="!loading">
-      <center>
-        <label class="mr-2">Filter Table </label>
-        <select @change="filter_table()" v-model="filter">
-            <option value="1">All</option>
-            <option value="2">Active</option>
-            <option value="3">Inactive</option>
-            <option value="4">Banned Users</option>
-            <option value="5">VIP Users</option>
-        </select>
-      </center>
-    </div> -->
+   
     <table id="table" class="table table-striped">
       <thead>
         <tr>
@@ -47,9 +36,9 @@
             <p-button class="mr-2" title="update" type="info" size="sm" icon @click.prevent="goToUpdate(user)">
               <i class="fa fa-edit"></i>
             </p-button>
-            <p-button class="mr-2" title="delete" type="danger" size="sm" icon @click.prevent="delete_user(user)">
+            <!-- <p-button class="mr-2" title="delete" type="danger" size="sm" icon @click.prevent="delete_user(user)">
               <i class="fa fa-trash"></i>
-            </p-button>
+            </p-button> -->
             <p-button class="mr-2" title="manage shops user can access" type="secondary" size="sm" icon @click.prevent="openModal('Manage Shop Access', user)">
               <i class="fa fa-home  "></i>
             </p-button>

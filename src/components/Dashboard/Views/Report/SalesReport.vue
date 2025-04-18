@@ -1,6 +1,6 @@
 <template>
   <div class="p-4"><br>
-    <Loader :loading="isLoading" />
+    <Loader :loading="loading" />
     <div class="card">
       <center class="mb-4">
         <button 
@@ -92,7 +92,7 @@
                   </tr>
                 </thead>
                 <tbody :key="tableKey">
-                  <tr v-for="(bank, index) in all_sales.banks" :key="bank.id">
+                  <tr v-for="(bank) in all_sales.banks" :key="bank.id">
                     <td>{{bank.bank_name}}</td>
                     <td>{{bank.amount.toLocaleString()}}</td>
                   </tr>
@@ -146,7 +146,7 @@ export default {
       oustanding: [],
       void_items: [],
       sold_items: [],
-      isLoading: false
+      loading: false
     }
   },
   methods: {
@@ -155,7 +155,7 @@ export default {
     },
 
     sales() {
-      this.isLoading = true;
+      this.loading = true;
       Reports.generate_report(this.form).then((result) => {
         this.all_sales = result.data.data
         var res = []
@@ -185,16 +185,15 @@ export default {
         localStorage.setItem('form', JSON.stringify(this.form))
 
         this.datatable()
-        this.isLoading = false;
+        this.loading = false;
       }).catch(() => {
-        this.isLoading = false;
+        this.loading = false;
       });
     },
     getVoidItems(data) {
       this.void_items = []
       if (data.length > 0) {
         data[0].forEach(element => {
-          // console.log(element)
           element.sales.forEach(sale => {
             this.void_items.push({
               product: sale.product.name,
@@ -210,7 +209,6 @@ export default {
       this.voided_table()
     },
     getOutstanding(data) {
-      console.log(data)
 
       this.oustanding = []
       if (data.length > 0) {

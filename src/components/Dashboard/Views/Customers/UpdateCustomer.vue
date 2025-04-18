@@ -23,6 +23,14 @@
           <label for="">address</label>
           <textarea name="" class="form-control" id="" cols="30" rows="10" v-model="form.address" required></textarea>
         </div>
+        <div class="form-group">
+          <label for="">customer type</label>
+          <select name="" class="form-control" v-model="form.customer_type" id="">
+            <option value="walk_in">Walk In</option>
+            <option value="dealer">Dealer</option>
+            <option value="institution">Institution</option>
+          </select>
+        </div>
         <button class="btn btn-success col-8" type="submit">Submit</button>
       </form>
     </section>
@@ -40,6 +48,8 @@ import Swal from 'sweetalert2';
           email:null,
           phone:null,
           address:null,
+          customer_type:null
+
         },
       }
     },
@@ -79,6 +89,7 @@ import Swal from 'sweetalert2';
           this.form.email = result.data.data['email']
           this.form.phone = result.data.data['phone']
           this.form.address = result.data.data['address']
+          this.form.customer_type = result.data.data['customer_type']
         })
         this.loading = false
 

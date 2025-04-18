@@ -204,14 +204,14 @@
                   <fg-input v-model="form.password" addon-left-icon="nc-icon nc-key-25" placeholder="Password"
                             required type="password"></fg-input>
                   <br>
-                  <button type="submit" style="cursor:pointer" class="btn btn-warning mb-3 col-sm-12">Login<span v-if="loading" class="loader"></span></button>
+                  <button type="submit" style="cursor:pointer" class="btn btn-black mb-3 col-sm-12">Login<span v-if="loading" class="loader"></span></button>
                 </card>
               </form>
             </div>
           </div>
         </div>
         <app-footer></app-footer>
-        <div class="full-page-background" style="background-image: url(static/img/shoppingCart.png) "></div>
+        <div class="full-page-background" style="background-image: url(static/img/background.jpg) "></div>
       </div>
     </div>
   </div>
@@ -252,7 +252,6 @@ import RolesPriviledge from '@/javascript/Api/RolesPriviledge';
       getUsers(){
         BusinessDetails.get_users().then((result) => {
           this.userCount = result.data
-          console.log(this.userCount)
         })
       },
       goToStep(step) {

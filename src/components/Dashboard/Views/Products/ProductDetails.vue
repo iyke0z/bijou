@@ -86,9 +86,14 @@
               <tr>
                 <th>Ref</th>
                 <th>Qty</th>
-                <th>Price</th>
+                <th>Sold at</th>
+                <th>Negative Stock</th>
+                <th>Quantity Left</th>
                 <th>Sold By</th>
                 <th>Date Sold</th>
+                <th>Cancelled</th>
+                <th>Date Cancelled</th>
+                <th>Cancelled By</th>
               </tr>
             </thead>
             <tbody :key="salesKey">
@@ -97,8 +102,18 @@
                 <td>{{sale.ref}}</td>
                 <td>{{sale.qty.toLocaleString()}}</td>
                 <td>{{sale.price.toLocaleString()}}</td>
+                <td v-if="sale.is_negative_sale == 0">No</td>
+                <td v-if="sale.is_negative_sale == 1">Yes</td>
+                <td>{{sale.no_of_items}}</td>
                 <td>{{sale.fullname}}</td>
                 <td>{{dateTime(sale.created_at)}}</td>
+
+                <td v-if="sale.deleted_at != null">Yes</td>
+                <td v-else>No</td>
+                <td v-if="sale.deleted_at != null">{{dateTime(sale.deleted_at)}}</td>
+                <td v-else>N/A</td>
+                <td v-if="sale.deleted_at != null">{{ sale.deleted_by }} By</td>
+                <td v-else>Null</td>
               </tr>
             </tbody>
           </table>

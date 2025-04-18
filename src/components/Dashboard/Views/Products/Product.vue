@@ -31,9 +31,12 @@
                 <p-button class="mr-1" title="update" type="info" size="sm" icon @click.native="openModal('classic', 'Update Product', 'update', product)">
                   <i class="fa fa-edit"></i>
                 </p-button>
-                <p-button class="mr-1" title="delete" type="danger" size="sm" icon @click.prevent="delete_user(product)">
+                <!-- <p-button class="mr-1" title="delete" type="danger" size="sm" icon @click.prevent="delete_user(product)">
                   <i class="fa fa-trash"></i>
-                </p-button>
+                </p-button> -->
+                <a href="#" class="mr-1" v-if="product.stock > 0" title="transfer" type="danger" size="sm" icon @click.prevent="openTransferModal('classic', 'Initiate Product Transfer', product)">
+                  Transfer Product
+                </a>
               </td>
             </tr>
          </tbody>
@@ -91,6 +94,35 @@
           </template>
         </modal>
 
+        <!-- transfer form -->
+        <modal :show.sync="transferModal.classic" headerClasses="justify-content-center">
+          <h4 slot="header" class=" title title-up">{{ modalTitle }}</h4>
+              <form @submit.prevent="initiateTransfer">
+                  <div class="form-group">
+                    <label for="">Quantity</label>
+                    <input v-model="transferForm.qty" type="number" step="any" class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <label for="">Destination Shop</label>
+                    <select name="" v-model="transferForm.destination_shop"  class="form-control" id="">
+                      <option v-for="shop in shops" :value="shop.id" :key="shop.id">{{shop.title}}</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="">Transaction Type</label>
+                    <select name="" v-model="transferForm.transaction_method" class="form-control" id="">
+                      <option value="transfer">Transfer</option>
+                      <option value="return">Return</option>
+                    </select>
+                  </div>
+                  
+                  <div class="form-group">
+                    <button type="submit" class="btn btn-success">Submit</button>
+                  </div>
+              </form>
+              <hr>
+        </modal>
+
   </div>
 </template>
 <script>
@@ -98,6 +130,7 @@
   import Product from '@/javascript/Api/Product'
   import Category from '@/javascript/Api/Categories'
   import Swal from 'sweetalert2'
+import Shops from '@/javascript/Api/Shops'
 
 
   export default{
@@ -116,15 +149,64 @@
         products: null,
         img:null,
         loading:false,
+        shops:null,
         modals: {
           classic: false,
           notice: false,
           mini: false
         },
+        transferModal: {
+          classic: false,
+          notice: false,
+          mini: false
+        },
+        selectedProduct:null,
         upl_image:null,
+        transferForm:{
+         name: null,
+         originating_shop: null,
+         destination_shop: null,
+         qty: 1,
+         product_id: null,
+         shop_one_user_id: null,
+         shop_two_user_id: null,
+         previous_stock: 0,
+         current_stock: 0,
+         previous_stock_two: 0,
+         current_stock_two: 0,
+         transaction_status: 'pending',
+         transaction_method: null,
+
+        }
       }
     },
     methods: {
+      getShops(){
+        this.loading = true
+       Shops.get_shops().then((result) => {
+          this.shops = result.data.data
+          this.loading = false  
+         })
+      },
+
+      initiateTransfer(){
+        Shops.initiate_transfer(this.transferForm).then(result => {
+          Swal.fire({
+              position: 'top-end',
+              icon: 'success',
+              title: result.data.message,
+              customClass: 'Swal-wide',
+              showConfirmButton: false,
+              timer: 3000
+            })
+            this.transferModal.classic = false
+            this.get_product();
+            this.tableKey++
+            this.datatable()
+            window.location.reload()
+        })
+      },
+    
       uploadImage(e){
         this.img = e[0]
         var image = e[0]
@@ -178,6 +260,16 @@
             this.updateMode = true
             this.form = product
         }
+      },
+
+      openTransferModal(type, title, product){
+        this.modalTitle = title
+        this.transferModal['classic'] = true
+        this.selectedProduct = product
+        this.transferForm.shop_one_user_id = localStorage.getItem('authUser')
+        this.transferForm.product_id = product.id       
+        this.transferForm.originating_shop = localStorage.getItem('shopId')
+        this.transferForm.name = product.name
       },
       update(){
         this.loading = true
@@ -288,6 +380,7 @@
     created(){
       this.get_product()
       this.allcategories()
+      this.getShops()
     }
 
   }

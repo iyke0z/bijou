@@ -81,11 +81,6 @@
     color: white;
   }
   
-  .footer {
-    background-color: #1a202c;
-    color: white;
-  }
-  
   .main-content {
     flex-grow: 1;
   }
