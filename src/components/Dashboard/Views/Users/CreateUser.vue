@@ -25,7 +25,7 @@
         <div class="form-group">
           <label for="">Role</label>
           <select v-model="form.role_id" class="form-control" required>
-            <option :value="role.role_id" v-for="role in roles" :key="role.id">
+            <option :value="role.id" v-for="role in roles" :key="role.id">
               {{ role.name }}
             </option>
           </select>
@@ -96,7 +96,6 @@ import Shops from '@/javascript/Api/Shops';
         })
       },
       uploadfile(e){
-        console.log(e[0])
         this.form.picture = e[0];
         var image = e[0]
           const reader = new FileReader();

@@ -576,7 +576,6 @@ import { Button, Modal } from '@/components/UIComponents'
       },
 
       appendProduct(product){
-        console.log(product)
         if(product.has_stock == 0 ){
           this.products.push({
               product_id: product.product_id,

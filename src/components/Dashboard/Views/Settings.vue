@@ -53,6 +53,11 @@
           <label for="">Business Closing Time</label>
             <input type="time" step="any" min="0" class="form-control col-8"  placeholder="Motto" v-model="details.times.closing_time"  required>
         </div>
+
+        <div>
+          <label for="">Owner Equity</label>
+            <input type="number" step="any" min="0" class="form-control col-8"  placeholder="Motto" v-model="details.owner_equity"  required>
+        </div>
         <button class="btn btn-success" type="submit">Update <span v-if="loading" class="loader"></span></button>
       </form>
     </div>

@@ -35,7 +35,7 @@
                 ref="searchInput">
           </form>
           <ul class="col-11">
-            <li class="productList" v-for="product in searchResult" :key="product" @click="addProduct(product)">
+            <li class="productList" v-for="product in searchResult" :key="product.id" @click="addProduct(product)">
               {{ product.name}}
               <b>
                 &#8358; <small class="bg-dark w-100 text-light"> {{product.price.toLocaleString()}} </small>
@@ -47,8 +47,9 @@
           </ul>
         </li>
         <!--  -->
-        <li class="mt-3 col-1 mr-1"> <button style="margin-top:8px; border:none; color:white" class="bg-danger" @click="logout">
-         <i class="fa fa-sign-out" aria-hidden="true">logout</i></button></li>
+        <a class="mt-4" title="sign out" href="#" @click.prevent="logout">
+            <i class="fa fa-power-off text-light" aria-hidden="true"></i>
+          </a>
     </div>
     <div class="container col-12"  style="background-color: #f1f5fee9">
       <div class="row mt-5 ">
@@ -148,7 +149,7 @@
 </div>
 <div style="margin-left: 35%;">
   <ul class="col-8">
-    <li class="productList" v-for="customer in customerSearch" :key="customer" @click="addCustomer(customer)">
+    <li class="productList" v-for="customer in customerSearch" :key="customer.id" @click="addCustomer(customer)">
       {{ customer.name}}
     </li>
   </ul>
@@ -174,22 +175,38 @@
 </div>
 
 <div class="row ml-1">
-  <div class="form-group">
+  <div class="form-group col-1">
     <label for="">Logistics Amount</label>
     <input type="number" step="any" v-model="logistics" class="form-control"/>
   </div>
-  <div class="form-group col-4">
+
+  <div class="form-group col-1">
+    <label for="">Is Split</label>
+    <select v-model="is_split_payment" class="form-control" @change="openModal">
+          <option :value="1">True</option>
+          <option :value="0">False</option>
+        </select>
+      </div>
+
+  <div class="form-group col-3">
+    <label for="">Payment Type</label>
+        <select v-model="type" class="form-control">
+          <option value="full_payment">Full Payment</option>
+      <option value="on_credit">On Credit</option>
+      <option value="complementary">Complementary</option>
+      <option value="part_payment">Part Payment</option>
+        </select>
+      </div>
+  <div class="form-group col-3">
     <label for="">Payment Method</label>
-    <select v-model="payment_method" :disabled="on_credit && part_payment" class="form-control">
+    <select v-model="payment_method" name="" class="form-control col-10" id="">
       <option value="cash">Cash</option>
       <option value="transfer">Transfer</option>
       <option value="card">POS</option>
-      <option v-if="on_credit" value="on_credit">On Credit</option>
-      <option v-if="part_payment" value="part_payment">Part Payment</option>
       <option v-if="total <= customerWallet_balance && customer_id != null" value="wallet">Wallet</option>
     </select>
   </div>
-  <div class="form-group col-6 col-md-6">
+  <div class="form-group">
     <label for=""></label><br />
     <button class="btn btn-success mr-2" @click.prevent="pay">Pay <i class="fa fa-money" aria-hidden="true"></i></button>
     <button class="btn btn-primary" @click.prevent="reset">Reset <i class="fa fa-refresh" aria-hidden="true"></i></button>
@@ -223,6 +240,53 @@
 
       </center>
        </div>
+
+       <modal :show.sync="modals.classic" headerClasses="justify-content-center">
+        <div>
+          <h4 slot="header" class="title title-up">Spilt Payment</h4>
+          <form @submit.prevent="pay" enctype="multipart/form-data">
+            <fieldset >
+                <table id="myTable">
+                <tr v-for="(row, index) in rows.split" :key="index">
+                  <td>{{ index+1 }}</td>
+                  <td>
+                    <label for="">Payment Method</label>
+                    <select v-model="rows.split[index].split_playment_method" name="" class="form-control col-10" id="">
+                      <option value="null">Select Payment Method</option>
+                      <option value="cash">Cash</option>
+                      <option value="transfer">Transfer</option>
+                      <option value="card">POS</option>
+                    </select>
+                  </td>
+                  <td>
+                    <label for="">Amount</label>
+                    <input autocomplete="off" required type="number" step="any" class="form-control col-8" v-model="rows.split[index].split_payment_amount" placeholder="Amount">
+                  </td>
+                  <td v-if="rows.split[index].split_playment_method == 'card'">
+                    <label for="">bank</label>
+                    <select v-model="rows.split[index].bank_id" name="" class="form-control col-10" id="">
+                      <option value="null">Select Bank</option>
+                      <option v-for="bank in banks" :key="bank.id" :value="bank.id">{{bank.name}}</option>
+                    </select>
+                  </td>
+
+                  <td>
+                    <button type="button" class="btn btn-success text-light col-2" @click="new_row()">+</button>
+                    <button v-show="rows.split.length > 1" type="button" class="btn btn-danger text-light col-2" @click="delete_row(index)">x</button>
+                  </td>
+                </tr>
+              </table>
+                <div class="form-group">
+                  <button type="submit" class="btn btn-success">Submit</button>
+                </div>
+            </fieldset>
+          </form>
+        </div>
+      <template slot="footer">
+      <p-button type="default" link @click.prevent="modals.classic = false">Close</p-button>
+
+      </template>
+    </modal>
   </div >
   
 </template>
@@ -237,9 +301,12 @@ import Receipt from './Receipt.vue'
 import Swal from 'sweetalert2'
 import Auth from '@/javascript/Api/Auth'
 import User from '@/javascript/Api/User'
+import { type } from 'jquery'
+import { Button, Modal } from '@/components/UIComponents'
+import { f } from 'html2pdf.js'
 
   export default{
-    components:{ Calculator, Receipt},
+    components:{ Calculator, Receipt, Modal},
     data() {
       return {
         customer_form: {
@@ -249,13 +316,20 @@ import User from '@/javascript/Api/User'
           email: null,
           wallet_balance: 0
         },
+        modals: {
+          classic: false,
+          notice: false,
+          mini: false
+        },
         customer_id: null,
         discount_pctge:0,
         is_discount_code: 0,
         discount_code: null,
         from_wallet:false,
+        type:"full_payment",
         on_credit:false,
         part_payment:false,
+        rows: {split:[{split_playment_method:null, split_payment_amount:null,bank_id:null}]},
         payment_method:"cash",
         products: [],
         allProducts: null,
@@ -264,7 +338,7 @@ import User from '@/javascript/Api/User'
         barcodeMode:false,
         searchParam:"",
         searchResult: [],
-        allCustomers:null,
+        allCustomers:[],
         receipt: false,
         customerSearch:[],
         searchCustomer:"",
@@ -284,11 +358,17 @@ import User from '@/javascript/Api/User'
         shopName:null,
         loading:false,
         negative_stock: false,
+        is_split_payment: 0,
         logistics: 0
       }
     },
 
     methods: {
+      openModal(){
+        if(this.is_split_payment == 1){
+          this.modals.classic = true
+        }
+      },
       createCustomer(){
         this.loading = true
         Customer.create(this.customer_form).then((result) => {
@@ -326,6 +406,16 @@ import User from '@/javascript/Api/User'
         if (!this.barcodeMode) {
           this.searchProduct();
         }
+      },
+      new_row(){
+        this.rows.split.push(
+          {split_playment_method:null,
+          split_payment_amount:null,
+          bank_id:null}
+        )
+      },
+      delete_row (id) {
+        this.rows.split.splice(id, 1)
       },
       clampValue(order, index, hasStock) {
         if (hasStock != 1 || this.negative_stock == 1) {
@@ -381,7 +471,7 @@ import User from '@/javascript/Api/User'
       },
 
       setCredit(){
-        this.payment_method = "on_credit"
+        this.type = "on_credit"
       },
 
       setPartPayment() {
@@ -486,7 +576,6 @@ import User from '@/javascript/Api/User'
       },
 
       appendProduct(product){
-        console.log(product)
         if(product.has_stock == 0 ){
           this.products.push({
               product_id: product.product_id,
@@ -564,6 +653,163 @@ import User from '@/javascript/Api/User'
       },
       pay(){
         this.loading = true
+        if(this.products.length == 0){
+          Swal.fire({
+            position: 'top-end',
+            icon: 'warning',
+            title: "No product selected",
+            customClass: 'Swal-wide',
+            showConfirmButton: false,
+            timer: 3000
+          })
+          this.loading = false
+          return
+        }
+        if(this.discount_pctge > 100){
+          Swal.fire({
+            position: 'top-end',
+            icon: 'warning',
+            title: "Discount cannot be more than 100%",
+            customClass: 'Swal-wide',
+            showConfirmButton: false,
+            timer: 3000
+          })
+          this.loading = false
+          return
+        }
+        if(this.discount_pctge < 0){
+          Swal.fire({
+            position: 'top-end',
+            icon: 'warning',
+            title: "Discount cannot be less than 0%",
+            customClass: 'Swal-wide',
+            showConfirmButton: false,
+            timer: 3000
+          })
+          this.loading = false
+          return
+        }
+        if(this.discount_pctge > 0 && this.is_discount_code == 1 && this.discount_code == null){
+          Swal.fire({
+            position: 'top-end',
+            icon: 'warning',
+            title: "Input discount code",
+            customClass: 'Swal-wide',
+            showConfirmButton: false,
+            timer: 3000
+          })
+          this.loading = false
+          return
+        }
+        if(this.discount_pctge > 0 && this.is_discount_code == 0 && this.discount_code != null){
+          Swal.fire({
+            position: 'top-end',
+            icon: 'warning',
+            title: "Select either discount code or percentage",
+            customClass: 'Swal-wide',
+            showConfirmButton: false,
+            timer: 3000
+          })
+          this.loading = false
+          return
+        }
+        if(this.customer_id == null){
+          Swal.fire({
+            position: 'top-end',
+            icon: 'warning',
+            title: "Select customer",
+            customClass: 'Swal-wide',
+            showConfirmButton: false,
+            timer: 3000
+          })
+          this.loading = false
+          return
+        }
+        if(this.customer_id == null && this.from_wallet == true){
+          Swal.fire({
+            position: 'top-end',
+            icon: 'warning',
+            title: "Select customer",
+            customClass: 'Swal-wide',
+            showConfirmButton: false,
+            timer: 3000
+          })
+          this.loading = false
+          return
+        }
+        if(this.payment_method == null){
+          Swal.fire({
+            position: 'top-end',
+            icon: 'warning',
+            title: "Select payment method",
+            customClass: 'Swal-wide',
+            showConfirmButton: false,
+            timer: 3000
+          })
+          this.loading = false
+          return
+        }
+        if(this.type == "on_credit" && this.customer_id == null){
+          Swal.fire({
+            position: 'top-end',
+            icon: 'warning',
+            title: "Select customer",
+            customClass: 'Swal-wide',
+            showConfirmButton: false,
+            timer: 3000
+          })
+          this.loading = false
+          return
+
+        }
+        if(this.type == "on_credit" && this.part_payment_amount > 0){
+          Swal.fire({
+            position: 'top-end',
+            icon: 'warning',
+            title: "Select either part payment or on credit",
+            customClass: 'Swal-wide',
+            showConfirmButton: false,
+            timer: 3000
+          })
+          this.loading = false
+          return
+
+        }
+        if (this.type == null || this.type == "") {
+          Swal.fire({
+            position: 'top-end',
+            icon: 'warning',
+            title: "Select payment type",
+            customClass: 'Swal-wide',
+            showConfirmButton: false,
+            timer: 3000
+          })
+          this.loading = false
+          return
+          
+        }
+      
+        var total_split = 0
+        for (let index = 0; index < this.rows.split.length; index++) {
+          if(this.rows.split[index].split_payment_amount != null){
+            total_split += parseFloat(this.rows.split[index].split_payment_amount)
+          }
+        }
+        if(this.is_split_payment == 1 && this.type != "on_credit" && this.type != "part_payment"){
+          if(total_split != this.total){
+            Swal.fire({
+              position: 'top-end',
+              icon: 'warning',
+              title: "Split payment amount should be equal to total amount",
+              customClass: 'Swal-wide',
+              showConfirmButton: false,
+              timer: 3000
+            })
+            this.loading = false
+            return
+          }
+        }
+
         var post = {
           "customer_id": this.customer_id,
           "discount_pctge": this.discount_pctge,
@@ -581,7 +827,11 @@ import User from '@/javascript/Api/User'
           "part_payment_amount": this.part_payment_amount,
           "discount": this.discount_pctge,
           "vat": this.vat,
-          "logistics": this.logistics
+          "logistics": this.logistics,
+          "split": this.rows.split,
+          "type": this.type,
+          "is_split_payment": this.is_split_payment,
+
         }
         Sales.new_sale(post).then((result) => {
           this.response = {products: this.products, summary: result.data.data}
@@ -632,6 +882,13 @@ import User from '@/javascript/Api/User'
         this.payment_method = "cash"
         this.products = []
         this.logistics = 0
+        this.part_payment_amount = 0
+        this.part_payment = false
+        this.searchCustomer = ""
+        this.is_split_payment = 0
+        this.type = "full_payment"
+        this.rows = {split:[{split_playment_method:null, split_payment_amount:null,bank_id:null}]}
+        this.getProducts()
       },
       getTotal(){
         var sum = []
@@ -674,7 +931,7 @@ import User from '@/javascript/Api/User'
     computed:{
       read_scan(){
         // alert('scan')
-      }
+      },
     },
     watch:{
       searchParam(){
@@ -682,22 +939,16 @@ import User from '@/javascript/Api/User'
           this.searchResult = []
         }
       },
+     
       part_payment_amount(){
-        if (this.part_payment_amount > 0) {
+        if (this.part_payment_amount > 0 && this.on_credit == true) {
           this.part_payment = true
-          this.payment_method = "part_payment";
+          this.type = "part_payment";
+        }else{
+          this.type = "on_credit"
         }
       },
-      on_credit(newVal) {
-        if (!newVal && !this.part_payment) {
-            this.payment_method = "cash";
-        }
-    },
-    part_payment(newVal) {
-        if (!newVal && !this.on_credit) {
-            this.payment_method = "cash";
-        }
-    },
+     
       barcodeMode(newValue) {
     // Focus the input element when barcodeMode changes to true
     this.$nextTick(() => {

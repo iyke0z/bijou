@@ -65,7 +65,6 @@
                 <p-button v-if="purchase.documents.length > 0" class="mr-2" title="download documents" type="secondary" size="sm" icon @click="downloadDocs(purchase.id)">
                   <i class="fa fa-download" aria-hidden="true"></i>
                 </p-button>
-                
               </td>
             </tr>
           </tbody>
@@ -113,20 +112,20 @@
                 {{ ((purchase.cost * purchase.qty)).toLocaleString() }}
               </td>
               <!-- balance -->
-              <td v-if="purchase.payment_status == 'not_paid' && (purchase.payment_method == 'part_payment' || purchase.payment_method == 'on_credit' || purchase.payment_method == 'cash')">
+              <td v-if="purchase.payment_status == 'not_paid'">
                 {{ ((purchase.cost * purchase.qty) - purchase.part_payment_amount).toLocaleString() }}
               </td>
               <td v-else>
                 0
               </td>
               <!-- deposited -->
-              <td v-if="purchase.payment_status === 'not_paid' && (purchase.payment_method === 'part_payment' || purchase.payment_method === 'on_credit' || purchase.payment_method == 'cash')">
+              <td v-if="purchase.payment_status === 'not_paid'">
                 {{ (purchase.part_payment_amount).toLocaleString() }}
               </td>
               <td v-else>
                 {{ (purchase.cost * purchase.qty).toLocaleString() }}
               </td>
-              <td v-if="((purchase.cost * purchase.qty) - purchase.part_payment_amount) > 0 && purchase.payment_status == 'not_paid'">
+              <td v-if="purchase.payment_status == 'not_paid'">
                 <p-button class="mr-2" title="update product plan" type="info" size="sm" @click.prevent="openModal('update '+ purchase.product.name+' Plan', purchase)">
                   <i class="fa fa-wrench"></i>
                 </p-button>
@@ -150,6 +149,22 @@
           <h6>Payment History</h6>
 
           <form @submit.prevent="updatePlan" enctype="multipart/form-data" >
+            <div class="form-group">
+              <label for="">Is Split</label>
+              <select v-model="is_split_payment" class="form-control" @change="is_split_payment = $event.target.value">
+                    <option :value="1">True</option>
+                    <option :value="0">False</option>
+                  </select>
+            </div>
+            <div class="form-group">
+              <label for="">Payment Type</label>
+                <select v-model="type" class="form-control">
+                  <option value="full_payment">Full Payment</option>
+                  <option value="on_credit">On Credit</option>
+                  <option value="complementary">Complementary</option>
+                  <option value="part_payment">Part Payment</option>
+                </select>
+              </div>
               <div class="form-group">
                 <!-- fund wallet -->
                 <label for="">Payment Method</label>
@@ -157,12 +172,10 @@
                   <option value="cash">cash</option>
                   <option value="transfer">transfer</option>
                   <option value="on_credit">on_credit</option>
-                  <option value="part_payment">part payment</option>
-                  <option value="is_accrual">accrual</option>
                 </select>
               </div>
               
-              <div class="form-group" v-if="payment_method == 'part_payment'">
+              <div class="form-group" v-if="type == 'part_payment'">
                 <label for="">Part Payment Amount</label>
                 <input type="number" step="any" class="form-control" v-model="part_payment_amount">
               </div>
@@ -181,8 +194,52 @@
                 <input type="number" step="any" class="form-control" v-model="duration">
               </div>
 
+
               <button class="btn btn-success" type="submit">UPDATE</button>
           </form>
+
+          <div>
+            <form @submit.prevent="updatePlan" v-if="is_split_payment" enctype="multipart/form-data">
+            <h4 slot="header" class="title title-up">Spilt Payment</h4>
+            <fieldset >
+                <table id="myTable">
+                <tr v-for="(row, index) in rows.split" :key="index">
+                  <td>{{ index+1 }}</td>
+                  <td>
+                    <label for="">Payment Method</label>
+                    <select v-model="rows.split[index].split_playment_method" name="" class="form-control col-10" id="">
+                      <option value="null">Select Payment Method</option>
+                      <option value="cash">Cash</option>
+                      <option value="transfer">Transfer</option>
+                      <option value="card">POS</option>
+                    </select>
+                  </td>
+                  <td>
+                    <label for="">Amount</label>
+                    <input autocomplete="off" required type="number" step="any" class="form-control col-8" v-model="rows.split[index].split_payment_amount" placeholder="Amount">
+                  </td>
+                  <td v-if="rows.split[index].split_playment_method == 'card'">
+                    <label for="">bank</label>
+                    <select v-model="rows.split[index].bank_id" name="" class="form-control col-10" id="">
+                      <option value="null">Select Bank</option>
+                      <option v-for="bank in banks" :key="bank.id" :value="bank.id">{{bank.name}}</option>
+                    </select>
+                  </td>
+
+                  <td>
+                    <button type="button" class="btn btn-success text-light col-2" @click="new_row()">+</button>
+                    <button v-show="rows.split.length > 1" type="button" class="btn btn-danger text-light col-2" @click="delete_row(index)">x</button>
+                  </td>
+                </tr>
+              </table>
+                <div class="form-group">
+                  <button type="submit" class="btn btn-success">Submit</button>
+                </div>
+            </fieldset>
+          </form>
+        </div>
+
+
         </div>
       <template slot="footer">
       <p-button type="default" link @click.prevent="modalOpen = false">Close</p-button>
@@ -304,8 +361,11 @@ import axios from 'axios'
         modalTitle:null,
         modalAction:null,
         modalContent:null,
+        is_split_payment: 0,
+        rows: {split:[{split_playment_method:null, split_payment_amount:null,bank_id:null}]},
         detail: null,
         modalOpen: false,
+        type: 'full_payment',
         docForm: {
           document_type: '',
           files: []
@@ -352,7 +412,10 @@ import axios from 'axios'
           payment_method: this.payment_method,
           payment_status: this.payment_status,
           part_payment_amount: this.part_payment_amount,
-          duration: this.duration
+          duration: this.duration,
+          type: this.type,
+          split: this.rows.split,
+          is_split_payment: this.is_split_payment
         }
 
         Product.update_plan(payload, this.selectedId).then(res => {
@@ -366,6 +429,7 @@ import axios from 'axios'
           })
           this.modalOpen = false
           this.loading = false
+          this.allpurchases()
         }).catch(err => {
           Swal.fire({
             position: 'top-end',
@@ -384,6 +448,18 @@ import axios from 'axios'
       },
       goToRoute(purchase){
         this.$router.push('/purchase/update/'+purchase.id)
+      },
+      new_row(){
+        this.rows.split.push(
+          {
+            split_playment_method:null,
+            split_payment_amount:null,
+            bank_id:null
+          }
+        )
+      },
+      delete_row (id) {
+        this.rows.split.splice(id, 1)
       },
       delete_purchase(purchase){
         this.loading = true

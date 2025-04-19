@@ -100,20 +100,20 @@
                   {{ ((purchase.cost * purchase.qty)).toLocaleString() }}
                 </td>
                 <!-- balance -->
-                <td v-if="purchase.payment_status == 'not_paid' && (purchase.payment_method == 'part_payment' || purchase.payment_method == 'on_credit' || purchase.payment_method == 'cash')">
+                <td v-if="purchase.payment_status == 'not_paid'">
                   {{ ((purchase.cost * purchase.qty) - purchase.part_payment_amount).toLocaleString() }}
                 </td>
                 <td v-else>
                   0
                 </td>
                 <!-- deposited -->
-                <td v-if="purchase.payment_status === 'not_paid' && (purchase.payment_method === 'part_payment' || purchase.payment_method === 'on_credit' || purchase.payment_method == 'cash')">
+                <td v-if="purchase.payment_status === 'not_paid'">
                   {{ (purchase.part_payment_amount).toLocaleString() }}
                 </td>
                 <td v-else>
                   {{ (purchase.cost * purchase.qty).toLocaleString() }}
                 </td>
-                <td v-if="((purchase.cost * purchase.qty) - purchase.part_payment_amount) > 0 && purchase.payment_status == 'not_paid'">
+                <td v-if="purchase.payment_status == 'not_paid'">
                   <p-button class="mr-2" title="update product plan" type="info" size="sm" @click.prevent="openModal('update '+ purchase.product.name+' Plan', purchase)">
                     <i class="fa fa-wrench"></i>
                   </p-button>

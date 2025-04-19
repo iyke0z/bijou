@@ -39,7 +39,7 @@
           <tbody :key="tableKey">
             <tr v-for="(expenditure, index) in all_expenditures" :key="expenditure.id">
               <td>{{index+1}}</td>
-              <td>{{expenditure.type.name}}</td>
+              <td>{{expenditure.exp_type.name}}</td>
               <td>{{expenditure.amount.toLocaleString()}}</td>
               <td>{{dateTime(expenditure.created_at)}}</td>
               <td>{{expenditure.user.fullname}}</td>
@@ -47,20 +47,20 @@
               <td>
                 {{ ((expenditure.amount)).toLocaleString() }}
               </td>
-              <td v-if="payment_method !== 'cash' && payment_method !== 'pos' && payment_method !== 'transfer'">
+              <td v-if="expenditure.payment_status == 'not_paid'">
                 {{ ((expenditure.amount) - expenditure.part_payment_amount).toLocaleString() }}
               </td>
               <td v-else>
                 0
               </td>
-              <td v-if="payment_method !== 'cash' && payment_method !== 'pos' && payment_method !== 'transfer'">
+              <td v-if="expenditure.type == 'part_payment'">
                 {{ (expenditure.part_payment_amount).toLocaleString() }}
               </td>
               <td v-else>
                 {{ ((expenditure.amount)).toLocaleString() }}
               </td>
               <td>
-                <p-button v-if="expenditure.payment_status != 'paid'" class="mr-2" title="update product plan" type="info" size="sm" @click.prevent="openModal('update '+ expenditure.type.name+' Plan', expenditure)">
+                <p-button v-if="expenditure.payment_status == 'not_paid'" class="mr-2" title="update product plan" type="info" size="sm" @click.prevent="openModal('update '+ expenditure.type.name+' Plan', expenditure)">
                   <i class="fa fa-wrench"></i>
                 </p-button>
                 <span v-else class="mr-4">Paid</span>
@@ -83,39 +83,84 @@
       <h4 slot="header" class="title title-up">{{ modalTitle }}</h4>
         <div>
           <form @submit.prevent="updatePlan" enctype="multipart/form-data" >
+            <div class="form-group">
+              <label for="">Is Split</label>
+              <select v-model="is_split_payment" class="form-control" @change="is_split_payment = $event.target.value">
+                    <option :value="1">True</option>
+                    <option :value="0">False</option>
+                  </select>
+            </div>
+            <div class="form-group">
+              <label for="">Payment Type</label>
+                <select v-model="type" class="form-control">
+                  <option value="full_payment">Full Payment</option>
+                  <option value="on_credit">On Credit</option>
+                  <option value="part_payment">Part Payment</option>
+                  <!-- <option value="is_accrual">Is Accrual</option> -->
+                </select>
+              </div>
               <div class="form-group">
                 <!-- fund wallet -->
                 <label for="">Payment Method</label>
                 <select name="" class="form-control" id="" v-model="payment_method" @change="setStatus">
                   <option value="cash">cash</option>
                   <option value="transfer">transfer</option>
-                  <option value="on_credit">on_credit</option>
-                  <option value="part_payment">part payment</option>
-                  <option value="is_accrual">accrual</option>
+                  <option value="pos">pos</option>
                 </select>
               </div>
               
-              <div class="form-group" v-if="payment_method == 'part_payment'">
+              <div class="form-group" v-if="type == 'part_payment'">
                 <label for="">Part Payment Amount</label>
                 <input type="number" step="any" class="form-control" v-model="part_payment_amount">
               </div>
 
-              <div class="form-group">
-                <label for="">Payment Status</label>
-                <select name="" class="form-control" v-model="payment_status" id="">
-                  <option value="paid">Paid</option>
-                  <option value="not_paid">Not Paid</option>
-                </select>
-              </div>
-             
-              
-              <div class="form-group" v-if="payment_method == 'is_accrual'">
+              <!-- <div class="form-group" v-if="payment_method == 'is_accrual'">
                 <label for="">Duration <small>(duration in months)</small></label>
                 <input type="number" step="any" class="form-control" v-model="duration">
-              </div>
+              </div> -->
 
               <button class="btn btn-success" type="submit">UPDATE</button>
           </form>
+          <div>
+            <form @submit.prevent="updatePlan" v-if="is_split_payment" enctype="multipart/form-data">
+            <h4 slot="header" class="title title-up">Spilt Payment</h4>
+            <fieldset >
+                <table id="myTable">
+                <tr v-for="(row, index) in rows.split" :key="index">
+                  <td>{{ index+1 }}</td>
+                  <td>
+                    <label for="">Payment Method</label>
+                    <select v-model="rows.split[index].split_playment_method" name="" class="form-control col-10" id="">
+                      <option value="null">Select Payment Method</option>
+                      <option value="cash">Cash</option>
+                      <option value="transfer">Transfer</option>
+                      <option value="card">POS</option>
+                    </select>
+                  </td>
+                  <td>
+                    <label for="">Amount</label>
+                    <input autocomplete="off" required type="number" step="any" class="form-control col-8" v-model="rows.split[index].split_payment_amount" placeholder="Amount">
+                  </td>
+                  <td v-if="rows.split[index].split_playment_method == 'card'">
+                    <label for="">bank</label>
+                    <select v-model="rows.split[index].bank_id" name="" class="form-control col-10" id="">
+                      <option value="null">Select Bank</option>
+                      <option v-for="bank in banks" :key="bank.id" :value="bank.id">{{bank.name}}</option>
+                    </select>
+                  </td>
+
+                  <td>
+                    <button type="button" class="btn btn-success text-light col-2" @click="new_row()">+</button>
+                    <button v-show="rows.split.length > 1" type="button" class="btn btn-danger text-light col-2" @click="delete_row(index)">x</button>
+                  </td>
+                </tr>
+              </table>
+                <div class="form-group">
+                  <button type="submit" class="btn btn-success">Submit</button>
+                </div>
+            </fieldset>
+          </form>
+        </div>
         </div>
       <template slot="footer">
       <p-button type="default" link @click.prevent="modalOpen = false">Close</p-button>
@@ -142,40 +187,40 @@
           </div>
 
           <div class="form-group">
-      <label for="files">Click to upload {{ docForm.document_type || '' }} File(s)</label>
-      <input
-        type="file"
-        ref="fileInput"
-        class="form-control"
-        multiple
-        @change="handleFileUpload"
-        required
-      />
+            <label for="files">Click to upload {{ docForm.document_type || '' }} File(s)</label>
+            <input
+              type="file"
+              ref="fileInput"
+              class="form-control"
+              multiple
+              @change="handleFileUpload"
+              required
+            />
 
-      <!-- Preview of selected files -->
-      <div v-if="docForm.files.length" class="mt-3">
-        <h6>Selected Files:</h6>
-        <ul class="list-group">
-          <li
-            class="list-group-item d-flex justify-content-between align-items-center"
-            v-for="(file, index) in docForm.files"
-            :key="index"
-          >
-            <div>
-              <i class="fa fa-file mr-2 text-primary"></i>
-              {{ file.name }}
+            <!-- Preview of selected files -->
+            <div v-if="docForm.files.length" class="mt-3">
+              <h6>Selected Files:</h6>
+              <ul class="list-group">
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center"
+                  v-for="(file, index) in docForm.files"
+                  :key="index"
+                >
+                  <div>
+                    <i class="fa fa-file mr-2 text-primary"></i>
+                    {{ file.name }}
+                  </div>
+                  <button
+                    class="btn btn-sm btn-outline-danger"
+                    @click="removeSelectedFile(index)"
+                    title="Remove"
+                  >
+                    <i class="fa fa-times"></i>
+                  </button>
+                </li>
+              </ul>
             </div>
-            <button
-              class="btn btn-sm btn-outline-danger"
-              @click="removeSelectedFile(index)"
-              title="Remove"
-            >
-              <i class="fa fa-times"></i>
-            </button>
-          </li>
-        </ul>
-      </div>
-    </div>
+          </div>
 
 
           <button class="btn btn-success" type="submit">Upload</button>
@@ -230,6 +275,9 @@ import helpers from '@/javascript/helpers'
         modalAction:null,
         modalContent:null,
         modalOpen: false,
+        is_split_payment: 0,
+        rows: {split:[{split_playment_method:null, split_payment_amount:null,bank_id:null}]},
+        type: 'full_payment',
         loading: false,
         selectedId: null,
         payment_method : 'cash',
@@ -297,10 +345,21 @@ import helpers from '@/javascript/helpers'
             this.loading = false
         });
       },
-
       openUploadModal(expenditure){
         this.documentModal.classic = true
         this.expenditureId = expenditure
+      },
+      new_row(){
+        this.rows.split.push(
+          {
+            split_playment_method:null,
+            split_payment_amount:null,
+            bank_id:null
+          }
+        )
+      },
+      delete_row (id) {
+        this.rows.split.splice(id, 1)
       },
 
       updatePlan(){
@@ -310,10 +369,15 @@ import helpers from '@/javascript/helpers'
           payment_method: this.payment_method,
           payment_status: this.payment_status,
           part_payment_amount: this.part_payment_amount,
-          duration: this.duration
+          duration: this.duration,
+          type: this.type,
+          is_split_payment: this.is_split_payment,
+          split: this.rows.split
         }
 
         Expenditure.update_plan(payload, this.selectedId).then(res => {
+          this.allexpenditures()
+
           Swal.fire({
             position: 'top-end',
             icon: 'success',

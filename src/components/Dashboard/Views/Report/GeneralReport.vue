@@ -43,9 +43,7 @@
               <button class="btn btn-success btn-block" type="submit">
                 <i class="fa fa-search" aria-hidden="true"></i> Generate Report
               </button>
-              <button class="btn btn-info btn-block mt-2" @click.prevent="downloadReport" :disabled="!details">
-                <i class="fa fa-download" aria-hidden="true"></i> Download CSV
-              </button>
+             
               <button class="btn btn-primary btn-block mt-2" @click.prevent="downloadPDF" :disabled="!details">
                 <i class="fa fa-file-pdf" aria-hidden="true"></i> Download PDF
               </button>
@@ -113,7 +111,30 @@
               <p><strong>Customer Acquisition Cost:</strong> {{ details.revenue.kpi.customer_acquisition_cost | formatCurrency }}</p>
             </div>
             <div class="col-md-6">
-              <p><strong>Sales by Product:</strong> {{ details.revenue.sales_by_product.length ? details.revenue.sales_by_product.join(', ') : 'No data' }}</p>
+              <p><strong>Sales by Product:</strong></p>
+              <ul class="list-unstyled">
+                <li v-for="sale in details.revenue.sales_by_product.sales_by_product" :key="sale.product_id">
+                  {{ sale.product_name }}: {{ sale.total_amount | formatCurrency }}
+                </li>
+                <li v-if="!details.revenue.sales_by_product.sales_by_product.length">No data</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profit and Loss Statement -->
+        <div class="report-section">
+          <h5 class="mt-4">Profit and Loss Statement</h5>
+          <div class="row">
+            <div class="col-md-4">
+              <p><strong>Revenue:</strong> {{ details.profit_loss_statement.revenue | formatCurrency }}</p>
+              <p><strong>Cost of Goods Sold:</strong> {{ details.profit_loss_statement.cost_of_goods_sold | formatCurrency }}</p>
+              <p><strong>Gross Profit:</strong> {{ details.profit_loss_statement.gross_profit | formatCurrency }}</p>
+            </div>
+            <div class="col-md-4">
+              <p><strong>Operating Expenses:</strong> {{ details.profit_loss_statement.operating_expenses | formatCurrency }}</p>
+              <p><strong>Operating Profit:</strong> {{ details.profit_loss_statement.operating_profit | formatCurrency }}</p>
+              <p><strong>Net Profit:</strong> {{ details.profit_loss_statement.net_profit | formatCurrency }}</p>
             </div>
           </div>
         </div>
@@ -127,8 +148,8 @@
               <canvas id="revenueExpenditureChart" height="150"></canvas>
             </div>
             <div class="col-md-6">
-              <h6>Profit Margins</h6>
-              <canvas id="profitMarginsChart" height="150"></canvas>
+              <h6>Profit Breakdown</h6>
+              <canvas id="profitBreakdownChart" height="150"></canvas>
             </div>
           </div>
           <div class="row mt-4">
@@ -242,7 +263,7 @@
             <tbody>
               <tr v-for="exp in details.expenditure.expenditure_details" :key="exp.id">
                 <td>{{ exp.id }}</td>
-                <td>{{ exp.type.name }}</td>
+                <td>{{ exp.exp_type.name }}</td>
                 <td>{{ exp.amount | formatCurrency }}</td>
                 <td>{{ exp.payment_method | capitalize }}</td>
                 <td>{{ exp.payment_status | capitalize }}</td>
@@ -263,7 +284,7 @@
                 <th>Quantity</th>
                 <th>Cost</th>
                 <th>Payment Status</th>
-                <th>Total Balance</th>
+                <th>Total</th>
               </tr>
             </thead>
             <tbody>
@@ -289,7 +310,7 @@
                     <li v-for="detail in purchase.purchase_detail" :key="detail.id">{{ detail.payment_status | capitalize }}</li>
                   </ul>
                 </td>
-                <td>{{ purchase.total_balance | formatCurrency }}</td>
+                <td>{{ purchase.price | formatCurrency }}</td>
               </tr>
             </tbody>
           </table>
@@ -302,26 +323,6 @@
             <div class="col-md-6">
               <h6>Accounts Payable</h6>
               <p><strong>Total:</strong> {{ details.balance_sheet.liabilities.current_liabilities.accounts_payable | formatCurrency }}</p>
-              <table class="table table-striped" v-if="details.balance_sheet.liabilities.current_liabilities.liability_details.purchases_part_payment.length">
-                <thead>
-                  <tr>
-                    <th>Purchase ID</th>
-                    <th>Product</th>
-                    <th>Quantity</th>
-                    <th>Cost</th>
-                    <th>Part Payment</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="detail in details.balance_sheet.liabilities.current_liabilities.liability_details.purchases_part_payment" :key="detail.id">
-                    <td>{{ detail.purchase_id }}</td>
-                    <td>{{ detail.product ? detail.product.name : 'N/A' }}</td>
-                    <td>{{ detail.qty }}</td>
-                    <td>{{ detail.cost | formatCurrency }}</td>
-                    <td>{{ detail.part_payment_amount | formatCurrency }}</td>
-                  </tr>
-                </tbody>
-              </table>
             </div>
             <div class="col-md-6">
               <h6>Accounts Receivable</h6>
@@ -344,19 +345,31 @@
           </div>
         </div>
 
-        <!-- Customer Report -->
+        <!-- Stock Movement -->
         <div class="report-section">
-          <h5 class="mt-4">Customer Report</h5>
-          <p><strong>Total Customers:</strong> {{ details.receivables.receivable_details.length || 'N/A' }}</p>
+          <h5 class="mt-4">Stock Movement</h5>
+          <div class="row">
+            <div class="col-md-4">
+              <p><strong>Stock Sold:</strong> {{ details.stock_movement.stock_sold }}</p>
+            </div>
+            <div class="col-md-4">
+              <p><strong>Stock Adjustments:</strong> {{ details.stock_movement.stock_adjustments }}</p>
+            </div>
+            <div class="col-md-4">
+              <p><strong>Negative Stock:</strong> {{ details.stock_movement.negative_stock }}</p>
+            </div>
+          </div>
         </div>
 
-        <!-- Sales vs Marketing Expenditure -->
+        <!-- Cash Flow -->
         <div class="report-section">
-          <h5 class="mt-4">Sales vs Marketing Expenditure</h5>
+          <h5 class="mt-4">Cash Flow</h5>
           <div class="row">
             <div class="col-md-6">
-              <p><strong>Sales Expenditure:</strong> {{ details.sales_vs_marketing_expenditure.sales_expenditure | formatCurrency }}</p>
-              <p><strong>Marketing Expenditure:</strong> {{ details.sales_vs_marketing_expenditure.marketing_expenditure | formatCurrency }}</p>
+              <p><strong>Cash Inflow:</strong> {{ details.cash_flow.cash_inflow | formatCurrency }}</p>
+            </div>
+            <div class="col-md-6">
+              <p><strong>Cash Outflow:</strong> {{ details.cash_flow.cash_outflow | formatCurrency }}</p>
             </div>
           </div>
         </div>
@@ -365,21 +378,56 @@
         <div class="report-section">
           <h5 class="mt-4">Balance Sheet</h5>
           <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-4">
               <h6>Assets</h6>
               <ul>
                 <li>Cash: {{ details.balance_sheet.assets.current_assets.cash | formatCurrency }}</li>
+                <li>Bank: {{ details.balance_sheet.assets.current_assets.bank | formatCurrency }}</li>
                 <li>Accounts Receivable: {{ details.balance_sheet.assets.current_assets.accounts_receivable | formatCurrency }}</li>
                 <li>Inventory: {{ details.balance_sheet.assets.current_assets.inventory | formatCurrency }}</li>
               </ul>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
               <h6>Liabilities</h6>
               <ul>
                 <li>Accounts Payable: {{ details.balance_sheet.liabilities.current_liabilities.accounts_payable | formatCurrency }}</li>
               </ul>
             </div>
+            <div class="col-md-4">
+              <h6>Equity</h6>
+              <ul>
+                <li>Owner Equity: {{ details.balance_sheet.equity.owner_equity | formatCurrency }}</li>
+                <li>Retained Earnings: {{ details.balance_sheet.equity.retained_earnings | formatCurrency }}</li>
+              </ul>
+            </div>
           </div>
+        </div>
+
+        <!-- Ledger Details -->
+        <div class="report-section">
+          <h5 class="mt-4">Ledger Details</h5>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Account Name</th>
+                <th>Transaction Type</th>
+                <th>Description</th>
+                <th>Amount</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="ledger in details.ledger_details" :key="ledger.id">
+                <td>{{ ledger.id }}</td>
+                <td>{{ ledger.account_name | capitalize }}</td>
+                <td>{{ ledger.transaction_type | capitalize }}</td>
+                <td>{{ ledger.description }}</td>
+                <td>{{ ledger.amount | formatCurrency }}</td>
+                <td>{{ formatDate(ledger.created_at) }}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -403,7 +451,7 @@ export default {
       details: null,
       charts: {
         revenueExpenditure: null,
-        profitMargins: null,
+        profitBreakdown: null,
         budgetVsActual: null
       }
     };
@@ -411,7 +459,7 @@ export default {
   computed: {
     logisticsDetails() {
       if (!this.details || !this.details.expenditure.expenditure_details) return [];
-      return this.details.expenditure.expenditure_details.filter(exp => exp.type.name.toLowerCase() === 'logistics');
+      return this.details.expenditure.expenditure_details.filter(exp => exp.exp_type.expenditure_type.toLowerCase() === 'logistics');
     }
   },
   filters: {
@@ -428,7 +476,7 @@ export default {
     fetchReport() {
       this.loading = true;
       Reports.download_report(this.form).then(res => {
-        this.details = res.data.data.report;
+        this.details = res.data.data;
         Swal.fire({
           position: 'top-end',
           icon: 'success',
@@ -509,19 +557,19 @@ export default {
         }
       });
 
-      // Profit Margins Chart
-      if (this.charts.profitMargins) {
-        this.charts.profitMargins.destroy();
+      // Profit Breakdown Chart
+      if (this.charts.profitBreakdown) {
+        this.charts.profitBreakdown.destroy();
       }
-      this.charts.profitMargins = new Chart(document.getElementById('profitMarginsChart'), {
+      this.charts.profitBreakdown = new Chart(document.getElementById('profitBreakdownChart'), {
         type: 'pie',
         data: {
-          labels: ['Gross Profit Margin', 'Operating Profit Margin', 'Net Profit Margin'],
+          labels: ['Gross Profit', 'Operating Profit', 'Net Profit'],
           datasets: [{
             data: [
-              this.details.profit_margin.gross_profit_margin,
-              this.details.profit_margin.operating_profit_margin,
-              this.details.profit_margin.net_profit_margin
+              this.details.profit_loss_statement.gross_profit,
+              this.details.profit_loss_statement.operating_profit,
+              this.details.profit_loss_statement.net_profit
             ],
             backgroundColor: ['#007bff', '#ffc107', '#28a745'],
             borderColor: ['#ffffff'],
@@ -531,7 +579,7 @@ export default {
         options: {
           plugins: {
             legend: { position: 'bottom', labels: { font: { size: 10 } } },
-            title: { display: true, text: 'Profit Margins (%)', font: { size: 10 } }
+            title: { display: true, text: 'Profit Breakdown (₦)', font: { size: 10 } }
           }
         }
       });
@@ -548,7 +596,7 @@ export default {
             {
               label: 'Budgeted',
               data: [
-                this.details.budget_vs_actual.budgeted_revenue,
+                parseFloat(this.details.budget_vs_actual.budgeted_revenue),
                 this.details.budget_vs_actual.budgeted_expenditure
               ],
               backgroundColor: '#007bff',
@@ -603,7 +651,21 @@ export default {
       csvContent += `Total Revenue,${this.details.revenue.total_revenue}\n`;
       csvContent += `Average Sales per Customer,${this.details.revenue.kpi.average_sales_per_customer}\n`;
       csvContent += `Customer Acquisition Cost,${this.details.revenue.kpi.customer_acquisition_cost}\n`;
-      csvContent += `Sales by Product,${this.details.revenue.sales_by_product.length ? this.details.revenue.sales_by_product.join(';') : 'None'}\n\n`;
+      csvContent += `Sales by Product,${
+        this.details.revenue.sales_by_product.sales_by_product.length
+          ? this.details.revenue.sales_by_product.sales_by_product.map(sale => `${sale.product_name}: ${sale.total_amount}`).join(';')
+          : 'None'
+      }\n\n`;
+
+      // Profit and Loss Statement
+      csvContent += 'Profit and Loss Statement\n';
+      csvContent += 'Metric,Value\n';
+      csvContent += `Revenue,${this.details.profit_loss_statement.revenue}\n`;
+      csvContent += `Cost of Goods Sold,${this.details.profit_loss_statement.cost_of_goods_sold}\n`;
+      csvContent += `Gross Profit,${this.details.profit_loss_statement.gross_profit}\n`;
+      csvContent += `Operating Expenses,${this.details.profit_loss_statement.operating_expenses}\n`;
+      csvContent += `Operating Profit,${this.details.profit_loss_statement.operating_profit}\n`;
+      csvContent += `Net Profit,${this.details.profit_loss_statement.net_profit}\n\n`;
 
       // Sales Details
       csvContent += 'Sales Details\n';
@@ -638,16 +700,16 @@ export default {
       csvContent += 'Expenditure Details\n';
       csvContent += 'ID,Type,Amount,Payment Method,Payment Status,Date\n';
       this.details.expenditure.expenditure_details.forEach(exp => {
-        csvContent += `${exp.id},${exp.type.name},${exp.amount},${exp.payment_method},${exp.payment_status},${this.formatDate(exp.created_at)}\n`;
+        csvContent += `${exp.id},${exp.exp_type.name},${exp.amount},${exp.payment_method},${exp.payment_status},${this.formatDate(exp.created_at)}\n`;
       });
       csvContent += '\n';
 
       // Purchase Details
       csvContent += 'Purchase Details\n';
-      csvContent += 'Purchase ID,Product,Quantity,Cost,Payment Status,Total Balance\n';
+      csvContent += 'Purchase ID,Product,Quantity,Cost,Payment Status,Total\n';
       this.details.expenditure.purchase_details.forEach(purchase => {
         purchase.purchase_detail.forEach(detail => {
-          csvContent += `${purchase.id},${detail.product.name},${detail.qty},${detail.cost},${detail.payment_status},${purchase.total_balance}\n`;
+          csvContent += `${purchase.id},${detail.product.name},${detail.qty},${detail.cost},${detail.payment_status},${purchase.price}\n`;
         });
       });
       csvContent += '\n';
@@ -663,31 +725,38 @@ export default {
         csvContent += `${receivable.fullname},${receivable.wallet_balance}\n`;
       });
       csvContent += '\n';
-      csvContent += 'Accounts Payable Part Payments\n';
-      csvContent += 'Purchase ID,Product,Quantity,Cost,Part Payment\n';
-      this.details.balance_sheet.liabilities.current_liabilities.liability_details.purchases_part_payment.forEach(detail => {
-        csvContent += `${detail.purchase_id},${detail.product ? detail.product.name : 'N/A'},${detail.qty},${detail.cost},${detail.part_payment_amount}\n`;
-      });
-      csvContent += '\n';
 
-      // Customer Report
-      csvContent += 'Customer Report\n';
+      // Stock Movement
+      csvContent += 'Stock Movement\n';
       csvContent += 'Metric,Value\n';
-      csvContent += `Total Customers,${this.details.receivables.receivable_details.length}\n\n`;
+      csvContent += `Stock Sold,${this.details.stock_movement.stock_sold}\n`;
+      csvContent += `Stock Adjustments,${this.details.stock_movement.stock_adjustments}\n`;
+      csvContent += `Negative Stock,${this.details.stock_movement.negative_stock}\n\n`;
 
-      // Sales vs Marketing Expenditure
-      csvContent += 'Sales vs Marketing Expenditure\n';
+      // Cash Flow
+      csvContent += 'Cash Flow\n';
       csvContent += 'Metric,Value\n';
-      csvContent += `Sales Expenditure,${this.details.sales_vs_marketing_expenditure.sales_expenditure}\n`;
-      csvContent += `Marketing Expenditure,${this.details.sales_vs_marketing_expenditure.marketing_expenditure}\n\n`;
+      csvContent += `Cash Inflow,${this.details.cash_flow.cash_inflow}\n`;
+      csvContent += `Cash Outflow,${this.details.cash_flow.cash_outflow}\n\n`;
 
       // Balance Sheet
       csvContent += 'Balance Sheet\n';
       csvContent += 'Category,Item,Value\n';
       csvContent += `Assets,Cash,${this.details.balance_sheet.assets.current_assets.cash}\n`;
+      csvContent += `Assets,Bank,${this.details.balance_sheet.assets.current_assets.bank}\n`;
       csvContent += `Assets,Accounts Receivable,${this.details.balance_sheet.assets.current_assets.accounts_receivable}\n`;
       csvContent += `Assets,Inventory,${this.details.balance_sheet.assets.current_assets.inventory}\n`;
-      csvContent += `Liabilities,Accounts Payable,${this.details.balance_sheet.liabilities.current_liabilities.accounts_payable}\n\n`;
+      csvContent += `Liabilities,Accounts Payable,${this.details.balance_sheet.liabilities.current_liabilities.accounts_payable}\n`;
+      csvContent += `Equity,Owner Equity,${this.details.balance_sheet.equity.owner_equity}\n`;
+      csvContent += `Equity,Retained Earnings,${this.details.balance_sheet.equity.retained_earnings}\n\n`;
+
+      // Ledger Details
+      csvContent += 'Ledger Details\n';
+      csvContent += 'ID,Account Name,Transaction Type,Description,Amount,Date\n';
+      this.details.ledger_details.forEach(ledger => {
+        csvContent += `${ledger.id},${ledger.account_name},${ledger.transaction_type},${ledger.description},${ledger.amount},${this.formatDate(ledger.created_at)}\n`;
+      });
+      csvContent += '\n';
 
       // Budget vs Actual
       csvContent += 'Budget vs Actual\n';
@@ -830,16 +899,7 @@ th {
   break-before: page;
 }
 
-.loader {
-  border: 4px solid #dee2e6;
-  border-top: 4px solid #007bff;
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  animation: spin 2s linear infinite;
-  display: block;
-  margin: 0 auto;
-}
+
 
 @keyframes spin {
   0% { transform: rotate(0deg); }
