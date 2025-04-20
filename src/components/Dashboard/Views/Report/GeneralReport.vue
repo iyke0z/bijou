@@ -14,7 +14,7 @@
               <div class="form-group">
                 <label for="start-date">Start Date</label>
                 <input
-                  type="datetime-local"
+                  type="date"
                   id="start-date"
                   v-model="form.start_date"
                   class="form-control w-100"
@@ -24,7 +24,7 @@
               <div class="form-group">
                 <label for="end-date">End Date</label>
                 <input
-                  type="datetime-local"
+                  type="date"
                   id="end-date"
                   v-model="form.end_date"
                   class="form-control w-100"
@@ -112,18 +112,13 @@
             <p><strong>Customer Acquisition Cost:</strong> {{ details.revenue.kpi.customer_acquisition_cost | formatCurrency }}</p>
           </div>
           <div class="col-md-6">
-            <p><strong>Sales by Product:</strong></p>
-            <ul class="list-unstyled">
-              <li v-for="sale in details.revenue.sales_by_product.sales_by_product" :key="sale.product_id">
-                {{ sale.product_name }}: {{ sale.total_amount | formatCurrency }}
-              </li>
-              <li v-if="!details.revenue.sales_by_product.sales_by_product.length">No data</li>
-            </ul>
+            <h6>Sales by Product</h6>
+            <canvas id="salesChart" height="150"></canvas>
           </div>
         </div>
 
         <!-- Charts -->
-        <div class="row">
+        <div class="row mt-4">
           <div class="col-md-6">
             <h5>Revenue vs Expenditure</h5>
             <canvas id="revenueExpenditureChart" height="150"></canvas>
@@ -134,9 +129,33 @@
           </div>
         </div>
         <div class="row mt-4">
-          <div class="col-md-12">
+          <div class="col-md-6">
             <h5>Budget vs Actual</h5>
             <canvas id="budgetVsActualChart" height="150"></canvas>
+          </div>
+          <div class="col-md-6">
+            <h5>Cash Flow</h5>
+            <canvas id="cashFlowChart" height="150"></canvas>
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <h5>Operating Expenses</h5>
+            <canvas id="opexChart" height="150"></canvas>
+          </div>
+          <div class="col-md-6">
+            <h5>Cost of Goods Sold</h5>
+            <canvas id="cogsChart" height="150"></canvas>
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <h5>Accounts Receivable</h5>
+            <canvas id="receivablesChart" height="150"></canvas>
+          </div>
+          <div class="col-md-6">
+            <h5>Accounts Payable</h5>
+            <canvas id="payablesChart" height="150"></canvas>
           </div>
         </div>
 
@@ -145,22 +164,19 @@
         <table class="table table-striped">
           <thead>
             <tr>
-              <th>Purchase ID</th>
+              <th>Product ID</th>
               <th>Product</th>
-              <th>Quantity</th>
-              <th>Cost</th>
-              <th>Payment Status</th>
-              <th>Total</th>
+              <th>Total Amount</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="purchase in details.expenditure.purchase_details" :key="purchase.id">
-              <td>{{ purchase.purchase_id }}</td>
-              <td>{{ purchase.product.name }}</td>
-              <td>{{ purchase.qty }}</td>
-              <td>{{ purchase.cost | formatCurrency }}</td>
-              <td>{{ purchase.payment_status | capitalize }}</td>
-              <td>{{ purchase.purchase.price | formatCurrency }}</td>
+            <tr v-for="sale in details.revenue.sales_by_product.sales_by_product" :key="sale.product_id">
+              <td>{{ sale.product_id }}</td>
+              <td>{{ sale.product_name }}</td>
+              <td>{{ sale.total_amount | formatCurrency }}</td>
+            </tr>
+            <tr v-if="!details.revenue.sales_by_product.sales_by_product.length">
+              <td colspan="3">No sales data available</td>
             </tr>
           </tbody>
         </table>
@@ -173,6 +189,7 @@
             <p><strong>Other Income:</strong> {{ details.profit_loss_statement.other_income | formatCurrency }}</p>
             <p><strong>Cost of Goods Sold:</strong> {{ details.profit_loss_statement.cost_of_goods_sold | formatCurrency }}</p>
             <p><strong>Gross Profit:</strong> {{ details.profit_loss_statement.gross_profit | formatCurrency }}</p>
+            <p><strong>Gross Profit Margin:</strong> {{ ((details.profit_loss_statement.gross_profit / (details.profit_loss_statement.revenue || 1)) * 100).toFixed(2) }}%</p>
           </div>
           <div class="col-md-4">
             <p><strong>Operating Expenses:</strong> {{ details.profit_loss_statement.operating_expenses | formatCurrency }}</p>
@@ -183,6 +200,7 @@
           <div class="col-md-4">
             <p><strong>Tax Expense:</strong> {{ details.profit_loss_statement.tax_expense | formatCurrency }}</p>
             <p><strong>Net Profit:</strong> {{ details.profit_loss_statement.net_profit | formatCurrency }}</p>
+            <p><strong>Net Profit Margin:</strong> {{ ((details.profit_loss_statement.net_profit / (details.profit_loss_statement.revenue || 1)) * 100).toFixed(2) }}%</p>
           </div>
         </div>
 
@@ -270,9 +288,10 @@
         <div class="row">
           <div class="col-md-6">
             <p><strong>Cash Inflow:</strong> {{ details.cash_flow.cash_inflow | formatCurrency }}</p>
+            <p><strong>Cash Outflow:</strong> {{ details.cash_flow.cash_outflow | formatCurrency }}</p>
           </div>
           <div class="col-md-6">
-            <p><strong>Cash Outflow:</strong> {{ details.cash_flow.cash_outflow | formatCurrency }}</p>
+            <canvas id="cashFlowChart" heightwatermark="true" height="150"></canvas>
           </div>
         </div>
 
@@ -463,17 +482,23 @@ export default {
       shops: null,
       details: null,
       charts: {
+        sales: null,
         revenueExpenditure: null,
         profitLoss: null,
-        budgetVsActual: null
-      }
+        budgetVsActual: null,
+        cashFlow: null,
+        opex: null,
+        cogs: null,
+        receivables: null,
+        payables: null,
+      },
     };
   },
   computed: {
     logisticsDetails() {
       if (!this.details || !this.details.expenditure.expenditure_details) return [];
       return this.details.expenditure.expenditure_details.filter(exp => exp.type.name.toLowerCase() === 'logistics');
-    }
+    },
   },
   filters: {
     capitalize(value) {
@@ -481,55 +506,67 @@ export default {
       return value.replace(/_/g, ' ').replace(/(^|\s)\w/g, letter => letter.toUpperCase());
     },
     formatCurrency(value) {
-      if (!value) return '0.00';
+      if (!value) return '₦0.00';
       return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(value);
-    }
+    },
   },
   methods: {
+    setDefaultDate() {
+      const today = new Date();
+      const yesterday = new Date(today);
+      yesterday.setDate(today.getDate() - 1);
+      this.form.start_date = yesterday.toISOString().split('T')[0]; // 2025-04-18
+      this.form.end_date = today.toISOString().split('T')[0]; // 2025-04-19
+    },
     fetchReport() {
       this.loading = true;
-      Reports.download_report(this.form).then(res => {
-        this.details = res.data.data;
-        Swal.fire({
-          position: 'top-end',
-          icon: 'success',
-          title: res.data.message,
-          customClass: 'Swal-wide',
-          showConfirmButton: false,
-          timer: 3000
+      Reports.download_report(this.form)
+        .then(res => {
+          this.details = res.data.data;
+          console.log('API Response:', this.details); // Debug
+          Swal.fire({
+            position: 'top-end',
+            icon: 'success',
+            title: res.data.message,
+            customClass: 'Swal-wide',
+            showConfirmButton: false,
+            timer: 3000,
+          });
+          this.loading = false;
+          this.$nextTick(() => {
+            this.initCharts();
+          });
+        })
+        .catch(err => {
+          Swal.fire({
+            position: 'top-end',
+            icon: 'error',
+            title: err?.response?.data?.message ?? 'Failed to fetch report',
+            customClass: 'Swal-wide',
+            showConfirmButton: false,
+            timer: 3000,
+          });
+          this.loading = false;
         });
-        this.loading = false;
-        this.$nextTick(() => {
-          this.initCharts();
-        });
-      }).catch(err => {
-        Swal.fire({
-          position: 'top-end',
-          icon: 'error',
-          title: err?.response?.data?.message ?? 'Failed to fetch report',
-          customClass: 'Swal-wide',
-          showConfirmButton: false,
-          timer: 3000
-        });
-        this.loading = false;
-      });
     },
     getShops() {
       this.loading = true;
-      Shops.get_shops().then(res => {
-        this.shops = res.data.data;
-        this.loading = false;
-      }).catch(err => {
-        Swal.fire({
-          position: 'top-end',
-          icon: 'error',
-          title: 'Failed to fetch shops',
-          customClass: 'Swal-wide',
-          showConfirmButton: false,
-          timer: 3000
+      Shops.get_shops()
+        .then(res => {
+          this.shops = res.data.data;
+          this.loading = false;
+        })
+        .catch(err => {
+          Swal.fire({
+            position: 'top-end',
+            icon: 'error',
+            title: 'Failed to fetch shops',
+            customClass: 'Swal-wide',
+            showConfirmButton: false,
+            timer: 3000,
+          });
+          this.loading = false;
         });
-        this.loading = false;
-      });
     },
     formatDate(date) {
       return moment(date).format('MMMM D, YYYY');
@@ -538,7 +575,36 @@ export default {
       return `${moment(start).format('MMMM D, YYYY')} - ${moment(end).format('MMMM D, YYYY')}`;
     },
     initCharts() {
-      if (!this.details) return;
+      if (!this.details) {
+        console.warn('No details available for charts');
+        return;
+      }
+
+      // Sales Chart
+      if (this.charts.sales) {
+        this.charts.sales.destroy();
+      }
+      this.charts.sales = new Chart(document.getElementById('salesChart'), {
+        type: 'bar',
+        data: {
+          labels: this.details.revenue.sales_by_product.sales_by_product.map(sale => sale.product_name),
+          datasets: [{
+            label: 'Sales (₦)',
+            data: this.details.revenue.sales_by_product.sales_by_product.map(sale => sale.total_amount),
+            backgroundColor: '#48BB78',
+            borderColor: '#48BB78',
+            borderWidth: 1,
+          }],
+        },
+        options: {
+          scales: { y: { beginAtZero: true } },
+          plugins: {
+            legend: { display: false },
+            title: { display: true, text: 'Sales by Product' },
+          },
+        },
+      });
+      console.log('Sales Chart:', this.charts.sales.data); // Debug
 
       // Revenue vs Expenditure Chart
       if (this.charts.revenueExpenditure) {
@@ -551,24 +617,23 @@ export default {
           datasets: [{
             label: 'Amount (₦)',
             data: [
-              this.details.summary.key_metrics.total_revenue,
-              this.details.summary.key_metrics.total_expenditure
+              this.details.summary.key_metrics.total_revenue || 0,
+              this.details.summary.key_metrics.total_expenditure || 0,
             ],
             backgroundColor: ['#28a745', '#dc3545'],
             borderColor: ['#28a745', '#dc3545'],
-            borderWidth: 1
-          }]
+            borderWidth: 1,
+          }],
         },
         options: {
-          scales: {
-            y: { beginAtZero: true }
-          },
+          scales: { y: { beginAtZero: true } },
           plugins: {
             legend: { display: false },
-            title: { display: true, text: 'Revenue vs Expenditure' }
-          }
-        }
+            title: { display: true, text: 'Revenue vs Expenditure' },
+          },
+        },
       });
+      console.log('Revenue vs Expenditure Chart:', this.charts.revenueExpenditure.data); // Debug
 
       // Profit & Loss Chart
       if (this.charts.profitLoss) {
@@ -580,22 +645,23 @@ export default {
           labels: ['Gross Profit', 'Operating Profit', 'Net Profit'],
           datasets: [{
             data: [
-              this.details.profit_loss_statement.gross_profit,
-              this.details.profit_loss_statement.operating_profit,
-              this.details.profit_loss_statement.net_profit
+              this.details.profit_loss_statement.gross_profit || 0,
+              this.details.profit_loss_statement.operating_profit || 0,
+              this.details.profit_loss_statement.net_profit || 0,
             ],
             backgroundColor: ['#007bff', '#ffc107', '#28a745'],
             borderColor: ['#ffffff'],
-            borderWidth: 1
-          }]
+            borderWidth: 1,
+          }],
         },
         options: {
           plugins: {
             legend: { position: 'bottom' },
-            title: { display: true, text: 'Profit & Loss' }
-          }
-        }
+            title: { display: true, text: 'Profit & Loss' },
+          },
+        },
       });
+      console.log('Profit & Loss Chart:', this.charts.profitLoss.data); // Debug
 
       // Budget vs Actual Chart
       if (this.charts.budgetVsActual) {
@@ -609,35 +675,188 @@ export default {
             {
               label: 'Budgeted',
               data: [
-                this.details.budget_vs_actual.budgeted_revenue,
-                this.details.budget_vs_actual.budgeted_expenditure
+                this.details.budget_vs_actual.budgeted_revenue || 0,
+                this.details.budget_vs_actual.budgeted_expenditure || 0,
               ],
               backgroundColor: '#007bff',
               borderColor: '#007bff',
-              borderWidth: 1
+              borderWidth: 1,
             },
             {
               label: 'Actual',
               data: [
-                this.details.budget_vs_actual.actual_revenue,
-                this.details.budget_vs_actual.actual_expenditure
+                this.details.budget_vs_actual.actual_revenue || 0,
+                this.details.budget_vs_actual.actual_expenditure || 0,
               ],
               backgroundColor: '#28a745',
               borderColor: '#28a745',
-              borderWidth: 1
-            }
-          ]
+              borderWidth: 1,
+            },
+          ],
         },
         options: {
-          scales: {
-            y: { beginAtZero: true }
-          },
+          scales: { y: { beginAtZero: true } },
           plugins: {
             legend: { position: 'bottom' },
-            title: { display: true, text: 'Budget vs Actual' }
-          }
-        }
+            title: { display: true, text: 'Budget vs Actual' },
+          },
+        },
       });
+      console.log('Budget vs Actual Chart:', this.charts.budgetVsActual.data); // Debug
+
+      // Cash Flow Chart
+      if (this.charts.cashFlow) {
+        this.charts.cashFlow.destroy();
+      }
+      this.charts.cashFlow = new Chart(document.getElementById('cashFlowChart'), {
+        type: 'pie',
+        data: {
+          labels: ['Cash Inflow', 'Cash Outflow'],
+          datasets: [{
+            data: [
+              this.details.cash_flow.cash_inflow || 0,
+              this.details.cash_flow.cash_outflow || 0,
+            ],
+            backgroundColor: ['#28a745', '#dc3545'],
+            borderColor: ['#ffffff'],
+            borderWidth: 1,
+          }],
+        },
+        options: {
+          plugins: {
+            legend: { position: 'bottom' },
+            title: { display: true, text: 'Cash Flow' },
+          },
+        },
+      });
+      console.log('Cash Flow Chart:', this.charts.cashFlow.data); // Debug
+
+      // OPEX Chart
+      if (this.charts.opex) {
+        this.charts.opex.destroy();
+      }
+      this.charts.opex = new Chart(document.getElementById('opexChart'), {
+        type: 'line',
+        data: {
+          labels: this.getLedgerDates('purchase'),
+          datasets: [{
+            label: 'OPEX (₦)',
+            data: this.getLedgerAmounts('purchase'),
+            borderColor: '#ED8936',
+            backgroundColor: 'rgba(237, 137, 54, 0.2)',
+            fill: true,
+            borderWidth: 2,
+          }],
+        },
+        options: {
+          scales: { y: { beginAtZero: true } },
+          plugins: {
+            legend: { display: false },
+            title: { display: true, text: 'Operating Expenses' },
+          },
+        },
+      });
+      console.log('OPEX Chart:', this.charts.opex.data); // Debug
+
+      // COGS Chart
+      if (this.charts.cogs) {
+        this.charts.cogs.destroy();
+      }
+      this.charts.cogs = new Chart(document.getElementById('cogsChart'), {
+        type: 'bar',
+        data: {
+          labels: this.getLedgerDates('cost_of_goods_sold'),
+          datasets: [{
+            label: 'COGS (₦)',
+            data: this.getLedgerAmounts('cost_of_goods_sold'),
+            backgroundColor: '#9F7AEA',
+            borderColor: '#9F7AEA',
+            borderWidth: 1,
+          }],
+        },
+        options: {
+          scales: { y: { beginAtZero: true } },
+          plugins: {
+            legend: { display: false },
+            title: { display: true, text: 'Cost of Goods Sold' },
+          },
+        },
+      });
+      console.log('COGS Chart:', this.charts.cogs.data); // Debug
+
+      // Receivables Chart
+      if (this.charts.receivables) {
+        this.charts.receivables.destroy();
+      }
+      this.charts.receivables = new Chart(document.getElementById('receivablesChart'), {
+        type: 'bar',
+        data: {
+          labels: ['Total Receivables'],
+          datasets: [{
+            label: 'Receivables (₦)',
+            data: [this.details.receivables.total_receivables || 0],
+            backgroundColor: '#4299E1',
+            borderColor: '#4299E1',
+            borderWidth: 1,
+          }],
+        },
+        options: {
+          scales: { y: { beginAtZero: true } },
+          plugins: {
+            legend: { display: false },
+            title: { display: true, text: 'Accounts Receivable' },
+          },
+        },
+      });
+      console.log('Receivables Chart:', this.charts.receivables.data); // Debug
+
+      // Payables Chart
+      if (this.charts.payables) {
+        this.charts.payables.destroy();
+      }
+      this.charts.payables = new Chart(document.getElementById('payablesChart'), {
+        type: 'bar',
+        data: {
+          labels: ['Total Payables'],
+          datasets: [{
+            label: 'Payables (₦)',
+            data: [this.details.balance_sheet.liabilities.current_liabilities.accounts_payable || 0],
+            backgroundColor: '#ED64A6',
+            borderColor: '#ED64A6',
+            borderWidth: 1,
+          }],
+        },
+        options: {
+          scales: { y: { beginAtZero: true } },
+          plugins: {
+            legend: { display: false },
+            title: { display: true, text: 'Accounts Payable' },
+          },
+        },
+      });
+      console.log('Payables Chart:', this.charts.payables.data); // Debug
+    },
+    getLedgerDates(accountName) {
+      const dates = {};
+      (this.details.ledger_details || [])
+        .filter(entry => entry.account_name.toLowerCase() === accountName.toLowerCase())
+        .forEach(entry => {
+          const date = moment(entry.created_at).format('YYYY-MM-DD');
+          dates[date] = true;
+        });
+      return Object.keys(dates).sort();
+    },
+    getLedgerAmounts(accountName) {
+      const amountsByDate = {};
+      (this.details.ledger_details || [])
+        .filter(entry => entry.account_name.toLowerCase() === accountName.toLowerCase())
+        .forEach(entry => {
+          const date = moment(entry.created_at).format('YYYY-MM-DD');
+          amountsByDate[date] = (amountsByDate[date] || 0) + entry.amount;
+        });
+      return Object.keys(amountsByDate)
+        .sort()
+        .map(date => amountsByDate[date]);
     },
     downloadReport() {
       if (!this.details) return;
@@ -673,9 +892,9 @@ export default {
 
       // Sales Details
       csvContent += 'Sales Details\n';
-      csvContent += 'Purchase ID,Product,Quantity,Cost,Payment Status,Total\n';
-      this.details.expenditure.purchase_details.forEach(purchase => {
-        csvContent += `${purchase.purchase_id},${purchase.product.name},${purchase.qty},${purchase.cost},${purchase.payment_status},${purchase.purchase.price}\n`;
+      csvContent += 'Product ID,Product,Total Amount\n';
+      this.details.revenue.sales_by_product.sales_by_product.forEach(sale => {
+        csvContent += `${sale.product_id},${sale.product_name},${sale.total_amount}\n`;
       });
       csvContent += '\n';
 
@@ -686,12 +905,14 @@ export default {
       csvContent += `Other Income,${this.details.profit_loss_statement.other_income}\n`;
       csvContent += `Cost of Goods Sold,${this.details.profit_loss_statement.cost_of_goods_sold}\n`;
       csvContent += `Gross Profit,${this.details.profit_loss_statement.gross_profit}\n`;
+      csvContent += `Gross Profit Margin,${((this.details.profit_loss_statement.gross_profit / (this.details.profit_loss_statement.revenue || 1)) * 100).toFixed(2)}%\n`;
       csvContent += `Operating Expenses,${this.details.profit_loss_statement.operating_expenses}\n`;
       csvContent += `Depreciation,${this.details.profit_loss_statement.depreciation}\n`;
       csvContent += `Amortization,${this.details.profit_loss_statement.amortization}\n`;
       csvContent += `Operating Profit,${this.details.profit_loss_statement.operating_profit}\n`;
       csvContent += `Tax Expense,${this.details.profit_loss_statement.tax_expense}\n`;
-      csvContent += `Net Profit,${this.details.profit_loss_statement.net_profit}\n\n`;
+      csvContent += `Net Profit,${this.details.profit_loss_statement.net_profit}\n`;
+      csvContent += `Net Profit Margin,${((this.details.profit_loss_statement.net_profit / (this.details.profit_loss_statement.revenue || 1)) * 100).toFixed(2)}%\n\n`;
 
       // Expenditure Summary
       csvContent += 'Expenditure Summary\n';
@@ -834,26 +1055,31 @@ export default {
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 3, useCORS: true },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
-        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] },
       };
 
-      html2pdf().set(opt).from(element).save().catch(err => {
-        Swal.fire({
-          position: 'top-end',
-          icon: 'error',
-          title: 'Failed to generate PDF',
-          text: err.message,
-          customClass: 'Swal-wide',
-          showConfirmButton: false,
-          timer: 3000
+      html2pdf()
+        .set(opt)
+        .from(element)
+        .save()
+        .catch(err => {
+          Swal.fire({
+            position: 'top-end',
+            icon: 'error',
+            title: 'Failed to generate PDF',
+            text: err.message,
+            customClass: 'Swal-wide',
+            showConfirmButton: false,
+            timer: 3000,
+          });
         });
-      });
-    }
+    },
   },
   created() {
+    this.setDefaultDate();
     this.getShops();
-  }
-}
+  },
+};
 </script>
 
 <style scoped>
@@ -870,7 +1096,14 @@ export default {
   margin-bottom: 1.5rem;
 }
 
-.card-title, h4, h5, h6 {
+.card-body {
+  padding: 20px;
+}
+
+.card-title,
+h4,
+h5,
+h6 {
   color: #343a40;
 }
 
@@ -914,9 +1147,14 @@ export default {
 }
 
 
+
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
 }
 
 .btn-link {
