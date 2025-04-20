@@ -1,6 +1,7 @@
 <template>
   <div class="table-responsive">
-    <span class="loader" v-if="loading"></span>
+    <div class="loader" v-if="loading"></div>
+
     <div class="mb-2" v-if="expiry_response && expiry_response[0] != 'active'">
         <span v-if="expiry_response[0] == 'expired'" class="text-white bg-danger pr-2 pl-2 pt-2 pb-2">Subscription Expired <small>Subscribe to continue </small></span>
         <span v-if="expiry_response[0] == 'active'" class="text-light bg-success pr-2 pl-2 pt-2 pb-2">Subscription Active</span>
@@ -173,44 +174,53 @@
   </div>
 </div>
 
-<div class="row ml-1">
-  <div class="form-group col-1">
-    <label for="">Logistics Amount</label>
-    <input type="number" step="any" v-model="logistics" class="form-control"/>
+<div class="row">
+  <div class="form-group col-12 col-md-2">
+    <label>Logistics Amount</label>
+    <input type="number" step="any" v-model="logistics" class="form-control" />
   </div>
 
-  <div class="form-group col-1">
-    <label for="">Is Split</label>
+  <div class="form-group col-12 col-md-2">
+    <label>Is Split</label>
     <select v-model="is_split_payment" class="form-control" @change="openModal">
-          <option :value="1">True</option>
-          <option :value="0">False</option>
-        </select>
+      <option :value="1">True</option>
+      <option :value="0">False</option>
+    </select>
   </div>
 
-  <div class="form-group col-3">
-    <label for="">Payment Type</label>
-        <select v-model="type" class="form-control">
-          <option value="full_payment">Full Payment</option>
+  <div class="form-group col-12 col-md-4">
+    <label>Payment Type</label>
+    <select v-model="type" class="form-control">
+      <option value="full_payment">Full Payment</option>
       <option value="on_credit">On Credit</option>
       <option value="complementary">Complementary</option>
       <option value="part_payment">Part Payment</option>
-        </select>
-      </div>
-  <div class="form-group col-3">
-    <label for="">Payment Method</label>
-    <select v-model="payment_method" name="" class="form-control col-10" id="">
+    </select>
+  </div>
+
+  <div class="form-group col-12 col-md-4">
+    <label>Payment Method</label>
+    <select v-model="payment_method" class="form-control">
       <option value="cash">Cash</option>
       <option value="transfer">Transfer</option>
       <option value="card">POS</option>
       <option v-if="total <= customerWallet_balance && customer_id != null" value="wallet">Wallet</option>
     </select>
   </div>
-  <div class="form-group">
-    <label for=""></label><br />
-    <button class="btn btn-success mr-2" @click.prevent="pay">Pay <i class="fa fa-money" aria-hidden="true"></i></button>
-    <button class="btn btn-primary" @click.prevent="reset">Reset <i class="fa fa-refresh" aria-hidden="true"></i></button>
-    <a class="btn btn-warning" @click.prevent="generateInvoice" target="_blank">Generate Invoice <i class="fa fa-print" aria-hidden="true"></i></a>
-    <a class="btn btn-danger" @click.prevent="printReceipt" target="_blank">Print Receipt <i class="fa fa-print" aria-hidden="true"></i></a>
+
+  <div class="form-group col-12 d-flex flex-wrap gap-2 mt-2">
+    <button class="btn btn-success mr-2" @click.prevent="pay">
+      Pay <i class="fa fa-money" aria-hidden="true"></i>
+    </button>
+    <button class="btn btn-primary" @click.prevent="reset">
+      Reset <i class="fa fa-refresh" aria-hidden="true"></i>
+    </button>
+    <a class="btn btn-warning" @click.prevent="generateInvoice" target="_blank">
+      Generate Invoice <i class="fa fa-print" aria-hidden="true"></i>
+    </a>
+    <a class="btn btn-danger" @click.prevent="printReceipt" target="_blank">
+      Print Receipt <i class="fa fa-print" aria-hidden="true"></i>
+    </a>
   </div>
 </div>
 
@@ -792,20 +802,6 @@ import { f } from 'html2pdf.js'
         for (let index = 0; index < this.rows.split.length; index++) {
           if(this.rows.split[index].split_payment_amount != null){
             total_split += parseFloat(this.rows.split[index].split_payment_amount)
-          }
-        }
-        if(this.is_split_payment == 1 && this.type != "on_credit" && this.type != "part_payment"){
-          if(total_split != this.total){
-            Swal.fire({
-              position: 'top-end',
-              icon: 'warning',
-              title: "Split payment amount should be equal to total amount",
-              customClass: 'Swal-wide',
-              showConfirmButton: false,
-              timer: 3000
-            })
-            this.loading = false
-            return
           }
         }
 

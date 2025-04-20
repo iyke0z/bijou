@@ -2,72 +2,50 @@
 <!-- START RECEIPT -->
 <div class="receipt">
   <div class="orderNo">
-    <b>{{ this.details }}</b><br/>
-    {{getDate()}} <br/>
-    {{ summary.payment_method }} receipt <br>
-   Receipt ID# <span id="Order #">{{ String(summary?.ref_no).padStart(7, 0)}}</span>
+    <b>{{ this.details }}</b><br />
+    {{ getDate() }}<br />
+    {{ summary.payment_method }} receipt<br />
+    Receipt ID# <span>{{ String(summary?.ref_no).padStart(7, 0) }}</span>
   </div>
-  <div class="body">
-    <div class="tableArea">
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Qty</th>
-            <th>Price</th>
-            <th>Total</th>
-          </tr>
-        </thead>
-        <tbody v-if="products != null">
-          <tr v-for="item in products" :key="item">
-            <td>{{item.name}}</td>
-            <td>{{item.qty}}</td>
-            <td>{{item.price.toLocaleString()}}</td>
-            <td>{{(item.price * item.qty).toLocaleString()}}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="TotalCalc bordered border-dark" v-if="summary != null">
-      <div class="row">
-        <div class="col-4">Subotal:</div>
-        <div class="col-8"><b>&#8358; {{(summary?.amount).toLocaleString()}}</b></div>
-      </div>
-      <div class="row">
-        <div class="col-4">Discount</div>
-        <div class="col-8">{{summary?.discount}} %</div>
-      </div>
-      <div class="row">
-        <div class="col-4">V.A.T</div>
-        <div class="col-8">{{summary?.vat}}</div>
-      </div>
-      <div class="row">
-        <div class="col-4">Logistics</div>
-        <div class="col=8">{{summary?.logistics}}</div>
-      </div>
-      <div class="row">
-        <div class="col-4">Total</div>
-        <div class="col-8"> <b>&#8358; {{Math.ceil(summary?.total + parseFloat(summary?.logistics)).toLocaleString()}}</b></div>
-      </div>
-      <div class="row"  v-if="summary?.payment_method == 'part_payment'">
-        <div class="col-4">Paid</div>
-        <div class="col-8">&#8358; {{Math.ceil((summary?.part_payment)).toLocaleString()}}</div>
-      </div>
-      <div class="row" v-if="summary?.payment_method == 'part_payment'">
-        <div class="col-4" >Balance</div>
-        <div class="col-8">&#8358; {{Math.ceil((summary?.total - summary?.part_payment)).toLocaleString()}}</div>
-      </div>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Qty</th>
+        <th>Price</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="item in products" :key="item.name">
+        <td>{{ item.name }}</td>
+        <td>{{ item.qty }}</td>
+        <td>{{ item.price.toLocaleString() }}</td>
+        <td>{{ (item.qty * item.price).toLocaleString() }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="totals">
+    <div>Subtotal: &#8358; {{ summary?.amount.toLocaleString() }}</div>
+    <div>Discount: {{ summary?.discount }}%</div>
+    <div>VAT: {{ summary?.vat }}</div>
+    <div>Logistics: &#8358; {{ summary?.logistics }}</div>
+    <div><strong>Total: &#8358; {{ Math.ceil(summary?.total + parseFloat(summary?.logistics)).toLocaleString() }}</strong></div>
+
+    <div v-if="summary?.payment_method === 'part_payment'">
+      Paid: &#8358; {{ Math.ceil(summary?.part_payment).toLocaleString() }}<br />
+      Balance: &#8358; {{ Math.ceil(summary?.total - summary?.part_payment).toLocaleString() }}
     </div>
   </div>
 
- <div class="keepIt">
-  <i>{{ numberToWords(Math.ceil(summary?.total  + parseFloat(summary?.logistics))) }} naira only</i><br>
-
-  <i>thank you for your patronage! <br>see you next time.</i>
-
+  <div class="footer">
+    <i>{{ numberToWords(Math.ceil(summary?.total + parseFloat(summary?.logistics))) }} naira only</i><br />
+    <i>Thank you for your patronage!<br />See you next time.</i>
   </div>
-
 </div>
+
 </template>
 <script>
 import helpers from '@/javascript/helpers'
@@ -149,284 +127,73 @@ import helpers from '@/javascript/helpers'
   }
 </script>
 <style scoped>
-/* TODO: optimize */
-
-body {
-  font-family: 'Roboto', sans-serif;
-  margin: 0px;
-  padding: 0px;
-}
-
 .receipt {
-    padding: 3mm;
-    width: 80mm;
-}
-.orderNo {
-  width: 100%;
-  text-align: center;
-  padding-bottom: 1mm;
-  font-size: 8pt;
-  font-weight: bold;
-}
-
-.orderNo:empty {
-  display: none;
-}
-
-.headerSubTitle {
-  font-family: 'Equestria', 'Permanent Marker', cursive;
-  text-align: center;
-  font-size: 12pt;
-}
-
-.headerTitle {
-  font-family: 'Equestria', 'Permanent Marker', cursive;
-  text-align: center;
-  font-size: 24pt;
-  font-weight: bold;
-}
-
-#location {
-  margin-top: 5pt;
-  text-align: center;
-  font-size: 16pt;
-  font-weight: bold;
-}
-
-#date {
-  margin: 5pt 0px;
-  text-align: center;
-  font-size: 8pt;
-}
-
-#barcode {
-  display: block;
-  margin: 0px auto;
-}
-
-#barcode:empty {
-  display: none;
-}
-
-.watermark {
-   position: absolute;
-   left: 7mm;
-   top: 60mm;
-   width: 75mm;
-   opacity: 0.1;
-}
-
-.keepIt {
-  margin-top: 3%;
-  text-align: center;
+  font-family: 'Courier New', monospace;
+  width: 80mm;
+  max-width: 100%;
+  padding: 5mm;
   font-size: 10pt;
+  color: #000;
 }
 
-.keepItBody {
-  text-align: justify;
-  font-size: 8pt;
-}
-
-.item {
-  margin-bottom: 1mm;
-}
-
-.itemRow {
-  display: flex;
-  font-size: 8pt;
-  align-items: baseline;
-}
-
-.itemRow > div {
-  align-items: baseline;
-}
-
-.itemName {
+.orderNo {
+  text-align: center;
+  margin-bottom: 5mm;
   font-weight: bold;
 }
 
-.itemPrice {
-  text-align: right;
-  flex-grow: 1;
-}
-
-.itemColor {
-  width: 10px;
-  height: 100%;
-  background: yellow;
-  margin: 0px 2px;
-  padding: 0px;
-}
-
-.itemColor:before {
-  content: "\00a0";
-}
-
-
-.itemData2 {
-  text-align: right;
-  flex-grow: 1;
-}
-
-.itemData3 {
-  width: 15mm;
-  text-align: right;
-}
-
-.itemQuantity:before {
-  content: "x";
-}
-
-.itemTaxable:after {
-  content: " T";
-}
-
-.flex {
-  display: flex;
-  justify-content: center;
-}
-
-#qrcode {
-  align-self: center;
-  flex: 0 0 100px
-}
-
-.totals {
-  flex-grow: 1;
-  align-self: center;
-  font-size: 8pt;
-}
-
-.totals .row {
-  display: flex;
-  text-align: right;
-}
-
-.totals .section {
-  padding-top: 2mm;
-}
-
-.totalRow > div, .total > div {
-  text-align: right;
-  align-items: baseline;
-  font-size: 8pt;
-}
-
-.totals .col1 {
-  text-align: right;
-  flex-grow: 1;
-}
-
-.totals .col2 {
-   width: 22mm;
-}
-
-.totals .col2:empty {
-  display: none;
-}
-
-.totals .col3 {
-  width: 15mm;
-}
-
-.footer {
-  overflow: hidden;
-  margin-top: 5mm;
-  border-radius: 7px;
+.table {
   width: 100%;
-  background: black;
-  color: white;
-  text-align: center;
-  font-weight: bold;
-  text-transform: uppercase;
+  border-collapse: collapse;
+  font-size: 9pt;
 }
 
-.footer:empty {
-    display: none;
-}
-
-.eta {
-  padding: 1mm 0px;
-}
-
-.eta:empty {
-    display: none;
-}
-
-.eta:before {
-    content: "Estimated time order will be ready: ";
-  font-size: 8pt;
-  display: block;
-}
-
-.etaLabel {
-  font-size: 8pt;
-}
-
-.printType {
-  padding: 1mm 0px;
-  width: 100%;
-  background: grey;
-  color: white;
-  text-align: center;
-  font-weight: bold;
-  text-transform: uppercase;
-}
-
-.about {
-  font-size: 12pt;
-  overflow: hidden;
-  background: #FCEC52;
-  color: #3A5743;
-  border-radius: 7px;
-  padding: 0px;
-  position: absolute;
-  width: 500px;
-  text-align: center;
-  left: 50%;
-  margin-top: 50px;
-  margin-left: -250px;
-}
-
-.arrow_box h3, ul {
-  margin: 5px;
-}
-
-.about li {
+.table th, .table td {
+  border-bottom: 1px dashed #000;
+  padding: 2pt;
   text-align: left;
 }
 
-.arrow_box {
-	position: absolute;
-	background: #88b7d5;
-  padding: 5px;
-  margin-top: 20px;
-  left: 95mm;
-  top: 2;
-  width: 500px;
-	border: 4px solid #c2e1f5;
-}
-.arrow_box:after, .arrow_box:before {
-	right: 100%;
-	top: 50%;
-	border: solid transparent;
-	content: " ";
-	height: 0;
-	width: 0;
-	position: absolute;
-	pointer-events: none;
+.table th {
+  font-weight: bold;
 }
 
-.arrow_box:after {
-	border-color: rgba(136, 183, 213, 0);
-	border-right-color: #88b7d5;
-	border-width: 30px;
-	margin-top: -30px;
+.totals {
+  margin-top: 5mm;
+  border-top: 1px solid #000;
+  padding-top: 3mm;
+  font-size: 9pt;
 }
-.arrow_box:before {
-	border-color: rgba(194, 225, 245, 0);
-	border-right-color: #c2e1f5;
-	border-width: 36px;
-	margin-top: -36px;
+
+.totals div {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2mm;
+}
+
+.footer {
+  margin-top: 5mm;
+  text-align: center;
+  font-style: italic;
+  font-size: 9pt;
+}
+
+/* Hide screen-only elements when printing */
+@media print {
+  body {
+    margin: 0;
+  }
+
+  .receipt {
+    margin: 0 auto;
+    page-break-after: always;
+  }
+
+  * {
+    background: none !important;
+    color: #000 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
 }
 </style>
