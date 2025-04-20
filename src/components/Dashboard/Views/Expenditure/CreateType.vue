@@ -1,7 +1,6 @@
 <template>
   <div><br>
-    <div class="loader" v-if="loading"></div>
-
+    <span class="loader" v-if="loading"></span>
     <h4>New Expenditure Type</h4>
     <section class="col-12">
       <form @submit.prevent="submit">

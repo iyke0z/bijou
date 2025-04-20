@@ -1,7 +1,6 @@
 <template>
   <div class="table-responsive"><br>
-    <div class="loader" v-if="loading"></div>
-
+    <span class="loader" v-if="loading"></span>
     <p-button type="success" size="lg" icon @click.native="goToRoute()">
       Add New
     </p-button>

@@ -1,7 +1,6 @@
 <template>
   <div><br>
-    <div class="loader" v-if="loading"></div>
-
+    <span class="loader" v-if="loading"></span>
       <h4>Support & Communication</h4>
      
       <!-- </div> -->

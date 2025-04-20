@@ -1,7 +1,6 @@
 <template>
     <div class="table-responsive"><br>
-    <div class="loader" v-if="loading"></div>
-    <h3>Manage Shops</h3>
+    <span class="loader" v-if="loading"></span>    <h3>Manage Shops</h3>
 
       <button class="btn btn-info" @click.prevent="openModal('New Role', 'create')">Create New Shop</button>
        <div v-if="!loading">
@@ -203,7 +202,6 @@
     };
 
     const update = async() => {
-        console.log()
         loading.value = true
         const {status, data} = await Shops.update_shop({
             title: title.value,

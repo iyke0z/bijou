@@ -1,7 +1,6 @@
 <template>
   <div><br>
-    <div class="loader" v-if="loading"></div>
-    <h4>Create User</h4>
+    <span class="loader" v-if="loading"></span>    <h4>Create User</h4>
     <section class="col-12">
       <form @submit.prevent="submit">
         <div class="form-group">

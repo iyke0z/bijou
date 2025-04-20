@@ -1,7 +1,6 @@
 <template>
     <div class="table-responsive"><br>
-      <div class="loader" v-if="loading"></div>
-  
+      <span class="loader" v-if="loading"></span>  
       <h3>Customers</h3>
       <table id="table" class="table table-striped">
         <thead>

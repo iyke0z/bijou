@@ -1,7 +1,6 @@
 <template>
   <div class="table-responsive">
-    <div class="loader" v-if="loading"></div>
-
+    <span class="loader" v-if="loading"></span>
     <div class="mb-2" v-if="expiry_response && expiry_response[0] != 'active'">
         <span v-if="expiry_response[0] == 'expired'" class="text-white bg-danger pr-2 pl-2 pt-2 pb-2">Subscription Expired <small>Subscribe to continue </small></span>
         <span v-if="expiry_response[0] == 'active'" class="text-light bg-success pr-2 pl-2 pt-2 pb-2">Subscription Active</span>
@@ -186,7 +185,7 @@
           <option :value="1">True</option>
           <option :value="0">False</option>
         </select>
-      </div>
+  </div>
 
   <div class="form-group col-3">
     <label for="">Payment Type</label>

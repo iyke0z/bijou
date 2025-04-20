@@ -1,639 +1,657 @@
 <template>
-  <div class="row"><br><br>
-    <div class="loader" v-if="loading"></div>
-   
-      <marquee class="col-12 mt-4 mb-3" behavior="" direction="LEFT">
-        <b class="mr-3">OPENING BALANCE: &#8358; {{ (profitLoss?.accounting_balance?.opening_cash_balance)?.toLocaleString() }}</b> | 
-        <b class="mr-3">OPENING RECIEVABLE BALANCE: &#8358; {{ (profitLoss?.accounting_balance?.opening_receivables_balance)?.toLocaleString() }}</b> |
-        <b class="mr-3">CLOSING BALANCE: &#8358; {{ (profitLoss?.accounting_balance?.closing_cash_balance)?.toLocaleString() }}</b> |
-        <b class="mr-3">CLOSING RECIEVABLE BALANCE: &#8358; {{ (profitLoss?.accounting_balance?.closing_receivables_balance)?.toLocaleString() }}</b> |
-      </marquee>
-    <div class="col-md-12">
-      
-    </div>
-    <div class="col-md-6">
-      <card>
-        <template slot="header">
-          <h4 class="card-title">Sales Performance</h4>
-          <p class="category"> Total of the goods or services that a company sells during a specific period.</p>
-
-          <div>
-            <label for="" class="mr-2">From: </label>
-            <input type="date" class="border border-gray text-primary mb-2" v-model="sales_performance_from"> 
-          </div>
-          <div>
-            <label for="" class="mr-2">To: </label>
-            <input type="date" class="border border-gray text-primary mb-2" v-model="sales_performance_to">
-          </div>
-          <button class="btn btn-dark text-light" @click.prevent="getSalesPerformance()">Get Report <span v-if="loading" class="loader"></span></button>
-
-        </template>
-        <bar-chart :labels="salesPerformanceChart.labels"
-                   :height="250"
-                   :datasets="salesPerformanceChart.datasets"
-                   :key="salesKey">
-        </bar-chart>
-        
-      </card>
+  <div class="container-fluid bg-gray-50 min-h-screen p-6">
+    <!-- Loader -->
+    <div v-if="loading" class="fixed inset-0 flex items-center justify-center bg-gray-100 bg-opacity-75 z-50">
+      <span class="loader"></span>
     </div>
 
-    <div class="col-md-6">
-      <card>
-        <template slot="header">
-          <h4 class="card-title">OPEX Performance</h4>
-          <p class="category">OPEX refers to the indirect costs required to run the day-to-day operations of a business.</p>
-
-          <div>
-            <label for="" class="mr-2">From: </label>
-            <input type="date" class="border border-gray text-primary mb-2" v-model="opex_performance_from">
-          </div>
-          <div>
-            <label for="" class="mr-2">To: </label>
-            <input type="date" class="border border-gray text-primary mb-2" v-model="opex_performance_to">
-          </div>
-          <button class="btn btn-dark text-light" @click.prevent="getOpexPerformance()">Get Report <span v-if="loading" class="loader"></span></button>
-        </template>
-        
-        <line-chart :labels="opexPerformanceChart.labels"
-                    :height="250"
-                    :color="opexPerformanceChart.color"
-                    :extra-options="opexPerformanceChart.options"
-                    :datasets="opexPerformanceChart.datasets"
-                    :key="opexKey">
-        </line-chart>
-      </card>
-    </div>
-    <div class="col-md-6">
-      <card>
-        <template slot="header">
-          <h4 class="card-title">Receivables</h4>
-          <p class="category">Debt Chart for the period</p>
-        </template>
-        <bar-chart :labels="debReportChart.labels"
-                   :height="250"
-                   :datasets="debReportChart.datasets" :key="debtKey">
-        </bar-chart>
-      </card>
-    </div>
-    <div class="col-md-6">
-      <card>
-        <template slot="header">
-          <h4 class="card-title">COGS</h4>
-          <p class="category">COGS refers to the direct costs incurred in producing or purchasing the goods or services that a company sells during a specific period.</p>
-          <div>
-            <label for="" class="mr-2">From: </label>
-            <input type="date" class="border border-gray text-primary mb-2" v-model="cogs_performance_from">
-          </div>
-          <div>
-            <label for="" class="mr-2">To: </label>
-            <input type="date" class="border border-gray text-primary mb-2" v-model="cogs_performance_to">
-          </div>
-          <button class="btn btn-dark text-light" @click.prevent="getCogs()">Get Report <span v-if="loading" class="loader"></span></button>
-
-        </template>
-        <bar-chart :labels="cogsActivityChart.labels"
-                   :height="250"
-                   :extra-options="cogsActivityChart.options"
-                   :datasets="cogsActivityChart.datasets" 
-                   :key="cogsKey">
-        </bar-chart>
-      </card>
-    </div>
-
-    <!-- <div class="col-md-4">
-      <chart-card :chart-data="paymentMethodChart"
-                  chart-type="Pie"
-                  title="Payment Method Performane Chart"
-                  description="Last Campaign Performance" :key="performanceKey">
-        <template slot="header">
-          <h5 class="card-title">Payment Method Performance</h5>
-          <p class="category">This shows how the different payment methods are performing and it shows which one is used more by customers.</p>
-
-          <div>
-            <label for="" class="mr-2">From: </label>
-            <input type="date" class="border border-gray text-primary mb-2" v-model="method_performance_from">
-          </div>
-          <div>
-            <label for="" class="mr-2">To: </label>
-            <input type="date" class="border border-gray text-primary mb-2" v-model="method_performance_to">
-          </div>
-          <button class="btn btn-dark text-light" @click.prevent="getMethodPerformance()">Get Report <span v-if="loading" class="loader"></span></button>
-
-        </template>
-        <template slot="footer">
-          <hr>
-        </template>
-      </chart-card>
-    </div> -->
-    <div class="col-md-12">
-    
-
-      <div class="card card-stats">
-    <div class="card-body">
-      <div class="row">
-
-        <div class="col-12 col-md-12" :key="pnlKey">
-            <div>
-              <div class="card-title">
-                <h3>Profit & Loss Account</h3>
-              </div>
-              <div class="card-body">
-                <div>
-                  <label for="" class="mr-2">From: </label>
-                  <input type="date" class="border border-gray text-primary mb-2" v-model="profit_loss_from">
-                </div>
-                <div>
-                  <label for="" class="mr-2">To: </label>
-                  <input type="date" class="border border-gray text-primary mb-2" v-model="profit_loss_to">
-                </div>
-                <button class="btn btn-dark text-light" @click.prevent="getProfitLoss()">Get Report <span v-if="loading" class="loader"></span></button>
-
-                <div class="table-responsive">
-                  <table class="table">
-                  <tr>
-                    <td>Turnover <br><small>Refers to the total revenue or sales <br>generated by the business during a specific period.
-                    <br>Represents the income before any <br>costs or expenses are deducted.</small></td>
-                    <td>&#8358;{{ (profitLoss?.turnover)?.toLocaleString() }}</td>
-                  </tr>
-                  <tr>
-                    <td>Less: COGS <br><small>Stands for Cost of Goods Sold, which includes the direct costs <br> of producing or purchasing the goods or services sold by the company</small></td>
-                    <td>&#8358;{{ (profitLoss?.cogs)?.toLocaleString() }}</td>
-                  </tr>
-                  <tr>
-                    <td>Gross Profit <br><small>Gross Profit= Turnover − COGS.</small></td>
-                    <td>&#8358;{{ (profitLoss?.gross_profit)?.toLocaleString() }}</td>
-                  </tr>
-                  <tr>
-                    <td>Less: Operating Expenses <br><small>Short for Operating Expenses, which are the indirect costs involved in running the business.</small></td>
-                    <td>&#8358;{{ (profitLoss?.opex)?.toLocaleString() }}</td>
-                  </tr>
-                  <tr>
-                    <td>Net Profit <br><small>Net Profit= Turnover − Total Expenditure</small></td>
-                    <td>&#8358;{{ (profitLoss?.net_profit)?.toLocaleString() }}</td>
-                  </tr>
-                  <tr>
-                    <td>Depreciation <br><small>Value of assets</small></td>
-                    <td>&#8358;{{ (profitLoss?.depreciation)?.toLocaleString() }}</td>
-                  </tr>
-                  <tr>
-                    <td>Total Expense <br><small>Total Expenditure= COGS + OPEX.</small></td>
-                    <td>&#8358;{{ (profitLoss?.total_expenditure)?.toLocaleString() }}</td>
-                  </tr>
-                  <!-- <tr>
-                    <td>Profit Before Tax <br><small>Refers to the total revenue or sales <br>generated by the business during a specific period.
-<br>Represents the income before any <br>costs or expenses are deducted.</small></td>
-                    <td>&#8358;{{ (profitLoss?.net_profit)?.toLocaleString() }}</td>
-                  </tr> -->
-                  <tr>
-                    <td>Gross Profit Margin <br><small>A percentage that measures the proportion of revenue left as Gross Profit after covering COGS.</small></td>
-                    <td>{{ (profitLoss?.gross_profit_margin).toFixed(2) }}%</td>
-                  </tr>
-                  <tr>
-                    <td>Net Profit Margin <br><small>A percentage that measures the proportion of revenue left as <br> Net Profit after covering all expenses, including COGS and OPEX.</small></td>
-                    <td>{{ (profitLoss?.net_profit_margin).toFixed(2) }}%</td>
-                  </tr>
-                  <tr>
-                      <td>OPENING BALANCE <br><small>Amount of cash available at the beginning of a financial period.</small></td>
-                      <td style="width:30%">&#8358; {{ (profitLoss?.accounting_balance?.opening_cash_balance)?.toLocaleString() }}</td>
-                  </tr>
-                  <tr>
-                      <td>OPENING RECEIVABLE BALANCE <br><small>Total amount owed to the business by customers at the beginning of a financial period.</small></td>
-                      <td style="width:30%">&#8358; {{ (profitLoss?.accounting_balance?.opening_receivables_balance)?.toLocaleString() }}</td>
-                  </tr>
-                  <tr>
-                      <td>CLOSING BALANCE <br><small>Amount of cash available at the end of a financial period.</small></td>
-                      <td style="width:30%">&#8358; {{ (profitLoss?.accounting_balance?.closing_cash_balance)?.toLocaleString() }}</td>
-                  </tr>
-                  <tr>
-                      <td>CLOSING RECEIVABLE BALANCE <br><small>Total amount owed to the business by customers at the end of a financial period.</small></td>
-                      <td style="width:30%">&#8358; {{ (profitLoss?.accounting_balance?.closing_receivables_balance)?.toLocaleString() }}</td>
-                  </tr>
-                </table>
-                </div>
-               
-              </div>
-              </div>
-             
+    <!-- Report Form -->
+    <div class="card bg-white shadow-md rounded-lg p-4 mb-6">
+      <h3 class="text-2xl font-semibold text-gray-800 mb-6">Financial Dashboard</h3>
+      <form @submit.prevent="fetchReport" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Start Date</label>
+          <input
+            type="date"
+            v-model="form.start_date"
+            class="mt-1 border border-gray-300 rounded-md p-2 w-full focus:ring-teal-500 focus:border-teal-500"
+            required
+          />
         </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">End Date</label>
+          <input
+            type="date"
+            v-model="form.end_date"
+            class="mt-1 border border-gray-300 rounded-md p-2 w-full focus:ring-teal-500 focus:border-teal-500"
+            required
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Branch</label>
+          <select
+            v-model="form.shop_id"
+            class="mt-1 border border-gray-300 rounded-md p-2 w-full focus:ring-teal-500 focus:border-teal-500"
+          >
+            <option value="0">All Shops</option>
+            <option v-for="shop in shops" :key="shop.id" :value="shop.id">{{ shop.title }}</option>
+          </select>
+        </div>
+        <div class="flex items-end">
+          <button
+            type="submit"
+            class="btn bg-teal-600 text-white hover:bg-teal-700 w-full"
+          >
+            Generate Report
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Charts Section -->
+    <div v-if="details" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Sales Performance -->
+      <div class="card bg-white shadow-md rounded-lg p-4 hover:shadow-lg transition-shadow">
+        <h4 class="text-xl font-semibold text-gray-800 mb-2">Sales Performance</h4>
+        <p class="text-sm text-gray-600 mb-6">Total sales revenue for the selected period</p>
+        <bar-chart
+          :labels="salesPerformanceChart.labels"
+          :height="250"
+          :datasets="salesPerformanceChart.datasets"
+          :key="salesKey"
+        ></bar-chart>
+      </div>
+
+      <!-- OPEX Performance -->
+      <div class="card bg-white shadow-md rounded-lg p-4 hover:shadow-lg transition-shadow">
+        <h4 class="text-xl font-semibold text-gray-800 mb-2">OPEX Performance</h4>
+        <p class="text-sm text-gray-600 mb-6">Operating expenses for the selected period</p>
+        <line-chart
+          :labels="opexPerformanceChart.labels"
+          :height="250"
+          :color="opexPerformanceChart.color"
+          :extra-options="opexPerformanceChart.options"
+          :datasets="opexPerformanceChart.datasets"
+          :key="opexKey"
+        ></line-chart>
+      </div>
+
+      <!-- Receivables -->
+      <div class="card bg-white shadow-md rounded-lg p-4 hover:shadow-lg transition-shadow">
+        <h4 class="text-xl font-semibold text-gray-800 mb-2">Receivables</h4>
+        <p class="text-sm text-gray-600 mb-6">Total accounts receivable</p>
+        <bar-chart
+          :labels="debReportChart.labels"
+          :height="250"
+          :datasets="debReportChart.datasets"
+          :key="debtKey"
+        ></bar-chart>
+      </div>
+
+      <!-- Payables -->
+      <div class="card bg-white shadow-md rounded-lg p-4 hover:shadow-lg transition-shadow">
+        <h4 class="text-xl font-semibold text-gray-800 mb-2">Payables</h4>
+        <p class="text-sm text-gray-600 mb-6">Total accounts payable</p>
+        <bar-chart
+          :labels="payablesChart.labels"
+          :height="250"
+          :datasets="payablesChart.datasets"
+          :key="payablesKey"
+        ></bar-chart>
+      </div>
+
+      <!-- COGS -->
+      <div class="card bg-white shadow-md rounded-lg p-4 hover:shadow-lg transition-shadow">
+        <h4 class="text-xl font-semibold text-gray-800 mb-2">Cost of Goods Sold (COGS)</h4>
+        <p class="text-sm text-gray-600 mb-6">Direct costs of goods sold</p>
+        <bar-chart
+          :labels="cogsActivityChart.labels"
+          :height="250"
+          :extra-options="cogsActivityChart.options"
+          :datasets="cogsActivityChart.datasets"
+          :key="cogsKey"
+        ></bar-chart>
+      </div>
+
+      <!-- Budget vs Actual -->
+      <div class="card bg-white shadow-md rounded-lg p-4 hover:shadow-lg transition-shadow">
+        <h4 class="text-xl font-semibold text-gray-800 mb-2">Budget vs Actual</h4>
+        <p class="text-sm text-gray-600 mb-6">Budgeted vs actual revenue and expenditure</p>
+        <bar-chart
+          :labels="budgetVsActualChart.labels"
+          :height="250"
+          :datasets="budgetVsActualChart.datasets"
+          :key="budgetKey"
+        ></bar-chart>
+      </div>
+
+      <!-- Cash Flow -->
+      <div class="card bg-white shadow-md rounded-lg p-4 hover:shadow-lg transition-shadow">
+        <h4 class="text-xl font-semibold text-gray-800 mb-2">Cash Flow</h4>
+        <p class="text-sm text-gray-600 mb-6">Cash inflow vs outflow</p>
+        <pie-chart
+          :labels="cashFlowChart.labels"
+          :height="250"
+          :datasets="cashFlowChart.datasets"
+          :key="cashFlowKey"
+        ></pie-chart>
       </div>
     </div>
-    <div class="card-footer">
-      <hr/>
-      <slot name="footer"></slot>
-    </div>
 
+    <!-- Profit & Loss Account -->
+    <div v-if="details" class="card bg-white shadow-md rounded-lg p-4 mt-6">
+      <h3 class="text-2xl font-semibold text-gray-800 mb-6">Profit & Loss Account</h3>
+      <div class="overflow-x-auto">
+        <table class="table-auto w-full text-left">
+          <thead>
+            <tr class="bg-teal-600 text-white">
+              <th class="py-2 px-4">Description</th>
+              <th class="py-2 px-4 text-right">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b bg-gray-50">
+              <td class="py-2 px-4">
+                Turnover<br />
+                <small class="text-gray-600">Total revenue or sales generated</small>
+              </td>
+              <td class="py-2 px-4 font-semibold text-right">
+                {{ (details.profit_loss_statement.revenue || 0).toLocaleString('en-NG', { style: 'currency', currency: 'NGN' }) }}
+              </td>
+            </tr>
+            <tr class="border-b">
+              <td class="py-2 px-4">
+                Other Income<br />
+                <small class="text-gray-600">Additional income from non-core activities</small>
+              </td>
+              <td class="py-2 px-4 font-semibold text-right">
+                {{ (details.profit_loss_statement.other_income || 0).toLocaleString('en-NG', { style: 'currency', currency: 'NGN' }) }}
+              </td>
+            </tr>
+            <tr class="border-b bg-gray-50">
+              <td class="py-2 px-4">
+                Cost of Goods Sold (COGS)<br />
+                <small class="text-gray-600">Direct costs of producing or purchasing goods sold</small>
+              </td>
+              <td class="py-2 px-4 font-semibold text-right">
+                {{ (details.profit_loss_statement.cost_of_goods_sold || 0).toLocaleString('en-NG', { style: 'currency', currency: 'NGN' }) }}
+              </td>
+            </tr>
+            <tr class="border-b">
+              <td class="py-2 px-4">
+                Gross Profit<br />
+                <small class="text-gray-600">Turnover + Other Income - COGS</small>
+              </td>
+              <td class="py-2 px-4 font-semibold text-right">
+                {{ (details.profit_loss_statement.gross_profit || 0).toLocaleString('en-NG', { style: 'currency', currency: 'NGN' }) }}
+              </td>
+            </tr>
+            <tr class="border-b bg-gray-50">
+              <td class="py-2 px-4">
+                Operating Expenses (OPEX)<br />
+                <small class="text-gray-600">Indirect costs of running the business</small>
+              </td>
+              <td class="py-2 px-4 font-semibold text-right">
+                {{ (details.profit_loss_statement.operating_expenses || 0).toLocaleString('en-NG', { style: 'currency', currency: 'NGN' }) }}
+              </td>
+            </tr>
+            <tr class="border-b">
+              <td class="py-2 px-4">
+                Depreciation<br />
+                <small class="text-gray-600">Reduction in value of assets</small>
+              </td>
+              <td class="py-2 px-4 font-semibold text-right">
+                {{ (details.profit_loss_statement.depreciation || 0).toLocaleString('en-NG', { style: 'currency', currency: 'NGN' }) }}
+              </td>
+            </tr>
+            <tr class="border-b bg-gray-50">
+              <td class="py-2 px-4">
+                Amortization<br />
+                <small class="text-gray-600">Gradual write-off of intangible assets</small>
+              </td>
+              <td class="py-2 px-4 font-semibold text-right">
+                {{ (details.profit_loss_statement.amortization || 0).toLocaleString('en-NG', { style: 'currency', currency: 'NGN' }) }}
+              </td>
+            </tr>
+            <tr class="border-b">
+              <td class="py-2 px-4">
+                Operating Profit<br />
+                <small class="text-gray-600">Gross Profit - Operating Expenses - Depreciation - Amortization</small>
+              </td>
+              <td class="py-2 px-4 font-semibold text-right">
+                {{ (details.profit_loss_statement.operating_profit || 0).toLocaleString('en-NG', { style: 'currency', currency: 'NGN' }) }}
+              </td>
+            </tr>
+            <tr class="border-b bg-gray-50">
+              <td class="py-2 px-4">
+                Tax Expense<br />
+                <small class="text-gray-600">Taxes paid on profits</small>
+              </td>
+              <td class="py-2 px-4 font-semibold text-right">
+                {{ (details.profit_loss_statement.tax_expense || 0).toLocaleString('en-NG', { style: 'currency', currency: 'NGN' }) }}
+              </td>
+            </tr>
+            <tr class="border-b">
+              <td class="py-2 px-4">
+                Net Profit<br />
+                <small class="text-gray-600">Operating Profit - Tax Expense</small>
+              </td>
+              <td class="py-2 px-4 font-semibold text-right">
+                {{ (details.profit_loss_statement.net_profit || 0).toLocaleString('en-NG', { style: 'currency', currency: 'NGN' }) }}
+              </td>
+            </tr>
+            <tr class="border-b bg-gray-50">
+              <td class="py-2 px-4">
+                Total Expenditure<br />
+                <small class="text-gray-600">COGS + Operating Expenses + Depreciation + Amortization + Tax Expense</small>
+              </td>
+              <td class="py-2 px-4 font-semibold text-right">
+                {{
+                  (
+                    details.profit_loss_statement.cost_of_goods_sold +
+                    details.profit_loss_statement.operating_expenses +
+                    details.profit_loss_statement.depreciation +
+                    details.profit_loss_statement.amortization +
+                    details.profit_loss_statement.tax_expense
+                  ).toLocaleString('en-NG', { style: 'currency', currency: 'NGN' })
+                }}
+              </td>
+            </tr>
+            <tr class="border-b">
+              <td class="py-2 px-4">
+                Gross Profit Margin<br />
+                <small class="text-gray-600">(Gross Profit / (Revenue + Other Income)) * 100</small>
+              </td>
+              <td class="py-2 px-4 font-semibold text-right">
+                {{ ((details.profit_loss_statement.gross_profit / (details.profit_loss_statement.revenue + details.profit_loss_statement.other_income || 1)) * 100).toFixed(2) }}%
+              </td>
+            </tr>
+            <tr>
+              <td class="py-2 px-4">
+                Net Profit Margin<br />
+                <small class="text-gray-600">(Net Profit / (Revenue + Other Income)) * 100</small>
+              </td>
+              <td class="py-2 px-4 font-semibold text-right">
+                {{ ((details.profit_loss_statement.net_profit / (details.profit_loss_statement.revenue + details.profit_loss_statement.other_income || 1)) * 100).toFixed(2) }}%
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
-    </div>
-    </div>
-      
 </template>
+
 <script>
-  import { Card } from '@/components/UIComponents'
-  import ChartCard from '@/components/UIComponents/Cards/ChartCard'
-  import StatCard from '@/components/UIComponents/Cards/StatsCard'
-  import LineChart from '@/components/UIComponents/Charts/LineChart'
-  import BarChart from '@/components/UIComponents/Charts/BarChart'
-  import PieChart from '@/components/UIComponents/Charts/PieChart'
-  import Reports from '@/javascript/Api/Reports'
+import { Card } from '@/components/UIComponents';
+import LineChart from '@/components/UIComponents/Charts/LineChart';
+import BarChart from '@/components/UIComponents/Charts/BarChart';
+import PieChart from '@/components/UIComponents/Charts/PieChart';
+import Reports from '@/javascript/Api/Reports';
+import Shops from '@/javascript/Api/Shops';
+import Swal from 'sweetalert2';
+import moment from 'moment';
 
-  const tooltipOptions = {
-    tooltipFillColor: "rgba(0,0,0,0.5)",
-    tooltipFontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
-    tooltipFontSize: 14,
-    tooltipFontStyle: "normal",
-    tooltipFontColor: "#fff",
-    tooltipTitleFontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
-    tooltipTitleFontSize: 14,
-    tooltipTitleFontStyle: "bold",
-    tooltipTitleFontColor: "#fff",
-    tooltipYPadding: 6,
-    tooltipXPadding: 6,
-    tooltipCaretSize: 8,
-    tooltipCornerRadius: 6,
-    tooltipXOffset: 10,
-  };
-  export default {
-    components: {
-      Card,
-      ChartCard,
-      LineChart,
-      BarChart,
-      PieChart,
-      StatCard
-    },
-    data() {
-      return {
-        sales_performance_from:null,
-        sales_performance_to:null,
-        opex_performance_from:null,
-        opex_performance_to:null,
-        cogs_performance_from:null,
-        cogs_performance_to:null,
-        method_performance_from: null,
-        method_performance_to: null, 
-        profit_loss_from: null,
-        profit_loss_to: null, 
-        loading:false,
+const tooltipOptions = {
+  tooltipFillColor: 'rgba(0,0,0,0.8)',
+  tooltipFontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+  tooltipFontSize: 14,
+  tooltipFontStyle: 'normal',
+  tooltipFontColor: '#fff',
+  tooltipTitleFontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+  tooltipTitleFontSize: 14,
+  tooltipTitleFontStyle: 'bold',
+  tooltipTitleFontColor: '#fff',
+  tooltipYPadding: 6,
+  tooltipXPadding: 6,
+  tooltipCaretSize: 8,
+  tooltipCornerRadius: 6,
+  tooltipXOffset: 10,
+};
 
-        salesPerformanceChart: {
-          labels: [],
-          datasets: [
-            {
-              label: "Data",
-              borderColor: '#b993bc',
-              fill: true,
-              backgroundColor: '#b993bc',
-              hoverBorderColor: '#b993bc',
-              borderWidth: 5,
-              data: [],
-            }
-          ]
-        },
-        salesKey: 0,
-        opexKey: 0,
-        debtKey: 0,
-        cogsKey: 0,
-        performanceKey: 0,
-        pnlKey: 0,
-
-        profitLoss:{
-          turnover:0,
-          cogs:0,
-          opex:0,
-          gross_profit:0,
-          total_expenditure:0,
-          net_profit:0,
-          gross_profit_margin:0,
-          net_profit_margin:0
-        },
-        opexPerformanceChart: {
-          labels: [],
-          datasets: [{
-            label: "Data",
-            borderColor: "#f17e5d",
-            pointBackgroundColor: "#f17e5d",
-            pointRadius: 3,
-            pointHoverRadius: 3,
-            lineTension: 0,
+export default {
+  components: {
+    Card,
+    LineChart,
+    BarChart,
+    PieChart,
+  },
+  data() {
+    return {
+      form: { start_date: null, end_date: null, shop_id: 0 },
+      loading: false,
+      shops: [],
+      details: null,
+      salesKey: 0,
+      opexKey: 0,
+      debtKey: 0,
+      payablesKey: 0,
+      cogsKey: 0,
+      budgetKey: 0,
+      cashFlowKey: 0,
+      salesPerformanceChart: {
+        labels: [],
+        datasets: [
+          {
+            label: 'Sales',
+            borderColor: '#48BB78',
+            fill: true,
+            backgroundColor: 'rgba(72, 187, 120, 0.5)',
+            hoverBorderColor: '#48BB78',
+            borderWidth: 2,
+            data: [],
+          },
+        ],
+      },
+      opexPerformanceChart: {
+        labels: [],
+        datasets: [
+          {
+            label: 'OPEX',
+            borderColor: '#ED8936',
+            pointBackgroundColor: '#ED8936',
+            pointRadius: 4,
+            pointHoverRadius: 6,
+            lineTension: 0.4,
             fill: false,
             borderWidth: 3,
-            data: []
-          }],
-          color: '#f17e5d',
-          options: {
-            tooltips: tooltipOptions,
-            scales: {
-              yAxes: [{
-
-                ticks: {
-                  fontColor: "#9f9f9f",
-                  beginAtZero: false,
-                  maxTicksLimit: 5,
-                },
-                gridLines: {
-                  drawBorder: false,
-                  borderDash: [8, 5],
-                  zeroLineColor: "transparent",
-                  color: '#9f9f9f'
-                }
-
-              }],
-
-              xAxes: [{
-                barPercentage: 1.6,
-                gridLines: {
-                  drawBorder: false,
-                  borderDash: [8, 5],
-                  color: '#9f9f9f',
-                  zeroLineColor: "transparent"
-                },
-                ticks: {
-                  padding: 20,
-                  fontColor: "#9f9f9f"
-                }
-              }]
-            }
-          }
-        },
-        debReportChart: {
-          labels: [],
-          datasets: [
-            {
-              label: "Data",
-              borderColor: '#add8e6',
-              fill: true,
-              backgroundColor: '#add8e6',
-              hoverBorderColor: '#add8e6',
-              borderWidth: 5,
-              data: [],
-            }
-          ]
-        },
-        cogsActivityChart: {
-          labels: [],
-          datasets: [
-            {
-              label: "Data",
-              borderColor: '#a2b9bc',
-              fill: false,
-              backgroundColor: '#a2b9bc',
-              hoverBorderColor: '#a2b9bc',
-              borderWidth: 8,
-              data: [],
-            },
-            
-          ],
-          options: {
-            tooltips: tooltipOptions
-          }
-        },
-        paymentMethodChart: {
-          labels: [],
-          datasets: [{
-            label: "Payment Method Performance",
-            pointRadius: 0,
-            pointHoverRadius: 0,
-            backgroundColor: [
-              '#e3e3e3',
-              '#4acccd',
-              '#fcc468',
-              '#a2b9bc',
-              '#b993bc',
-              '#d5f4e6',
-              '#92a8d1',
-              '#fefbd8',
-            ],
-            borderWidth: 0,
-            data: []
-          }],
-          options: {
-            tooltips: tooltipOptions
-          }
-        },
-        chartHours: {
-          data: {
-
-            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct"],
-            datasets: [{
-              borderColor: "#6bd098",
-              backgroundColor: "#6bd098",
-              pointRadius: 0,
-              pointHoverRadius: 0,
-              borderWidth: 3,
-              data: [300, 310, 316, 322, 330, 326, 333, 345, 338, 354]
-            },
-              {
-                borderColor: "#f17e5d",
-                backgroundColor: "#f17e5d",
-                pointRadius: 0,
-                pointHoverRadius: 0,
-                borderWidth: 3,
-                data: [320, 340, 365, 360, 370, 385, 390, 384, 408, 420]
-              },
-              {
-                borderColor: "#fcc468",
-                backgroundColor: "#fcc468",
-                pointRadius: 0,
-                pointHoverRadius: 0,
-                borderWidth: 3,
-                data: [370, 394, 415, 409, 425, 445, 460, 450, 478, 484]
-              }
-            ]
+            data: [],
           },
-
-          options: {
-            tooltips: tooltipOptions,
-            scales: {
-              yAxes: [{
-
-                ticks: {
-                  fontColor: "#9f9f9f",
-                  beginAtZero: false,
-                  maxTicksLimit: 5,
-                  //padding: 20
-                },
-                gridLines: {
-                  drawBorder: false,
-                  zeroLineColor: "transparent",
-                  color: 'rgba(255,255,255,0.05)'
-                }
-
-              }],
-
-
-              xAxes: [{
-                barPercentage: 1.6,
-                gridLines: {
-                  drawBorder: false,
-                  color: 'rgba(255,255,255,0.1)',
-                  zeroLineColor: "transparent",
-                  display: false,
-                },
-                ticks: {
-                  padding: 20,
-                  fontColor: "#9f9f9f"
-                }
-              }]
-            }
-          }
-        }
-      }
+        ],
+        color: '#ED8936',
+        options: {
+          tooltips: tooltipOptions,
+          scales: {
+            yAxes: [
+              {
+                ticks: { fontColor: '#4A5568', beginAtZero: true },
+                gridLines: { color: '#E2E8F0' },
+              },
+            ],
+            xAxes: [
+              {
+                gridLines: { color: '#E2E8F0' },
+                ticks: { fontColor: '#4A5568' },
+              },
+            ],
+          },
+        },
+      },
+      debReportChart: {
+        labels: ['Total Receivables'],
+        datasets: [
+          {
+            label: 'Receivables',
+            borderColor: '#4299E1',
+            fill: true,
+            backgroundColor: 'rgba(66, 153, 225, 0.5)',
+            hoverBorderColor: '#4299E1',
+            borderWidth: 2,
+            data: [],
+          },
+        ],
+      },
+      payablesChart: {
+        labels: ['Total Payables'],
+        datasets: [
+          {
+            label: 'Payables',
+            borderColor: '#ED64A6',
+            fill: true,
+            backgroundColor: 'rgba(237, 100, 166, 0.5)',
+            hoverBorderColor: '#ED64A6',
+            borderWidth: 2,
+            data: [],
+          },
+        ],
+      },
+      cogsActivityChart: {
+        labels: [],
+        datasets: [
+          {
+            label: 'COGS',
+            borderColor: '#9F7AEA',
+            fill: true,
+            backgroundColor: 'rgba(159, 122, 234, 0.5)',
+            hoverBorderColor: '#9F7AEA',
+            borderWidth: 2,
+            data: [],
+          },
+        ],
+        options: { tooltips: tooltipOptions },
+      },
+      budgetVsActualChart: {
+        labels: ['Revenue', 'Expenditure'],
+        datasets: [
+          {
+            label: 'Budgeted',
+            backgroundColor: '#ECC94B',
+            borderColor: '#ECC94B',
+            borderWidth: 1,
+            data: [],
+          },
+          {
+            label: 'Actual',
+            backgroundColor: '#48BB78',
+            borderColor: '#48BB78',
+            borderWidth: 1,
+            data: [],
+          },
+        ],
+      },
+      cashFlowChart: {
+        labels: ['Cash Inflow', 'Cash Outflow'],
+        datasets: [
+          {
+            label: 'Cash Flow',
+            backgroundColor: ['#48BB78', '#F56565'],
+            borderWidth: 0,
+            data: [],
+          },
+        ],
+      },
+    };
+  },
+  methods: {
+    setDefaultDate() {
+      const today = new Date();
+      const yesterday = new Date(today);
+      yesterday.setDate(today.getDate() - 1);
+      this.form.start_date = yesterday.toISOString().split('T')[0]; // 2025-04-18
+      this.form.end_date = today.toISOString().split('T')[0]; // 2025-04-19
     },
-
-    methods:{
-      setDefaultDate(){
-        const today = new Date();
-
-        const formattedToday = today.toISOString().split('T')[0]; 
-
-        const lastMonth = new Date(today);
-        lastMonth.setMonth(today.getMonth() - 1);
-
-        const formattedLastMonth = lastMonth.toISOString().split('T')[0];
-
-        this.sales_performance_to = formattedToday;
-        this.sales_performance_from = formattedLastMonth;
-        this.opex_performance_from = formattedLastMonth
-        this.opex_performance_to = formattedToday
-        this.cogs_performance_from = formattedLastMonth
-        this.cogs_performance_to = formattedToday
-        this.method_performance_from = formattedLastMonth
-        this.method_performance_to = formattedToday
-        this.profit_loss_from = formattedLastMonth
-        this.profit_loss_to = formattedToday
-      },
-      getSalesPerformance(){
-        this.loading = true
-        let payload = {
-          start_date: this.sales_performance_from,
-          end_date: this.sales_performance_to
-        }
-        if (payload.start_date !== null && payload.end_date !== null) {
-            Reports.get_sales_performance(payload).then((res) => {
-
-              if ((res.data.data).length > 0) {
-                res.data.data.forEach(element => {
-                  this.salesPerformanceChart.labels.push(element.sale_date)
-                  this.salesPerformanceChart.datasets[0].data.push(element.total_amount)
-                });
-              }else{
-                this.salesPerformanceChart.labels = []
-                  this.salesPerformanceChart.datasets[0].data = []
-              }
-            
-            this.salesKey ++
-          }).catch(() => {
-          })
-        }
-        this.loading = false
-
-      },
-
-      getOpexPerformance(){
-        this.loading = true
-        // getCost
-        let payload = {
-          start_date: this.opex_performance_from,
-          end_date: this.opex_performance_to
-        }
-        if (payload.start_date !== null && payload.end_date !== null) {
-            Reports.get_opex_report(payload).then((res) => {
-            res.data.data.forEach(element => {
-              this.opexPerformanceChart.labels.push(element.request_date)
-              this.opexPerformanceChart.datasets[0].data.push(element.total_amount)
-            });
-            this.opexKey ++
-          }).catch(() => {
-          })
-        this.loading = false
-      }
-      },
-
-      getDebtPerformance(){
-        this.loading = true
-        Reports.get_debt_report().then((res) => {
-            res.data.data[0].forEach(element => {
-              this.debReportChart.labels.push(element.fullname)
-              this.debReportChart.datasets[0].data.push(element.wallet_balance)
-            });
-            this.debtKey ++
-          }).catch(() => {
-        this.loading = false
-      })
-      },
-
-      getCogs(){
-        this.loading = true
-        let payload = {
-          start_date: this.cogs_performance_from,
-          end_date: this.cogs_performance_to
-        }
-        if (payload.start_date !== null && payload.end_date !== null) {
-            Reports.get_cogs(payload).then((res) => {
-              console.log(res.data.data)
-              if ((res.data.data).length > 0) {
-                res.data.data.forEach(element => {
-                  this.cogsActivityChart.labels.push(element.purchase_date)
-                  this.cogsActivityChart.datasets[0].data.push(element.total_amount + element.other_cogs)
-                });
-              }else{
-                  this.cogsActivityChart.labels = []
-                  this.cogsActivityChart.datasets[0].data = []
-              }
-            
-            this.cogsKey ++
-          }).catch(() => {
-          })
-          this.loading = false
-        }
-        
-      },
-
-      getMethodPerformance(){
-        this.loading = true
-        let payload = {
-          start_date: this.method_performance_from,
-          end_date: this.method_performance_to
-        }
-        if (payload.start_date !== null && payload.end_date !== null) {
-            Reports.get_method_performance(payload).then((res) => {
-
-            Object.keys(res.data.data).forEach(element => {
-              this.paymentMethodChart.labels.push(element)
-              this.paymentMethodChart.datasets[0].data.push(res.data.data[element][0])
-            });
-            this.performanceKey ++
-          }).catch(() => {
-          })
-          this.loading = false
-        }
-      },
-      getProfitLoss(){
-        this.loading = true
-        let payload = {
-          start_date: this.profit_loss_from,
-          end_date: this.profit_loss_to
-        }
-        if (payload.start_date !== null && payload.end_date !== null) {
-            Reports.get_profit_loss(payload).then((res) => {
-              this.profitLoss = res.data.data
-           
-            this.pnlKey ++
-          }).catch(() => {
-          })
-          this.loading = false
-        }
-      },
+    fetchReport() {
+      this.loading = true;
+      Reports.download_report(this.form)
+        .then((res) => {
+          this.details = res.data.data;
+          console.log('API Response:', this.details); // Debug API data
+          Swal.fire({
+            position: 'top-end',
+            icon: 'success',
+            title: res.data.message,
+            customClass: 'Swal-wide',
+            showConfirmButton: false,
+            timer: 3000,
+          });
+          this.loading = false;
+          this.$nextTick(() => {
+            this.initCharts();
+          });
+        })
+        .catch((err) => {
+          Swal.fire({
+            position: 'top-end',
+            icon: 'error',
+            title: err?.response?.data?.message ?? 'Failed to fetch report',
+            customClass: 'Swal-wide',
+            showConfirmButton: false,
+            timer: 3000,
+          });
+          this.loading = false;
+        });
     },
+    getShops() {
+      this.loading = true;
+      Shops.get_shops()
+        .then((res) => {
+          this.shops = res.data.data;
+          this.loading = false;
+        })
+        .catch((err) => {
+          Swal.fire({
+            position: 'top-end',
+            icon: 'error',
+            title: 'Failed to fetch shops',
+            customClass: 'Swal-wide',
+            showConfirmButton: false,
+            timer: 3000,
+          });
+          this.loading = false;
+        });
+    },
+    initCharts() {
+      if (!this.details) {
+        console.warn('No details available for charts');
+        return;
+      }
 
-    created(){
-      this.setDefaultDate()
-      this.getSalesPerformance()
-      this.getOpexPerformance()
-      this.getDebtPerformance()
-      this.getCogs()
-      this.getMethodPerformance()
-      this.getProfitLoss()
-    }
-  }
+      // Sales Performance
+      this.salesPerformanceChart.labels = [];
+      this.salesPerformanceChart.datasets[0].data = [];
+      const salesByDate = {};
+      (this.details.ledger_details || [])
+        .filter((entry) => entry.account_name.toLowerCase() === 'sales')
+        .forEach((entry) => {
+          const date = moment(entry.created_at).format('YYYY-MM-DD');
+          salesByDate[date] = (salesByDate[date] || 0) + entry.amount;
+        });
+      Object.keys(salesByDate)
+        .sort()
+        .forEach((date) => {
+          this.salesPerformanceChart.labels.push(date);
+          this.salesPerformanceChart.datasets[0].data.push(salesByDate[date]);
+        });
+      console.log('Sales Chart:', this.salesPerformanceChart); // Debug
+      this.salesKey++;
+
+      // OPEX Performance
+      this.opexPerformanceChart.labels = [];
+      this.opexPerformanceChart.datasets[0].data = [];
+      const opexByDate = {};
+      (this.details.ledger_details || [])
+        .filter((entry) => entry.account_name.toLowerCase() === 'purchase')
+        .forEach((entry) => {
+          const date = moment(entry.created_at).format('YYYY-MM-DD');
+          opexByDate[date] = (opexByDate[date] || 0) + entry.amount;
+        });
+      Object.keys(opexByDate)
+        .sort()
+        .forEach((date) => {
+          this.opexPerformanceChart.labels.push(date);
+          this.opexPerformanceChart.datasets[0].data.push(opexByDate[date]);
+        });
+      console.log('OPEX Chart:', this.opexPerformanceChart); // Debug
+      this.opexKey++;
+
+      // Receivables
+      const totalReceivables = this.details.receivables?.total_receivables || 0;
+      this.debReportChart.datasets[0].data = [totalReceivables];
+      console.log('Receivables Chart:', this.debReportChart); // Debug
+      this.debtKey++;
+
+      // Payables
+      const totalPayables = this.details.payables?.total_payables || 0;
+      this.payablesChart.datasets[0].data = [totalPayables];
+      console.log('Payables Chart:', this.payablesChart); // Debug
+      this.payablesKey++;
+
+      // COGS
+      this.cogsActivityChart.labels = [];
+      this.cogsActivityChart.datasets[0].data = [];
+      const cogsByDate = {};
+      (this.details.ledger_details || [])
+        .filter((entry) => entry.account_name.toLowerCase() === 'cost_of_goods_sold')
+        .forEach((entry) => {
+          const date = moment(entry.created_at).format('YYYY-MM-DD');
+          cogsByDate[date] = (cogsByDate[date] || 0) + entry.amount;
+        });
+      Object.keys(cogsByDate)
+        .sort()
+        .forEach((date) => {
+          this.cogsActivityChart.labels.push(date);
+          this.cogsActivityChart.datasets[0].data.push(cogsByDate[date]);
+        });
+      console.log('COGS Chart:', this.cogsActivityChart); // Debug
+      this.cogsKey++;
+
+      // Budget vs Actual
+      const budget = this.details.budget_vs_actual || {};
+      this.budgetVsActualChart.datasets[0].data = [
+        budget.budgeted_revenue || 0,
+        budget.budgeted_expenditure || 0,
+      ];
+      this.budgetVsActualChart.datasets[1].data = [
+        budget.actual_revenue || 0,
+        budget.actual_expenditure || 0,
+      ];
+      console.log('Budget vs Actual Chart:', this.budgetVsActualChart); // Debug
+      this.budgetKey++;
+
+      // Cash Flow
+      const cashFlow = this.details.cash_flow || {};
+      this.cashFlowChart.datasets[0].data = [
+        cashFlow.cash_inflow || 0,
+        cashFlow.cash_outflow || 0,
+      ];
+      console.log('Cash Flow Chart:', this.cashFlowChart); // Debug
+      this.cashFlowKey++;
+    },
+  },
+  created() {
+    this.setDefaultDate();
+    this.getShops();
+  },
+};
 </script>
+
+<style scoped>
+.loader {
+  border: 4px solid #E2E8F0;
+  border-top: 4px solid #319795;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.card {
+  transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.table-auto th,
+.table-auto td {
+  border-color: #E2E8F0;
+}
+
+.table-auto small {
+  font-size: 0.75rem;
+  line-height: 1.2;
+}
+</style>

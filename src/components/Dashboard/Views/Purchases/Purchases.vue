@@ -1,6 +1,6 @@
 <template>
   <div class="table-responsive"><br>
-    <div class="loader" v-if="loading"></div>
+    <span class="loader" v-if="loading"></span>
 
     <p-button type="success" size="lg" icon @click.native="createPurchaseRoute()">
       Add New
@@ -171,7 +171,7 @@
                 <select name="" class="form-control" id="" v-model="payment_method" @change="setStatus">
                   <option value="cash">cash</option>
                   <option value="transfer">transfer</option>
-                  <option value="on_credit">on_credit</option>
+                  <option value="pos">pos</option>
                 </select>
               </div>
               
@@ -419,6 +419,7 @@ import axios from 'axios'
         }
 
         Product.update_plan(payload, this.selectedId).then(res => {
+          this.allpurchases()
           Swal.fire({
             position: 'top-end',
             icon: 'success',
@@ -429,7 +430,6 @@ import axios from 'axios'
           })
           this.modalOpen = false
           this.loading = false
-          this.allpurchases()
         }).catch(err => {
           Swal.fire({
             position: 'top-end',
@@ -517,6 +517,7 @@ import axios from 'axios'
       },
       delete_purchase_detail(purchase){
         Purchases.delete_details(purchase.id).then((result) => {
+          this.purchase_detail(purchase.purchase_id)
           Swal.fire({
             position: 'top-end',
             icon: 'success',
@@ -525,7 +526,6 @@ import axios from 'axios'
             showConfirmButton: false,
             timer: 3000
           })
-          this.purchase_detail(purchase.purchase_id)
         }).catch((err) => {
          Swal.fire({
               position: 'top-end',

@@ -5,8 +5,7 @@
     <div class="row">
       <div class="row col-12">
         <!-- Loader -->
-        <div class="loader" v-if="loading"></div>
-
+        <span class="loader" v-if="loading"></span>
         <!-- Toggle Between Monthly and Annual -->
         <div class="col-12 mb-4">
           <button

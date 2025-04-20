@@ -1,7 +1,6 @@
 <template>
   <div class="table-responsive"><br>
-    <div class="loader" v-if="loading"></div>
-
+    <span class="loader" v-if="loading"></span>
     <h4>Update User</h4>
     <section class="col-12">
       <form @submit.prevent="submit">
@@ -117,7 +116,6 @@ import Shops from '@/javascript/Api/Shops';
         })
       },
       uploadfile(e){
-        // console.log(e[0])
         this.form.picture = e[0];
         var image = e[0]
           const reader = new FileReader();

@@ -316,6 +316,7 @@
               <th>Account Name</th>
               <th>Amount</th>
               <th>Description</th>
+              <th>Transaction ID</th>
               <th>Date</th>
             </tr>
           </thead>
@@ -324,6 +325,7 @@
               <td>{{ txn.account_name | capitalize }}</td>
               <td>{{ txn.amount | formatCurrency }}</td>
               <td>{{ txn.description }}</td>
+              <td>{{ txn.transaction_id }}</td>
               <td>{{ formatDate(txn.date) }}</td>
             </tr>
           </tbody>
@@ -335,6 +337,7 @@
               <th>Account Name</th>
               <th>Amount</th>
               <th>Description</th>
+              <th>Transaction ID</th>
               <th>Date</th>
             </tr>
           </thead>
@@ -343,6 +346,7 @@
               <td>{{ txn.account_name | capitalize }}</td>
               <td>{{ txn.amount | formatCurrency }}</td>
               <td>{{ txn.description }}</td>
+              <td>{{ txn.transaction_id }}</td>
               <td>{{ formatDate(txn.date) }}</td>
             </tr>
           </tbody>

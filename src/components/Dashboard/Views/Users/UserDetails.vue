@@ -1,7 +1,6 @@
 <template>
   <div><br>
-    <div class="loader" v-if="loading"></div>
-
+    <span class="loader" v-if="loading"></span>
     <div class="card">
       <div class="card-body">
         <h5 class="card-title">User Details</h5>
@@ -339,7 +338,6 @@ import Purchases from '@/javascript/Api/Purchases';
       this.void_items = []
       if (data.length > 0) {
         data[0].forEach(element => {
-          console.log(element)
           element.sales.forEach(sale => {
             this.void_items.push({
               product: sale.product.name,
@@ -358,7 +356,6 @@ import Purchases from '@/javascript/Api/Purchases';
       this.oustanding = []
       if (data.length > 0) {
         data[0].forEach(element => {
-          console.log(element)
           element.sales.forEach(sale => {
             this.oustanding.push({
               product: sale.product.name,
@@ -377,7 +374,6 @@ import Purchases from '@/javascript/Api/Purchases';
       this.sold_items = []
       if (data.length > 0) {
         data[0].forEach(element => {
-          console.log(element)
           element.sales.forEach(sale => {
             this.sold_items.push({
               product: sale.product.name,

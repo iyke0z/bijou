@@ -1,7 +1,6 @@
 <!-- Loader.vue -->
 <template>
-    <div class="loader" v-if="loading"></div>
-  </template>
+    <span class="loader" v-if="loading"></span>  </template>
   
   <script>
   export default {
