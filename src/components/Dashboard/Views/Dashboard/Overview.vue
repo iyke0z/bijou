@@ -90,7 +90,7 @@
 
       <!-- Payables -->
       <div class="card bg-white shadow-md rounded-lg p-4 hover:shadow-lg transition-shadow">
-        <h4 class="text-xl font-semibold text-gray-800 mb-2">Payables</h4>
+        <h4 class="text-xl font-semibold text-gray-800 mb-2">Payables {{  }}</h4>
         <p class="text-sm text-gray-600 mb-6">Total accounts payable</p>
         <bar-chart
           :labels="payablesChart.labels"
@@ -466,14 +466,7 @@ export default {
         .then((res) => {
           this.details = res.data.data;
           console.log('API Response:', this.details); // Debug API data
-          Swal.fire({
-            position: 'top-end',
-            icon: 'success',
-            title: res.data.message,
-            customClass: 'Swal-wide',
-            showConfirmButton: false,
-            timer: 3000,
-          });
+         
           this.loading = false;
           this.$nextTick(() => {
             this.initCharts();
@@ -561,7 +554,9 @@ export default {
       this.debtKey++;
 
       // Payables
-      const totalPayables = this.details.payables?.total_payables || 0;
+      const totalPayables = this.details.balance_sheet.liabilities?.current_liabilities?.accounts_payable
+
+      console.log('Payables:', totalPayables); // Debug
       this.payablesChart.datasets[0].data = [totalPayables];
       console.log('Payables Chart:', this.payablesChart); // Debug
       this.payablesKey++;
@@ -611,6 +606,7 @@ export default {
   created() {
     this.setDefaultDate();
     this.getShops();
+    this.fetchReport();
   },
 };
 </script>
@@ -618,7 +614,7 @@ export default {
 <style scoped>
 .loader {
   border: 4px solid #E2E8F0;
-  border-top: 4px solid #319795;
+  border-top: 4px solid black;
   border-radius: 50%;
   width: 30px;
   height: 30px;
