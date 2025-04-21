@@ -13,41 +13,44 @@ jobs:
     strategy:
       matrix:
         include:
-          - subdomain: "edzain"
-            folder: "business_sites/edzain"
-          - subdomain: "bingoml"
-            folder: "business_sites/bingoml"
-          - subdomain: "aromaperk"
-            folder: "business_sites/aromaperk"
-          - subdomain: "phlorah"
-            folder: "business_sites/phlorah"
-          - subdomain: "fitandfeet"
-            folder: "business_sites/fitandfeet"
-          - subdomain: "totech"
-            folder: "business_sites/totech"
-          - subdomain: "chosenconcept"
-            folder: "business_sites/chosenconcept"
-          - subdomain: "amasemporium"
-            folder: "business_sites/amasemporium"
-          - subdomain: "jomarsgroups"
-            folder: "business_sites/jomarsgroups"
-          - subdomain: "royalrelish"
-            folder: "business_sites/royalrelish"
-          - subdomain: "osasumwenbyfd"
-            folder: "business_sites/osasumwenbyfd"
-          - subdomain: "hairarena"
-            folder: "business_sites/hairarena"
-          - subdomain: "standardchoice"
-            folder: "business_sites/standardchoice"
-          - subdomain: "standardchoice"
-          - subdomain: "ugbommaintefarms"
-            folder: "business_sites/ugbommaintefarms"
-          - subdomain: "dreambarbers"
-            folder: "business_sites/dreambarbers"
+          # - subdomain: "edzain"
+          #   folder: "business_sites/edzain"
+          # - subdomain: "bingoml"
+          #   folder: "business_sites/bingoml"
+          # - subdomain: "aromaperk"
+          #   folder: "business_sites/aromaperk"
+          # - subdomain: "phlorah"
+          #   folder: "business_sites/phlorah"
+          # - subdomain: "fitandfeet"
+          #   folder: "business_sites/fitandfeet"
+          # - subdomain: "totech"
+          #   folder: "business_sites/totech"
+          # - subdomain: "chosenconcept"
+          #   folder: "business_sites/chosenconcept"
+          # - subdomain: "amasemporium"
+          #   folder: "business_sites/amasemporium"
+          # - subdomain: "jomarsgroups"
+          #   folder: "business_sites/jomarsgroups"
+          # - subdomain: "royalrelish"
+          #   folder: "business_sites/royalrelish"
+          # - subdomain: "osasumwenbyfd"
+          #   folder: "business_sites/osasumwenbyfd"
+          # - subdomain: "hairarena"
+          #   folder: "business_sites/hairarena"
+          # - subdomain: "standardchoice"
+          #   folder: "business_sites/standardchoice"
+          # - subdomain: "standardchoice"
+          # - subdomain: "ugbommaintefarms"
+          #   folder: "business_sites/ugbommaintefarms"
+          # - subdomain: "dreambarbers"
+          #   folder: "business_sites/dreambarbers"
+          # - subdomain: "jtsforte"
+          #   folder: "business_sites/jtsforte"
           - subdomain: "24hrs"
             folder: "business_sites/24hrs"
-          - subdomain: "jtsforte"
-            folder: "business_sites/jtsforte"
+          - subdomain: "flexglobalprime"
+            folder: "business_sites/flexglobalprime"
+            
 
       fail-fast: false  # Continue if one matrix job fails
 
@@ -71,56 +74,12 @@ jobs:
         run: |
           echo "Updating API URL for subdomain: ${{ matrix.subdomain }}"
           case "${{ matrix.subdomain }}" in
-            "edzain")
-              API_URL="https://api.edzain.ngmkt.site"
-              ;;
-            "bingoml")
-              API_URL="https://api.bingoml.ngmkt.site"
-              ;;
-            "phlorah")
-              API_URL="https://api.phlorah.ngmkt.site"
-              ;;
-            "aromaperk")
-              API_URL="https://api.aromaperk.ngmkt.site"
-              ;;
-            "chosenconcept")
-              API_URL="https://api.chosenconcept.ngmkt.site"
-              ;;
-            "fitandfeet")
-              API_URL="https://api.fitandfeet.ngmkt.site"
-              ;;
-            "totech")
-              API_URL="https://api.totech.ngmkt.site"
-              ;;
-            "amasemporium")
-              API_URL="https://api.amasemporium.ngmkt.site"
-              ;;
-            "jomarsgroups")
-              API_URL="https://api.jomarsgroups.ngmkt.site"
-              ;;
-            "royalrelish")
-              API_URL="https://api.royalrelish.ngmkt.site"
-              ;;
-            "osasumwenbyfd")
-              API_URL="https://api.osasumwenbyfd.ngmkt.site"
-              ;;
-            "hairarena")
-              API_URL="https://api.hairarena.ngmkt.site"
-              ;;
-            "standardchoice")
-              API_URL="https://api.standardchoice.ngmkt.site"
-              ;;
-            "ugbommaintefarms")
-              API_URL="https://api.ugbommaintefarms.ngmkt.site"
-              ;;
-            "dreambarbers")
-              API_URL="https://api.dreambarbers.ngmkt.site"
-              ;;
+
             "24hrs")
               API_URL="https://api.24hrs.ngmkt.site"
               ;;
-            "jtsforte")
-              API_URL="https://api.jtsforte.ngmkt.site"
+            "flexglobalprime")
+              API_URL="https://api.flexglobalprime.ngmkt.site"
               ;;
             *)
               echo "Unknown subdomain!"
