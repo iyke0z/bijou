@@ -59,7 +59,8 @@
                 {{ ((expenditure.amount)).toLocaleString() }}
               </td>
               <td>
-                <p-button v-if="expenditure.payment_status == 'not_paid'" class="mr-2" title="update product plan" type="info" size="sm" @click.prevent="openModal('update '+ expenditure.type.name+' Plan', expenditure)">
+                <p-button v-if="expenditure.payment_status == 'not_paid'" class="mr-2" title="update product plan" type="info" size="sm" 
+                @click.prevent="openModal('update '+ expenditure.exp_type.name+' Plan', expenditure)">
                   <i class="fa fa-wrench"></i>
                 </p-button>
                 <span v-else class="mr-4">Paid</span>
