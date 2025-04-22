@@ -677,13 +677,13 @@ export default {
       this.opexKey++;
 
       // Receivables
-      const totalReceivables = this.details.receivables?.total_receivables || 10800000; // Sample data
+      const totalReceivables = this.details.receivables?.total_receivables || 0; // Sample data
       this.debReportChart.datasets[0].data = [totalReceivables];
       console.log('Receivables Chart:', this.debReportChart);
       this.debtKey++;
 
       // Payables
-      const totalPayables = this.details.balance_sheet.liabilities?.current_liabilities?.accounts_payable || 7500000; // Sample data
+      const totalPayables = this.details.balance_sheet.liabilities?.current_liabilities?.accounts_payable || 0; // Sample data
       this.payablesChart.datasets[0].data = [totalPayables];
       console.log('Payables Chart:', this.payablesChart);
       this.payablesKey++;
@@ -727,8 +727,8 @@ export default {
       // Cash Flow
       const cashFlow = this.details.cash_flow || {};
       this.cashFlowChart.datasets[0].data = [
-        cashFlow.cash_inflow || 10800000, // Sample data
-        cashFlow.cash_outflow || 5858750, // Sample data
+        cashFlow.cash_inflow || 0, // Sample data
+        cashFlow.cash_outflow || 0, // Sample data
       ];
       console.log('Cash Flow Chart:', this.cashFlowChart);
       this.cashFlowKey++;
