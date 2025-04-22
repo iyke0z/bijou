@@ -14,7 +14,7 @@
               <th>category_id</th>
               <th>stock</th>
               <th>price</th>
-              <th>stock</th>
+              <th>out of stock?</th>
             </tr>
           </thead>
           <tbody>
@@ -25,7 +25,8 @@
               <td>{{product[0].category_id}}</td>
               <td>{{product[0].stock.toLocaleString()}}</td>
               <td>{{product[0].price.toLocaleString()}}</td>
-              <td>{{product[0].out_of_stock.toLocaleString()}}</td>
+              <td v-if="product[0].out_of_stock == 1">Yes</td>
+              <td v-else>No</td>
             </tr>
           </tbody>
         </table>
