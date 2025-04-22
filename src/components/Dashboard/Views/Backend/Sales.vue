@@ -130,15 +130,15 @@
         <div>
           <form @submit.prevent="updateSales" enctype="multipart/form-data" >
             <div class="form-group">
-              <label for="">Is Split</label>
-              <select v-model="is_split_payment" class="form-control" @change="is_split_payment = $event.target.value">
+                <label for="">Is Split <small>(Are you paying for this with different payment methods?)</small></label>
+                <select v-model="is_split_payment" class="form-control" @change="is_split_payment = $event.target.value">
                     <option :value="1">True</option>
                     <option :value="0">False</option>
                   </select>
             </div>
             <div class="form-group">
-              <label>Accrual</label>
-              <select v-model="payment_type" class="form-control" @change="openAccrualModal">
+                <label>Accrual <small>(Is this an accrued transaction, i.e spread for a period?)</small></label>
+                <select v-model="payment_type" class="form-control" @change="openAccrualModal">
                 <option :value="null">None</option>
                 <option :value="'prepayment'">Prepaid</option>
                 <option :value="'postpayment'">Postpaid</option>

@@ -157,7 +157,7 @@
                   </select>
             </div>
             <div class="form-group">
-              <label>Accrual</label>
+              <label>Accrual <small>(Is this an accrued transaction, i.e spread for a period?)</small></label>
               <select v-model="payment_type" class="form-control" @change="openAccrualModal">
                 <option :value="null">None</option>
                 <option :value="'prepayment'">Prepaid</option>
