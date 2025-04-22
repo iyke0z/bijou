@@ -193,6 +193,12 @@
           </div>
           <div class="col-md-4">
             <p><strong>Operating Expenses:</strong> {{ details.profit_loss_statement.operating_expenses | formatCurrency }}</p>
+            <ul>
+              <li>Marketing Expense: {{ (details.expenditure.expenditure_details?.marketing_expense || 0) | formatCurrency }}</li>
+              <li>Salaries: {{ (details.expenditure.expenditure_details?.salaries || 0) | formatCurrency }}</li>
+              <li>Utilities: {{ (details.expenditure.expenditure_details?.utilities || 0) | formatCurrency }}</li>
+              <li>Logistics Expense: {{ details.logistics_break_down.expenditure | formatCurrency }}</li>
+            </ul>
             <p><strong>Depreciation:</strong> {{ details.profit_loss_statement.depreciation | formatCurrency }}</p>
             <p><strong>Amortization:</strong> {{ details.profit_loss_statement.amortization | formatCurrency }}</p>
             <p><strong>Operating Profit:</strong> {{ details.profit_loss_statement.operating_profit | formatCurrency }}</p>
@@ -291,7 +297,7 @@
             <p><strong>Cash Outflow:</strong> {{ details.cash_flow.cash_outflow | formatCurrency }}</p>
           </div>
           <div class="col-md-6">
-            <canvas id="cashFlowChart" heightwatermark="true" height="150"></canvas>
+            <canvas id="cashFlowChart" height="150"></canvas>
           </div>
         </div>
 
@@ -340,7 +346,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="txn in details.general_ledger_summary.debit_transactions" :key="txn.description + txn.date">
+            <tr v-for="txn in details.general_ledger_summary.debit_transactions" :key="txn.transaction_id + '-' + txn.date">
               <td>{{ txn.account_name | capitalize }}</td>
               <td>{{ txn.amount | formatCurrency }}</td>
               <td>{{ txn.description }}</td>
@@ -361,7 +367,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="txn in details.general_ledger_summary.credit_transactions" :key="txn.description + txn.date">
+            <tr v-for="txn in details.general_ledger_summary.credit_transactions" :key="txn.transaction_id + '-' + txn.date">
               <td>{{ txn.account_name | capitalize }}</td>
               <td>{{ txn.amount | formatCurrency }}</td>
               <td>{{ txn.description }}</td>
@@ -410,6 +416,30 @@
             <p><strong>Logistics Revenue:</strong> {{ details.logistics_break_down.revenue | formatCurrency }}</p>
             <p><strong>Logistics Expenditure:</strong> {{ details.logistics_break_down.expenditure | formatCurrency }}</p>
           </div>
+          <div class="col-md-6">
+            <h6>Logistics Transactions</h6>
+            <table class="table table-striped" v-if="logisticsDetails.length">
+              <thead>
+                <tr>
+                  <th>Account Name</th>
+                  <th>Transaction Type</th>
+                  <th>Amount</th>
+                  <th>Description</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="txn in logisticsDetails" :key="txn.id">
+                  <td>{{ txn.account_name | capitalize }}</td>
+                  <td>{{ txn.transaction_type | capitalize }}</td>
+                  <td>{{ txn.amount | formatCurrency }}</td>
+                  <td>{{ txn.description }}</td>
+                  <td>{{ formatDate(txn.created_at) }}</td>
+                </tr>
+              </tbody>
+            </table>
+            <p v-else>No logistics transactions available.</p>
+          </div>
         </div>
 
         <!-- Sales vs Marketing Expenditure -->
@@ -432,6 +462,8 @@
               <li>Bank: {{ details.balance_sheet.assets.current_assets.bank | formatCurrency }}</li>
               <li>Accounts Receivable: {{ details.balance_sheet.assets.current_assets.accounts_receivable | formatCurrency }}</li>
               <li>Inventory: {{ details.balance_sheet.assets.current_assets.inventory | formatCurrency }}</li>
+              <li>Prepaid Inventory: {{ details.balance_sheet.assets.current_assets.prepaid_inventory | formatCurrency }}</li>
+              <li>Prepaid Expense: {{ details.balance_sheet.assets.current_assets.prepaid_expense | formatCurrency }}</li>
             </ul>
             <h6>Non-Current Assets</h6>
             <ul>
@@ -445,6 +477,7 @@
             <h6>Current Liabilities</h6>
             <ul>
               <li>Accounts Payable: {{ details.balance_sheet.liabilities.current_liabilities.accounts_payable | formatCurrency }}</li>
+              <li>Prepaid Sales: {{ details.balance_sheet.liabilities.current_liabilities.prepaid_sales | formatCurrency }}</li>
             </ul>
             <h6>Non-Current Liabilities</h6>
             <ul>
@@ -496,8 +529,8 @@ export default {
   },
   computed: {
     logisticsDetails() {
-      if (!this.details || !this.details.expenditure.expenditure_details) return [];
-      return this.details.expenditure.expenditure_details.filter(exp => exp.type.name.toLowerCase() === 'logistics');
+      if (!this.details || !this.details.ledger_details) return [];
+      return this.details.ledger_details.filter(ledger => ledger.account_name.toLowerCase() === 'logistics_expense');
     },
   },
   filters: {
@@ -515,15 +548,14 @@ export default {
       const today = new Date();
       const yesterday = new Date(today);
       yesterday.setDate(today.getDate() - 1);
-      this.form.start_date = yesterday.toISOString().split('T')[0]; // 2025-04-18
-      this.form.end_date = today.toISOString().split('T')[0]; // 2025-04-19
+      this.form.start_date = yesterday.toISOString().split('T')[0];
+      this.form.end_date = today.toISOString().split('T')[0];
     },
     fetchReport() {
       this.loading = true;
       Reports.download_report(this.form)
         .then(res => {
           this.details = res.data.data;
-          console.log('API Response:', this.details); // Debug
           Swal.fire({
             position: 'top-end',
             icon: 'success',
@@ -581,9 +613,7 @@ export default {
       }
 
       // Sales Chart
-      if (this.charts.sales) {
-        this.charts.sales.destroy();
-      }
+      if (this.charts.sales) this.charts.sales.destroy();
       this.charts.sales = new Chart(document.getElementById('salesChart'), {
         type: 'bar',
         data: {
@@ -598,18 +628,12 @@ export default {
         },
         options: {
           scales: { y: { beginAtZero: true } },
-          plugins: {
-            legend: { display: false },
-            title: { display: true, text: 'Sales by Product' },
-          },
+          plugins: { legend: { display: false }, title: { display: true, text: 'Sales by Product' } },
         },
       });
-      console.log('Sales Chart:', this.charts.sales.data); // Debug
 
       // Revenue vs Expenditure Chart
-      if (this.charts.revenueExpenditure) {
-        this.charts.revenueExpenditure.destroy();
-      }
+      if (this.charts.revenueExpenditure) this.charts.revenueExpenditure.destroy();
       this.charts.revenueExpenditure = new Chart(document.getElementById('revenueExpenditureChart'), {
         type: 'bar',
         data: {
@@ -627,18 +651,12 @@ export default {
         },
         options: {
           scales: { y: { beginAtZero: true } },
-          plugins: {
-            legend: { display: false },
-            title: { display: true, text: 'Revenue vs Expenditure' },
-          },
+          plugins: { legend: { display: false }, title: { display: true, text: 'Revenue vs Expenditure' } },
         },
       });
-      console.log('Revenue vs Expenditure Chart:', this.charts.revenueExpenditure.data); // Debug
 
       // Profit & Loss Chart
-      if (this.charts.profitLoss) {
-        this.charts.profitLoss.destroy();
-      }
+      if (this.charts.profitLoss) this.charts.profitLoss.destroy();
       this.charts.profitLoss = new Chart(document.getElementById('profitLossChart'), {
         type: 'pie',
         data: {
@@ -655,18 +673,12 @@ export default {
           }],
         },
         options: {
-          plugins: {
-            legend: { position: 'bottom' },
-            title: { display: true, text: 'Profit & Loss' },
-          },
+          plugins: { legend: { position: 'bottom' }, title: { display: true, text: 'Profit & Loss' } },
         },
       });
-      console.log('Profit & Loss Chart:', this.charts.profitLoss.data); // Debug
 
       // Budget vs Actual Chart
-      if (this.charts.budgetVsActual) {
-        this.charts.budgetVsActual.destroy();
-      }
+      if (this.charts.budgetVsActual) this.charts.budgetVsActual.destroy();
       this.charts.budgetVsActual = new Chart(document.getElementById('budgetVsActualChart'), {
         type: 'bar',
         data: {
@@ -696,18 +708,12 @@ export default {
         },
         options: {
           scales: { y: { beginAtZero: true } },
-          plugins: {
-            legend: { position: 'bottom' },
-            title: { display: true, text: 'Budget vs Actual' },
-          },
+          plugins: { legend: { position: 'bottom' }, title: { display: true, text: 'Budget vs Actual' } },
         },
       });
-      console.log('Budget vs Actual Chart:', this.charts.budgetVsActual.data); // Debug
 
       // Cash Flow Chart
-      if (this.charts.cashFlow) {
-        this.charts.cashFlow.destroy();
-      }
+      if (this.charts.cashFlow) this.charts.cashFlow.destroy();
       this.charts.cashFlow = new Chart(document.getElementById('cashFlowChart'), {
         type: 'pie',
         data: {
@@ -723,45 +729,59 @@ export default {
           }],
         },
         options: {
-          plugins: {
-            legend: { position: 'bottom' },
-            title: { display: true, text: 'Cash Flow' },
-          },
+          plugins: { legend: { position: 'bottom' }, title: { display: true, text: 'Cash Flow' } },
         },
       });
-      console.log('Cash Flow Chart:', this.charts.cashFlow.data); // Debug
 
       // OPEX Chart
-      if (this.charts.opex) {
-        this.charts.opex.destroy();
-      }
+      if (this.charts.opex) this.charts.opex.destroy();
       this.charts.opex = new Chart(document.getElementById('opexChart'), {
         type: 'line',
         data: {
-          labels: this.getLedgerDates('purchase'),
-          datasets: [{
-            label: 'OPEX (₦)',
-            data: this.getLedgerAmounts('purchase'),
-            borderColor: '#ED8936',
-            backgroundColor: 'rgba(237, 137, 54, 0.2)',
-            fill: true,
-            borderWidth: 2,
-          }],
+          labels: this.getOpexDates(),
+          datasets: [
+            {
+              label: 'Logistics Expense (₦)',
+              data: this.getOpexAmounts('logistics_expense'),
+              borderColor: '#ED8936',
+              backgroundColor: 'rgba(237, 137, 54, 0.2)',
+              fill: true,
+              borderWidth: 2,
+            },
+            {
+              label: 'Marketing Expense (₦)',
+              data: this.getOpexAmounts('marketing_expense'),
+              borderColor: '#4299E1',
+              backgroundColor: 'rgba(66, 153, 225, 0.2)',
+              fill: true,
+              borderWidth: 2,
+            },
+            {
+              label: 'Salaries (₦)',
+              data: this.getOpexAmounts('salaries'),
+              borderColor: '#48BB78',
+              backgroundColor: 'rgba(72, 187, 120, 0.2)',
+              fill: true,
+              borderWidth: 2,
+            },
+            {
+              label: 'Utilities (₦)',
+              data: this.getOpexAmounts('utilities'),
+              borderColor: '#9F7AEA',
+              backgroundColor: 'rgba(159, 122, 234, 0.2)',
+              fill: true,
+              borderWidth: 2,
+            },
+          ],
         },
         options: {
           scales: { y: { beginAtZero: true } },
-          plugins: {
-            legend: { display: false },
-            title: { display: true, text: 'Operating Expenses' },
-          },
+          plugins: { legend: { position: 'bottom' }, title: { display: true, text: 'Operating Expenses' } },
         },
       });
-      console.log('OPEX Chart:', this.charts.opex.data); // Debug
 
       // COGS Chart
-      if (this.charts.cogs) {
-        this.charts.cogs.destroy();
-      }
+      if (this.charts.cogs) this.charts.cogs.destroy();
       this.charts.cogs = new Chart(document.getElementById('cogsChart'), {
         type: 'bar',
         data: {
@@ -776,18 +796,12 @@ export default {
         },
         options: {
           scales: { y: { beginAtZero: true } },
-          plugins: {
-            legend: { display: false },
-            title: { display: true, text: 'Cost of Goods Sold' },
-          },
+          plugins: { legend: { display: false }, title: { display: true, text: 'Cost of Goods Sold' } },
         },
       });
-      console.log('COGS Chart:', this.charts.cogs.data); // Debug
 
       // Receivables Chart
-      if (this.charts.receivables) {
-        this.charts.receivables.destroy();
-      }
+      if (this.charts.receivables) this.charts.receivables.destroy();
       this.charts.receivables = new Chart(document.getElementById('receivablesChart'), {
         type: 'bar',
         data: {
@@ -802,18 +816,12 @@ export default {
         },
         options: {
           scales: { y: { beginAtZero: true } },
-          plugins: {
-            legend: { display: false },
-            title: { display: true, text: 'Accounts Receivable' },
-          },
+          plugins: { legend: { display: false }, title: { display: true, text: 'Accounts Receivable' } },
         },
       });
-      console.log('Receivables Chart:', this.charts.receivables.data); // Debug
 
       // Payables Chart
-      if (this.charts.payables) {
-        this.charts.payables.destroy();
-      }
+      if (this.charts.payables) this.charts.payables.destroy();
       this.charts.payables = new Chart(document.getElementById('payablesChart'), {
         type: 'bar',
         data: {
@@ -828,13 +836,9 @@ export default {
         },
         options: {
           scales: { y: { beginAtZero: true } },
-          plugins: {
-            legend: { display: false },
-            title: { display: true, text: 'Accounts Payable' },
-          },
+          plugins: { legend: { display: false }, title: { display: true, text: 'Accounts Payable' } },
         },
       });
-      console.log('Payables Chart:', this.charts.payables.data); // Debug
     },
     getLedgerDates(accountName) {
       const dates = {};
@@ -854,9 +858,27 @@ export default {
           const date = moment(entry.created_at).format('YYYY-MM-DD');
           amountsByDate[date] = (amountsByDate[date] || 0) + entry.amount;
         });
-      return Object.keys(amountsByDate)
-        .sort()
-        .map(date => amountsByDate[date]);
+      return Object.keys(amountsByDate).sort().map(date => amountsByDate[date]);
+    },
+    getOpexDates() {
+      const dates = {};
+      (this.details.ledger_details || [])
+        .filter(entry => ['logistics_expense', 'marketing_expense', 'salaries', 'utilities'].includes(entry.account_name.toLowerCase()))
+        .forEach(entry => {
+          const date = moment(entry.created_at).format('YYYY-MM-DD');
+          dates[date] = true;
+        });
+      return Object.keys(dates).sort();
+    },
+    getOpexAmounts(accountName) {
+      const amountsByDate = {};
+      (this.details.ledger_details || [])
+        .filter(entry => entry.account_name.toLowerCase() === accountName.toLowerCase())
+        .forEach(entry => {
+          const date = moment(entry.created_at).format('YYYY-MM-DD');
+          amountsByDate[date] = (amountsByDate[date] || 0) + entry.amount;
+        });
+      return Object.keys(amountsByDate).sort().map(date => amountsByDate[date] || 0);
     },
     downloadReport() {
       if (!this.details) return;
@@ -907,6 +929,10 @@ export default {
       csvContent += `Gross Profit,${this.details.profit_loss_statement.gross_profit}\n`;
       csvContent += `Gross Profit Margin,${((this.details.profit_loss_statement.gross_profit / (this.details.profit_loss_statement.revenue || 1)) * 100).toFixed(2)}%\n`;
       csvContent += `Operating Expenses,${this.details.profit_loss_statement.operating_expenses}\n`;
+      csvContent += `Marketing Expense,${this.details.expenditure.expenditure_details?.marketing_expense || 0}\n`;
+      csvContent += `Salaries,${this.details.expenditure.expenditure_details?.salaries || 0}\n`;
+      csvContent += `Utilities,${this.details.expenditure.expenditure_details?.utilities || 0}\n`;
+      csvContent += `Logistics Expense,${this.details.logistics_break_down.expenditure}\n`;
       csvContent += `Depreciation,${this.details.profit_loss_statement.depreciation}\n`;
       csvContent += `Amortization,${this.details.profit_loss_statement.amortization}\n`;
       csvContent += `Operating Profit,${this.details.profit_loss_statement.operating_profit}\n`;
@@ -968,15 +994,15 @@ export default {
       csvContent += `Total Debit,${this.details.general_ledger_summary.total_debit}\n`;
       csvContent += `Total Credit,${this.details.general_ledger_summary.total_credit}\n\n`;
       csvContent += 'Debit Transactions\n';
-      csvContent += 'Account Name,Amount,Description,Date\n';
+      csvContent += 'Account Name,Amount,Description,Transaction ID,Date\n';
       this.details.general_ledger_summary.debit_transactions.forEach(txn => {
-        csvContent += `${txn.account_name},${txn.amount},${txn.description},${this.formatDate(txn.date)}\n`;
+        csvContent += `${txn.account_name},${txn.amount},${txn.description},${txn.transaction_id},${this.formatDate(txn.date)}\n`;
       });
       csvContent += '\n';
       csvContent += 'Credit Transactions\n';
-      csvContent += 'Account Name,Amount,Description,Date\n';
+      csvContent += 'Account Name,Amount,Description,Transaction ID,Date\n';
       this.details.general_ledger_summary.credit_transactions.forEach(txn => {
-        csvContent += `${txn.account_name},${txn.amount},${txn.description},${this.formatDate(txn.date)}\n`;
+        csvContent += `${txn.account_name},${txn.amount},${txn.description},${txn.transaction_id},${this.formatDate(txn.date)}\n`;
       });
       csvContent += '\n';
 
@@ -999,13 +1025,19 @@ export default {
       // Customer Report
       csvContent += 'Customer Report\n';
       csvContent += 'Metric,Value\n';
-      csvContent += `Total Customers,${this.details.receivables.receivable_details.length}\n\n`;
+      csvContent += `Total Customers,${this.details.receivables.customer_count}\n\n`;
 
       // Logistics Report
       csvContent += 'Logistics Report\n';
       csvContent += 'Metric,Value\n';
       csvContent += `Logistics Revenue,${this.details.logistics_break_down.revenue}\n`;
       csvContent += `Logistics Expenditure,${this.details.logistics_break_down.expenditure}\n\n`;
+      csvContent += 'Logistics Transactions\n';
+      csvContent += 'Account Name,Transaction Type,Amount,Description,Date\n';
+      this.logisticsDetails.forEach(txn => {
+        csvContent += `${txn.account_name},${txn.transaction_type},${txn.amount},${txn.description},${this.formatDate(txn.created_at)}\n`;
+      });
+      csvContent += '\n';
 
       // Sales vs Marketing Expenditure
       csvContent += 'Sales vs Marketing Expenditure\n';
@@ -1020,10 +1052,13 @@ export default {
       csvContent += `Assets,Bank,${this.details.balance_sheet.assets.current_assets.bank}\n`;
       csvContent += `Assets,Accounts Receivable,${this.details.balance_sheet.assets.current_assets.accounts_receivable}\n`;
       csvContent += `Assets,Inventory,${this.details.balance_sheet.assets.current_assets.inventory}\n`;
+      csvContent += `Assets,Prepaid Inventory,${this.details.balance_sheet.assets.current_assets.prepaid_inventory}\n`;
+      csvContent += `Assets,Prepaid Expense,${this.details.balance_sheet.assets.current_assets.prepaid_expense}\n`;
       csvContent += `Assets,Property Plant Equipment,${this.details.balance_sheet.assets.non_current_assets.property_plant_equipment}\n`;
       csvContent += `Assets,Long Term Investments,${this.details.balance_sheet.assets.non_current_assets.long_term_investments}\n`;
       csvContent += `Assets,Intangible Assets,${this.details.balance_sheet.assets.non_current_assets.intangible_assets}\n`;
       csvContent += `Liabilities,Accounts Payable,${this.details.balance_sheet.liabilities.current_liabilities.accounts_payable}\n`;
+      csvContent += `Liabilities,Prepaid Sales,${this.details.balance_sheet.liabilities.current_liabilities.prepaid_sales}\n`;
       csvContent += `Liabilities,Long Term Loans,${this.details.balance_sheet.liabilities.non_current_liabilities.long_term_loans}\n`;
       csvContent += `Liabilities,Deferred Tax Liability,${this.details.balance_sheet.liabilities.non_current_liabilities.deferred_tax_liability}\n`;
       csvContent += `Equity,Owner Investment,${this.details.balance_sheet.equity.owner_investment}\n`;
@@ -1146,15 +1181,9 @@ h6 {
   background-color: #f2f2f2;
 }
 
-
-
 @keyframes spin {
-  0% {
-    transform: translate(-50%, -50%) rotate(0deg);
-  }
-  100% {
-    transform: translate(-50%, -50%) rotate(360deg);
-  }
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
 .btn-link {
