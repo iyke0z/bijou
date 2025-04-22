@@ -58,7 +58,7 @@
                   <th>Payment Method</th>
                   <th>Amount</th>
                   <th>Customer</th>
-                  <th>Waiter</th>
+                  <th>Staff</th>
                   <th>Date</th>
                   <th>Description</th>
                   <th>Actions</th>
@@ -76,6 +76,9 @@
                   <td>{{ dateTime(transaction.created_at) }}</td>
                   <td>{{ transaction.table_description }}</td>
                   <td>
+                    <button @click.prevent="openModal(transaction)" v-if="transaction.status != 'completed'" class="btn btn-black btn-sm">
+                      <i class="fa fa-wrench"></i>
+                    </button>
                     <button @click.prevent="details(transaction.id)" class="btn btn-info btn-sm">
                       <i class="fa fa-eye"></i>
                     </button>
@@ -120,6 +123,132 @@
           </table>
         </div>
       </div>
+
+      <!-- update modal -->
+     <Modal :show.sync="modalOpen" headerClasses="justify-content-center">
+      <h4 slot="header" class="title title-up">Update Sale</h4>
+        <div>
+          <form @submit.prevent="updateSales" enctype="multipart/form-data" >
+            <div class="form-group">
+              <label for="">Is Split</label>
+              <select v-model="is_split_payment" class="form-control" @change="is_split_payment = $event.target.value">
+                    <option :value="1">True</option>
+                    <option :value="0">False</option>
+                  </select>
+            </div>
+            <div class="form-group">
+              <label>Accrual</label>
+              <select v-model="payment_type" class="form-control" @change="openAccrualModal">
+                <option :value="null">None</option>
+                <option :value="'prepayment'">Prepaid</option>
+                <option :value="'postpayment'">Postpaid</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="">Payment Type</label>
+                <select v-model="type" class="form-control">
+                  <option value="full_payment">Full Payment</option>
+                  <option value="on_credit">On Credit</option>
+                  <option value="part_payment">Part Payment</option>
+                  <!-- <option value="is_accrual">Is Accrual</option> -->
+                </select>
+              </div>
+              <div class="form-group">
+                <!-- fund wallet -->
+                <label for="">Payment Method</label>
+                <select name="" class="form-control" id="" v-model="payment_method" @change="setStatus">
+                  <option value="cash">cash</option>
+                  <option value="transfer">transfer</option>
+                  <option value="pos">pos</option>
+                </select>
+              </div>
+              
+              <div class="form-group" v-if="type == 'part_payment'">
+                <label for="">Part Payment Amount</label>
+                <input type="number" step="any" class="form-control" v-model="part_payment_amount">
+              </div>
+
+              <!-- <div class="form-group" v-if="payment_method == 'is_accrual'">
+                <label for="">Duration <small>(duration in months)</small></label>
+                <input type="number" step="any" class="form-control" v-model="duration">
+              </div> -->
+
+              <button class="btn btn-success" type="submit">UPDATE</button>
+          </form>
+          <div>
+            <form @submit.prevent="updateSales" v-if="is_split_payment" enctype="multipart/form-data">
+            <h4 slot="header" class="title title-up">Spilt Payment</h4>
+            <fieldset >
+                <table id="myTable">
+                <tr v-for="(row, index) in rows.split" :key="index">
+                  <td>{{ index+1 }}</td>
+                  <td>
+                    <label for="">Payment Method</label>
+                    <select v-model="rows.split[index].split_playment_method" name="" class="form-control col-10" id="">
+                      <option value="null">Select Payment Method</option>
+                      <option value="cash">Cash</option>
+                      <option value="transfer">Transfer</option>
+                      <option value="card">POS</option>
+                    </select>
+                  </td>
+                  
+                  <td>
+                    <label for="">Amount</label>
+                    <input autocomplete="off" required type="number" step="any" class="form-control col-8" v-model="rows.split[index].split_payment_amount" placeholder="Amount">
+                  </td>
+                  <td v-if="rows.split[index].split_playment_method == 'card'">
+                    <label for="">bank</label>
+                    <select v-model="rows.split[index].bank_id" name="" class="form-control col-10" id="">
+                      <option value="null">Select Bank</option>
+                      <option v-for="bank in banks" :key="bank.id" :value="bank.id">{{bank.name}}</option>
+                    </select>
+                  </td>
+
+                  <td>
+                    <button type="button" class="btn btn-success text-light col-2" @click="new_row()">+</button>
+                    <button v-show="rows.split.length > 1" type="button" class="btn btn-danger text-light col-2" @click="delete_row(index)">x</button>
+                  </td>
+                </tr>
+              </table>
+                <div class="form-group">
+                  <button type="submit" class="btn btn-success">Submit</button>
+                </div>
+            </fieldset>
+          </form>
+        </div>
+        </div>
+      <template slot="footer">
+      <p-button type="default" link @click.prevent="modalOpen = false">Close</p-button>
+
+      </template>
+    </Modal>
+ <!-- accrual -->
+     <modal :show.sync="accrualModal.classic" headerClasses="justify-content-center">
+        <div>
+          <h4 slot="header" class="title title-up">Accrual</h4>
+          <form @submit.prevent="updateSales" enctype="multipart/form-data">
+            <fieldset >
+                <table id="myTable">
+                  <div class="form-group">
+                    <label>Start Date</label>
+                    <input type="datetime-local" class="form-control" v-model="start_date">
+                  </div>
+                  <div class="form-group">
+                    <label>End Date</label>
+                    <input type="datetime-local" class="form-control" v-model="end_date">
+                  </div>
+                  <div class="form-group">
+                    <label>Posting Day</label>
+                    <input type="number" min="1" max="31" class="form-control" v-model="posting_day">
+                  </div>
+              </table>
+                <div class="form-group">
+                  <button type="submit" class="btn btn-success">Submit</button>
+                </div>
+            </fieldset>
+          </form>
+        </div>
+    </modal>
     </div>
   </template>
   
@@ -133,24 +262,45 @@
       components: {
         Modal
       },
-      data() {
-        return {
-          form:{start_date:null, end_date:null, platform:"all"},
-          transactions:null,
-          purchases:null,
-          expenditures: null,
-          sales_details:null,
-          tableKey:0,
-          detailsKey:0,
-          profit:0,
-          sales:null,
-          totalcost:0,
-          totalexp:0,
-          totalsales:0,
-          productTrend:null,
-          trendKey:0,
-          loading: false
-  
+  data() {
+    return {
+        form:{start_date:null, end_date:null, platform:"all"},
+        transactions:null,
+        purchases:null,
+        expenditures: null,
+        sales_details:null,
+        tableKey:0,
+        detailsKey:0,
+        profit:0,
+        sales:null,
+        totalcost:0,
+        totalexp:0,
+        totalsales:0,
+        productTrend:null,
+        payment_method : 'cash',
+        payment_status : 'paid',
+        part_payment_amount : 0,
+        trendKey:0,
+        loading: false,
+        modals: {
+            classic: false,
+            notice: false,
+            mini: false,
+        },
+        modalTitle:null,
+        modalAction:null,
+        modalContent:null,
+        modalOpen: false,
+        is_split_payment: 0,
+        rows: {split:[{split_playment_method:null, split_payment_amount:null,bank_id:null}]},
+        type: 'full_payment',  
+        payment_type: null,
+        accrualModal: {
+          classic: false
+        },
+        start_date: null,
+        end_date: null,
+        posting_day: null
   
         }
       },
@@ -166,6 +316,58 @@
               });
           });
         },
+
+        openAccrualModal(){
+            this.accrualModal.classic = true
+        },
+
+        openModal(item){
+            this.modalOpen = true
+            this.detail = item.id
+            this.selectedId = item.id
+        },
+
+        updateSales(){
+            this.loading = true
+            let payload = {
+                payment_method: this.payment_method,
+                payment_status: this.payment_status,
+                part_payment_amount: this.part_payment_amount,
+                duration: this.duration,
+                type: this.type,
+                is_split_payment: this.is_split_payment,
+                split: this.rows.split,
+                payment_type: this.payment_type,
+                start_date: this.start_date,
+                end_date: this.end_date,
+                posting_day: this.posting_day
+            }
+
+            Report.update_sales(payload, this.selectedId).then((result) => {
+                this.loading = false
+                this.modalOpen = false
+                this.filter()
+                Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: result.data.message,
+                customClass: 'Swal-wide',
+                showConfirmButton: false,
+                timer: 3000
+                })
+            }).catch((err) => {
+                this.loading = false
+                Swal.fire({
+                position: 'top-end',
+                icon: 'error',
+                title: err?.response?.data?.error ?? err.response.data.message,
+                customClass: 'Swal-wide',
+                showConfirmButton: false,
+                timer: 3000
+                })
+            });
+        },
+
         datatableTrend(){
           $(function() {
             $('#trendtable').DataTable({
@@ -217,6 +419,7 @@
                 })
               }
           });
+          
           this.productTrend = product
           this.datatableTrend()
           this.trendKey++
@@ -232,7 +435,13 @@
             })
           }
         },
-  
+        setStatus(){
+        if (this.payment_method == 'cash' || this.payment_method == 'transfer' || this.payment_method == "is_accrual") {
+          this.payment_status = "paid"
+        }else{
+          this.payment_status = "not_paid"
+        }
+      },
         getSummary(){
           // getCost
           this.loading = true

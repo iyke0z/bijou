@@ -23,7 +23,7 @@
       <div class="copyright pull-right">
         &copy; 2025
         <i class="fa fa-tachometer"></i> by
-        <span>efteck</span>
+        <span>efteck solutions</span>
       </div>
     </div>
   </footer>

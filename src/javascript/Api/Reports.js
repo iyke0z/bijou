@@ -46,6 +46,9 @@ export default {
     },
     download_report(form){
         return Api.post('/report/download', form)
+    },
+    update_sales(form, id){
+        return Api.post('/sell/update/'+id+'?shop_id='+localStorage.getItem('shopId'), form)
     }
     
 

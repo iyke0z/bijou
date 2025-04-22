@@ -91,6 +91,14 @@
                   </select>
             </div>
             <div class="form-group">
+              <label>Accrual</label>
+              <select v-model="payment_type" class="form-control" @change="openAccrualModal">
+                <option :value="null">None</option>
+                <option :value="'prepayment'">Prepaid</option>
+                <option :value="'postpayment'">Postpaid</option>
+              </select>
+            </div>
+            <div class="form-group">
               <label for="">Payment Type</label>
                 <select v-model="type" class="form-control">
                   <option value="full_payment">Full Payment</option>
@@ -137,6 +145,7 @@
                       <option value="card">POS</option>
                     </select>
                   </td>
+                  
                   <td>
                     <label for="">Amount</label>
                     <input autocomplete="off" required type="number" step="any" class="form-control col-8" v-model="rows.split[index].split_payment_amount" placeholder="Amount">
@@ -244,6 +253,34 @@
       </template>
     </Modal>
 
+    <!-- accrual -->
+    <modal :show.sync="accrualModal.classic" headerClasses="justify-content-center">
+        <div>
+          <h4 slot="header" class="title title-up">Accrual</h4>
+          <form @submit.prevent="updatePlan" enctype="multipart/form-data">
+            <fieldset >
+                <table id="myTable">
+                  <div class="form-group">
+                    <label>Start Date</label>
+                    <input type="datetime-local" class="form-control" v-model="start_date">
+                  </div>
+                  <div class="form-group">
+                    <label>End Date</label>
+                    <input type="datetime-local" class="form-control" v-model="end_date">
+                  </div>
+                  <div class="form-group">
+                    <label>Posting Day</label>
+                    <input type="number" min="1" max="31" class="form-control" v-model="posting_day">
+                  </div>
+              </table>
+                <div class="form-group">
+                  <button type="submit" class="btn btn-success">Submit</button>
+                </div>
+            </fieldset>
+          </form>
+        </div>
+    </modal>
+
   </div>
 </template>
 <script>
@@ -295,6 +332,13 @@ import helpers from '@/javascript/helpers'
           mini: false
       },
       uploadedDocuments: [], // fetched previously or after upload
+      payment_type: null,
+        accrualModal: {
+          classic: false
+        },
+        start_date: null,
+        end_date: null,
+        posting_day: null
       }
     },
     methods: {
@@ -303,6 +347,9 @@ import helpers from '@/javascript/helpers'
         this.modalTitle = title
         this.detail = item.id
         this.selectedId = item.id
+      },
+      openAccrualModal(){
+        this.accrualModal.classic = true
       },
       // openModal(type, title, action, expenditure){
       //   this.modalTitle = title
@@ -372,7 +419,11 @@ import helpers from '@/javascript/helpers'
           duration: this.duration,
           type: this.type,
           is_split_payment: this.is_split_payment,
-          split: this.rows.split
+          split: this.rows.split,
+          payment_type: this.payment_type,
+          start_date: this.start_date,
+          end_date: this.end_date,
+          posting_day: this.posting_day
         }
 
         Expenditure.update_plan(payload, this.selectedId).then(res => {
@@ -388,7 +439,11 @@ import helpers from '@/javascript/helpers'
           })
           this.modalOpen = false
           this.loading = false
-
+          this.payment_type = null
+          this.start_date = null,
+          this.end_date = null,
+          this.posting_day = null
+          this.accrualModal.classic = false
         }).catch(err => {
           Swal.fire({
             position: 'top-end',

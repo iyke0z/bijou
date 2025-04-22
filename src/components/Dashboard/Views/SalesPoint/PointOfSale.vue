@@ -305,7 +305,7 @@
     </modal>
     <modal :show.sync="accrualModal.classic" headerClasses="justify-content-center">
         <div>
-          <h4 slot="header" class="title title-up">Modal</h4>
+          <h4 slot="header" class="title title-up">Accrual</h4>
           <form @submit.prevent="pay" enctype="multipart/form-data">
             <fieldset >
                 <table id="myTable">
@@ -875,8 +875,8 @@ import { f } from 'html2pdf.js'
           "logistics": this.logistics,
           "split": this.rows.split,
           "type": this.type,
-          "payment_type": this.payment_type,
           "is_split_payment": this.is_split_payment,
+          "payment_type": this.payment_type,
           'start_date': this.start_date,
           'end_date': this.end_date,
           'posting_day': this.posting_day
@@ -940,6 +940,7 @@ import { f } from 'html2pdf.js'
         this.start_date = null,
         this.end_date = null,
         this.posting_day = null
+        this.accrualModal.classic = false
         this.rows = {split:[{split_playment_method:null, split_payment_amount:null,bank_id:null}]}
         this.getProducts()
       },
