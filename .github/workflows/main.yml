@@ -50,6 +50,10 @@ jobs:
             folder: "business_sites/24hrs"
           - subdomain: "flexglobalprime"
             folder: "business_sites/flexglobalprime"
+          - subdomain: "munchiesevents"
+            folder: "business_sites/munchiesevents"
+          - subdomain: "dami"
+            folder: "business_sites/dami"
             
 
       fail-fast: false  # Continue if one matrix job fails
@@ -80,6 +84,12 @@ jobs:
               ;;
             "flexglobalprime")
               API_URL="https://api.flexglobalprime.ngmkt.site"
+              ;;
+            "munchiesevents")
+              API_URL="https://api.munchiesevents.ngmkt.site"
+              ;;
+            "dami")
+              API_URL="https://api.dami.ngmkt.site"
               ;;
             *)
               echo "Unknown subdomain!"
