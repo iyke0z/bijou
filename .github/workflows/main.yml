@@ -96,7 +96,6 @@ jobs:
               exit 1
               ;;
           esac
-
           # Replace the base URL in Api.js file
           sed -i "s|http://localhost:9009/api/v1|$API_URL/api/v1|" ./src/javascript/Api/Api.js
 
