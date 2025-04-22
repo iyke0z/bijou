@@ -49,7 +49,7 @@ jobs:
           - subdomain: "24hrs"
             folder: "business_sites/24hrs"
           - subdomain: "flexglobalprime"
-            folder: "business_sites/flexglobalprime"
+            folder: "business_sites/munchiesevents"
           - subdomain: "munchiesevents"
             folder: "business_sites/munchiesevents"
           - subdomain: "dami"
