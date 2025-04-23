@@ -54,6 +54,8 @@ jobs:
             folder: "business_sites/munchiesevents"
           - subdomain: "dami"
             folder: "business_sites/dami"
+          - subdomain: "crestgrandeur"
+            folder: "business_sites/crestgrandeur"
             
 
       fail-fast: false  # Continue if one matrix job fails
@@ -91,6 +93,10 @@ jobs:
             "dami")
               API_URL="https://api.dami.ngmkt.site"
               ;;
+            "crestgrandeur")
+              API_URL="https://api.crestgrandeur.ngmkt.site"
+              ;;
+              
             *)
               echo "Unknown subdomain!"
               exit 1
