@@ -11,13 +11,14 @@
     </div>
     
     <div class="nav col-12 bg-info" style="height:70px">
-      <li class="navBrand mt-3 d-none d-md-block" style="cursor: pointer;">
-          <a @click.prevent="goHome"> {{shopName}}</a>
-          <!-- <a @click.prevent="goHome"> {{business_name}}</a> -->
+      <li class="navBrand mt-0 d-none d-md-block" style="cursor: pointer;">
+          <a @click.prevent="goHome"> <i class="fa fa-home"></i> {{shopName}} - </a>
+          <a @click.prevent="goHome"> {{business_name}}</a>
+          <div><small class="text-light mt-0"> <i class="fa fa-user"></i> Welcome {{user?.fullname}}</small></div>
         </li>
         <li class="col-2 col-md-1 ml-2 mt-4 pb-0">
           <label for="flexSwitchCheckChecked" class="text-light">
-            <span class="d-none d-md-block"><i class="fa fa-barcode"></i> Click to scan</span>
+            <span class=" d-md-block"><i class="fa fa-barcode"></i> Barcode</span>
           </label>
           <input class="form-check-input ml-2 mt-1" type="checkbox" role="switch" id="flexSwitchCheckChecked" 
                 @click="barcodeMode = !barcodeMode" :checked="barcodeMode">
@@ -47,8 +48,8 @@
           </ul>
         </li>
         <!--  -->
-        <a class="mt-4" title="sign out" href="#" @click.prevent="logout">
-            <i class="fa fa-power-off text-light" aria-hidden="true"></i>
+        <a class="mt-4 text-light" title="sign out"  href="#" @click.prevent="logout">
+          <i class="fa fa-power-off text-light" aria-hidden="true"></i> Logout
           </a>
     </div>
     <div class="container col-12"  style="background-color: #f1f5fee9">

@@ -174,7 +174,7 @@ const menuItems = [
     }
 ];
 
-const filterMenu = (menuItems, access) => {
+const filterMenu = (menuItems, access = []) => {
     // Function to check if an item has required permissions
     const hasAccess = (itemPermissions, access) => {
         return access.some(accessItem => 
@@ -184,14 +184,19 @@ const filterMenu = (menuItems, access) => {
 
     // Recursive function to filter menu items
     const filterMenuItems = (items) => {
+        if (!items || items.length === 0) {
+            // If items is empty, return only the ones that don't require permission
+            return items.filter(item => !item.permissionRequired);
+        }
+    
         return items
             .map(item => {
                 // Check if the item doesn't require permission or has required permissions
-                const hasPermission = !item.perimssionRequired || hasAccess(item.permissions, access);
-
+                const hasPermission = !item.permissionRequired || hasAccess(item.permissions, access);
+    
                 // If the item has children, filter them recursively
                 const children = item.children ? filterMenuItems(item.children) : [];
-
+    
                 // Include the item if it has permission or any valid children
                 if (hasPermission || children.length > 0) {
                     return {
@@ -199,7 +204,7 @@ const filterMenu = (menuItems, access) => {
                         children: children.length > 0 ? children : undefined,
                     };
                 }
-
+    
                 return null;
             })
             .filter(Boolean); // Remove null values
@@ -212,8 +217,22 @@ const getMenu = async () => {
     const role = localStorage.getItem('role');
     if (role) {
         const res = await RolesPriviledge.get_role_priviledges(role);
-        const access = res.data.data;
-        return filterMenu(menuItems, access);
+        if (res.status === 200 && res.data.data) {
+            const access = res.data.data;
+            if (access && access.length > 0) {
+                // User has permissions, filter based on those permissions
+                return filterMenu(menuItems, access);
+            } else {
+                // User has no permissions, show only items that don't require permission
+                return filterMenu(menuItems);
+            }
+        } else {
+            // Fallback if fetching the role privileges fails
+            return filterMenu(menuItems);
+        }
+    } else {
+        // If no role is found, show only items that don't require permission
+        return filterMenu(menuItems);
     }
 };
 

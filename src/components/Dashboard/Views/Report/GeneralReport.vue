@@ -478,6 +478,7 @@
             <ul>
               <li>Accounts Payable: {{ details.balance_sheet.liabilities.current_liabilities.accounts_payable | formatCurrency }}</li>
               <li>Prepaid Sales: {{ details.balance_sheet.liabilities.current_liabilities.prepaid_sales | formatCurrency }}</li>
+              <li>Customer Wallets: {{ details.balance_sheet.liabilities.current_liabilities.customer_deposits | formatCurrency }}</li>
             </ul>
             <h6>Non-Current Liabilities</h6>
             <ul>

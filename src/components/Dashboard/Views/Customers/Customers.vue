@@ -79,7 +79,8 @@
         loading: false,
         fund:{
           amount:null,
-          platform: 'offline'
+          platform: 'offline',
+          type: 'fund_wallet'
         },
         modals: {
           classic: false,
