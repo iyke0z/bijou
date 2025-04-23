@@ -105,7 +105,7 @@ import { Button, Modal } from '@/components/UIComponents'
 import Category from '@/javascript/Api/Categories'
 import Swal from 'sweetalert2'
 import helpers from '@/javascript/helpers'
-  function delete_row(id){console.log(id)}
+  function delete_row(id){}
   export default{
     components: {
       Modal
@@ -185,7 +185,6 @@ import helpers from '@/javascript/helpers'
           this.rows.category = [{name:null}]
           this.allcategories()
           this.loading = false
-          window.location.reload()
         }).catch((err) => {
           this.loading = false
          Swal.fire({
@@ -214,7 +213,6 @@ import helpers from '@/javascript/helpers'
           this.form = {name:null}
           this.modals.classic = false
           this.loading = false
-          window.location.reload()
 
         }).catch((err) => {
         this.loading = false
@@ -233,7 +231,6 @@ import helpers from '@/javascript/helpers'
         Category.categories().then((result) => {
             this.all_categories = result.data.data
             this.loading = false
-            this.tableKey++
             this.datatable()
         }).catch(()=>{
           this.loading = false
