@@ -166,14 +166,20 @@
             <tr>
               <th>Product ID</th>
               <th>Product</th>
+              <th>Qty</th>
+              <th>Previous Stock</th>
+              <th>Current Stock</th>
               <th>Total Amount</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="sale in details.revenue.sales_by_product.sales_by_product" :key="sale.product_id">
+            <tr v-for="sale in details.revenue.sales_details" :key="sale.product_id">
               <td>{{ sale.product_id }}</td>
-              <td>{{ sale.product_name }}</td>
-              <td>{{ sale.total_amount | formatCurrency }}</td>
+              <td>{{ sale.product.name }}</td>
+              <td>{{ sale.qty }}</td>
+              <td>{{ sale.previous_stock }}</td>
+              <td>{{ sale.previous_stock - sale.qty }}</td>
+              <td>{{ (sale.price * sale.qty) | formatCurrency }}</td>
             </tr>
             <tr v-if="!details.revenue.sales_by_product.sales_by_product.length">
               <td colspan="3">No sales data available</td>
@@ -258,6 +264,8 @@
               <th>Purchase ID</th>
               <th>Product</th>
               <th>Quantity</th>
+              <th>Previous Stock</th>
+              <th>Current Stock</th>
               <th>Cost</th>
               <th>Payment Status</th>
               <th>Total Balance</th>
@@ -268,6 +276,8 @@
               <td>{{ purchase.purchase_id }}</td>
               <td>{{ purchase.product.name }}</td>
               <td>{{ purchase.qty }}</td>
+              <td>{{ purchase.previous_stock }}</td>
+              <td>{{ purchase.qty + purchase.previous_stock }}</td>
               <td>{{ purchase.cost | formatCurrency }}</td>
               <td>{{ purchase.payment_status | capitalize }}</td>
               <td>{{ purchase.part_payment_amount | formatCurrency }}</td>
@@ -882,205 +892,216 @@ export default {
       return Object.keys(amountsByDate).sort().map(date => amountsByDate[date] || 0);
     },
     downloadReport() {
-      if (!this.details) return;
+  if (!this.details) return;
 
-      let csvContent = 'Financial Report\n';
-      csvContent += `Period,${this.formatPeriod(this.details.summary.start_date, this.details.summary.end_date)}\n`;
-      csvContent += `Branch,${this.details.summary.Branch}\n`;
-      csvContent += `Overview,${this.details.summary.overview}\n\n`;
+  let csvContent = 'Financial Report\n';
+  csvContent += `Period,${this.formatPeriod(this.details.summary.start_date, this.details.summary.end_date)}\n`;
+  csvContent += `Branch,${this.details.summary.Branch}\n`;
+  csvContent += `Overview,${this.details.summary.overview}\n\n`;
 
-      // Key Metrics
-      csvContent += 'Key Metrics\n';
-      csvContent += 'Metric,Value\n';
-      csvContent += `Total Revenue,${this.details.summary.key_metrics.total_revenue}\n`;
-      csvContent += `Total Expenditure,${this.details.summary.key_metrics.total_expenditure}\n`;
-      csvContent += `Net Profit,${this.details.summary.key_metrics.net_profit}\n`;
-      csvContent += `Gross Profit,${this.details.summary.key_metrics.gross_profit}\n`;
-      csvContent += `EBIT,${this.details.summary.key_metrics.ebit}\n`;
-      csvContent += `ROI,${this.details.summary.key_metrics.roi}\n`;
-      csvContent += `Profit Margin,${this.details.summary.key_metrics.profit_margin}\n\n`;
+  // Key Metrics
+  csvContent += 'Key Metrics\n';
+  csvContent += 'Metric,Value\n';
+  csvContent += `Total Revenue,${this.details.summary.key_metrics.total_revenue}\n`;
+  csvContent += `Total Expenditure,${this.details.summary.key_metrics.total_expenditure}\n`;
+  csvContent += `Net Profit,${this.details.summary.key_metrics.net_profit}\n`;
+  csvContent += `Gross Profit,${this.details.summary.key_metrics.gross_profit}\n`;
+  csvContent += `EBIT,${this.details.summary.key_metrics.ebit}\n`;
+  csvContent += `ROI,${this.details.summary.key_metrics.roi}\n`;
+  csvContent += `Profit Margin,${this.details.summary.key_metrics.profit_margin}\n\n`;
 
-      // Revenue Details
-      csvContent += 'Revenue Details\n';
-      csvContent += 'Metric,Value\n';
-      csvContent += `Total Revenue,${this.details.revenue.total_revenue}\n`;
-      csvContent += `Average Sales per Customer,${this.details.revenue.kpi.average_sales_per_customer}\n`;
-      csvContent += `Customer Acquisition Cost,${this.details.revenue.kpi.customer_acquisition_cost}\n`;
-      csvContent += 'Sales by Product\n';
-      csvContent += 'Product Name,Total Amount\n';
-      this.details.revenue.sales_by_product.sales_by_product.forEach(sale => {
-        csvContent += `${sale.product_name},${sale.total_amount}\n`;
-      });
-      csvContent += '\n';
+  // Revenue Details
+  csvContent += 'Revenue Details\n';
+  csvContent += 'Metric,Value\n';
+  csvContent += `Total Revenue,${this.details.revenue.total_revenue}\n`;
+  csvContent += `Average Sales per Customer,${this.details.revenue.kpi.average_sales_per_customer}\n`;
+  csvContent += `Customer Acquisition Cost,${this.details.revenue.kpi.customer_acquisition_cost}\n`;
+  csvContent += 'Sales by Product\n';
+  csvContent += 'Product Name,Total Amount\n';
+  this.details.revenue.sales_by_product.sales_by_product.forEach(sale => {
+    csvContent += `${sale.product_name},${sale.total_amount}\n`;
+  });
+  csvContent += '\n';
 
-      // Sales Details
-      csvContent += 'Sales Details\n';
-      csvContent += 'Product ID,Product,Total Amount\n';
-      this.details.revenue.sales_by_product.sales_by_product.forEach(sale => {
-        csvContent += `${sale.product_id},${sale.product_name},${sale.total_amount}\n`;
-      });
-      csvContent += '\n';
+  // Sales Details (Updated)
+  csvContent += 'Sales Details\n';
+  csvContent += 'Product ID,Product,Quantity,Previous Stock,Current Stock,Total Amount\n';
+  if (this.details.revenue.sales_details.length) {
+    this.details.revenue.sales_details.forEach(sale => {
+      const currentStock = sale.previous_stock - sale.qty;
+      const totalAmount = sale.price * sale.qty;
+      csvContent += `${sale.product_id},${sale.product.name},${sale.qty},${sale.previous_stock},${currentStock},${totalAmount}\n`;
+    });
+  } else {
+    csvContent += 'No sales details available\n';
+  }
+  csvContent += '\n';
 
-      // Profit & Loss Statement
-      csvContent += 'Profit & Loss Statement\n';
-      csvContent += 'Metric,Value\n';
-      csvContent += `Revenue,${this.details.profit_loss_statement.revenue}\n`;
-      csvContent += `Other Income,${this.details.profit_loss_statement.other_income}\n`;
-      csvContent += `Cost of Goods Sold,${this.details.profit_loss_statement.cost_of_goods_sold}\n`;
-      csvContent += `Gross Profit,${this.details.profit_loss_statement.gross_profit}\n`;
-      csvContent += `Gross Profit Margin,${((this.details.profit_loss_statement.gross_profit / (this.details.profit_loss_statement.revenue || 1)) * 100).toFixed(2)}%\n`;
-      csvContent += `Operating Expenses,${this.details.profit_loss_statement.operating_expenses}\n`;
-      csvContent += `Marketing Expense,${this.details.expenditure.expenditure_details?.marketing_expense || 0}\n`;
-      csvContent += `Salaries,${this.details.expenditure.expenditure_details?.salaries || 0}\n`;
-      csvContent += `Utilities,${this.details.expenditure.expenditure_details?.utilities || 0}\n`;
-      csvContent += `Logistics Expense,${this.details.logistics_break_down.expenditure}\n`;
-      csvContent += `Depreciation,${this.details.profit_loss_statement.depreciation}\n`;
-      csvContent += `Amortization,${this.details.profit_loss_statement.amortization}\n`;
-      csvContent += `Operating Profit,${this.details.profit_loss_statement.operating_profit}\n`;
-      csvContent += `Tax Expense,${this.details.profit_loss_statement.tax_expense}\n`;
-      csvContent += `Net Profit,${this.details.profit_loss_statement.net_profit}\n`;
-      csvContent += `Net Profit Margin,${((this.details.profit_loss_statement.net_profit / (this.details.profit_loss_statement.revenue || 1)) * 100).toFixed(2)}%\n\n`;
+  // Profit & Loss Statement
+  csvContent += 'Profit & Loss Statement\n';
+  csvContent += 'Metric,Value\n';
+  csvContent += `Revenue,${this.details.profit_loss_statement.revenue}\n`;
+  csvContent += `Other Income,${this.details.profit_loss_statement.other_income}\n`;
+  csvContent += `Cost of Goods Sold,${this.details.profit_loss_statement.cost_of_goods_sold}\n`;
+  csvContent += `Gross Profit,${this.details.profit_loss_statement.gross_profit}\n`;
+  csvContent += `Gross Profit Margin,${((this.details.profit_loss_statement.gross_profit / (this.details.profit_loss_statement.revenue || 1)) * 100).toFixed(2)}%\n`;
+  csvContent += `Operating Expenses,${this.details.profit_loss_statement.operating_expenses}\n`;
+  csvContent += `Marketing Expense,${this.details.expenditure.expenditure_details?.marketing_expense || 0}\n`;
+  csvContent += `Salaries,${this.details.expenditure.expenditure_details?.salaries || 0}\n`;
+  csvContent += `Utilities,${this.details.expenditure.expenditure_details?.utilities || 0}\n`;
+  csvContent += `Logistics Expense,${this.details.logistics_break_down.expenditure}\n`;
+  csvContent += `Depreciation,${this.details.profit_loss_statement.depreciation}\n`;
+  csvContent += `Amortization,${this.details.profit_loss_statement.amortization}\n`;
+  csvContent += `Operating Profit,${this.details.profit_loss_statement.operating_profit}\n`;
+  csvContent += `Tax Expense,${this.details.profit_loss_statement.tax_expense}\n`;
+  csvContent += `Net Profit,${this.details.profit_loss_statement.net_profit}\n`;
+  csvContent += `Net Profit Margin,${((this.details.profit_loss_statement.net_profit / (this.details.profit_loss_statement.revenue || 1)) * 100).toFixed(2)}%\n\n`;
 
-      // Expenditure Summary
-      csvContent += 'Expenditure Summary\n';
-      csvContent += 'Metric,Value\n';
-      csvContent += `Total Expenditure,${this.details.expenditure.total_expenditure}\n`;
-      csvContent += `Cost of Goods Sold,${this.details.expenditure.cost_of_goods_sold}\n`;
-      csvContent += `Operating Expenses,${this.details.expenditure.operating_expenses}\n\n`;
+  // Expenditure Summary
+  csvContent += 'Expenditure Summary\n';
+  csvContent += 'Metric,Value\n';
+  csvContent += `Total Expenditure,${this.details.expenditure.total_expenditure}\n`;
+  csvContent += `Cost of Goods Sold,${this.details.expenditure.cost_of_goods_sold}\n`;
+  csvContent += `Operating Expenses,${this.details.expenditure.operating_expenses}\n\n`;
 
-      // Expenditure Details
-      csvContent += 'Expenditure Details\n';
-      csvContent += 'ID,Type,Amount,Payment Method,Payment Status,Date\n';
-      if (this.details.expenditure.expenditure_details.length) {
-        this.details.expenditure.expenditure_details.forEach(exp => {
-          csvContent += `${exp.id},${exp.type.name},${exp.amount},${exp.payment_method},${exp.payment_status},${this.formatDate(exp.created_at)}\n`;
-        });
-      } else {
-        csvContent += 'No expenditure details available\n';
-      }
-      csvContent += '\n';
+  // Expenditure Details
+  csvContent += 'Expenditure Details\n';
+  csvContent += 'ID,Type,Amount,Payment Method,Payment Status,Date\n';
+  if (this.details.expenditure.expenditure_details.length) {
+    this.details.expenditure.expenditure_details.forEach(exp => {
+      csvContent += `${exp.id},${exp.type.name},${exp.amount},${exp.payment_method},${exp.payment_status},${this.formatDate(exp.created_at)}\n`;
+    });
+  } else {
+    csvContent += 'No expenditure details available\n';
+  }
+  csvContent += '\n';
 
-      // Purchase Details
-      csvContent += 'Purchase Details\n';
-      csvContent += 'Purchase ID,Product,Quantity,Cost,Payment Status,Total Balance\n';
-      this.details.expenditure.purchase_details.forEach(purchase => {
-        csvContent += `${purchase.purchase_id},${purchase.product.name},${purchase.qty},${purchase.cost},${purchase.payment_status},${purchase.part_payment_amount}\n`;
-      });
-      csvContent += '\n';
+  // Purchase Details (Updated)
+  csvContent += 'Purchase Details\n';
+  csvContent += 'Purchase ID,Product,Quantity,Previous Stock,Current Stock,Cost,Payment Status,Total Balance\n';
+  if (this.details.expenditure.purchase_details.length) {
+    this.details.expenditure.purchase_details.forEach(purchase => {
+      const currentStock = purchase.qty + purchase.previous_stock;
+      csvContent += `${purchase.purchase_id},${purchase.product.name},${purchase.qty},${purchase.previous_stock},${currentStock},${purchase.cost},${purchase.payment_status},${purchase.part_payment_amount}\n`;
+    });
+  } else {
+    csvContent += 'No purchase details available\n';
+  }
+  csvContent += '\n';
 
-      // Stock Movement
-      csvContent += 'Stock Movement\n';
-      csvContent += 'Metric,Value\n';
-      csvContent += `Stock Sold,${this.details.stock_movement.stock_sold}\n`;
-      csvContent += `Stock Adjustments,${this.details.stock_movement.stock_adjustments}\n`;
-      csvContent += `Negative Stock,${this.details.stock_movement.negative_stock}\n\n`;
+  // Stock Movement
+  csvContent += 'Stock Movement\n';
+  csvContent += 'Metric,Value\n';
+  csvContent += `Stock Sold,${this.details.stock_movement.stock_sold}\n`;
+  csvContent += `Stock Adjustments,${this.details.stock_movement.stock_adjustments}\n`;
+  csvContent += `Negative Stock,${this.details.stock_movement.negative_stock}\n\n`;
 
-      // Cash Flow
-      csvContent += 'Cash Flow\n';
-      csvContent += 'Metric,Value\n';
-      csvContent += `Cash Inflow,${this.details.cash_flow.cash_inflow}\n`;
-      csvContent += `Cash Outflow,${this.details.cash_flow.cash_outflow}\n\n`;
+  // Cash Flow
+  csvContent += 'Cash Flow\n';
+  csvContent += 'Metric,Value\n';
+  csvContent += `Cash Inflow,${this.details.cash_flow.cash_inflow}\n`;
+  csvContent += `Cash Outflow,${this.details.cash_flow.cash_outflow}\n\n`;
 
-      // Ledger Details
-      csvContent += 'Ledger Details\n';
-      csvContent += 'ID,Account Name,Transaction Type,Description,Amount,Date\n';
-      this.details.ledger_details.forEach(ledger => {
-        csvContent += `${ledger.id},${ledger.account_name},${ledger.transaction_type},${ledger.description},${ledger.amount},${this.formatDate(ledger.created_at)}\n`;
-      });
-      csvContent += '\n';
+  // Ledger Details
+  csvContent += 'Ledger Details\n';
+  csvContent += 'ID,Account Name,Transaction Type,Description,Amount,Date\n';
+  this.details.ledger_details.forEach(ledger => {
+    csvContent += `${ledger.id},${ledger.account_name},${ledger.transaction_type},${ledger.description},${ledger.amount},${this.formatDate(ledger.created_at)}\n`;
+  });
+  csvContent += '\n';
 
-      // General Ledger Summary
-      csvContent += 'General Ledger Summary\n';
-      csvContent += 'Metric,Value\n';
-      csvContent += `Total Debit,${this.details.general_ledger_summary.total_debit}\n`;
-      csvContent += `Total Credit,${this.details.general_ledger_summary.total_credit}\n\n`;
-      csvContent += 'Debit Transactions\n';
-      csvContent += 'Account Name,Amount,Description,Transaction ID,Date\n';
-      this.details.general_ledger_summary.debit_transactions.forEach(txn => {
-        csvContent += `${txn.account_name},${txn.amount},${txn.description},${txn.transaction_id},${this.formatDate(txn.date)}\n`;
-      });
-      csvContent += '\n';
-      csvContent += 'Credit Transactions\n';
-      csvContent += 'Account Name,Amount,Description,Transaction ID,Date\n';
-      this.details.general_ledger_summary.credit_transactions.forEach(txn => {
-        csvContent += `${txn.account_name},${txn.amount},${txn.description},${txn.transaction_id},${this.formatDate(txn.date)}\n`;
-      });
-      csvContent += '\n';
+  // General Ledger Summary
+  csvContent += 'General Ledger Summary\n';
+  csvContent += 'Metric,Value\n';
+  csvContent += `Total Debit,${this.details.general_ledger_summary.total_debit}\n`;
+  csvContent += `Total Credit,${this.details.general_ledger_summary.total_credit}\n\n`;
+  csvContent += 'Debit Transactions\n';
+  csvContent += 'Account Name,Amount,Description,Transaction ID,Date\n';
+  this.details.general_ledger_summary.debit_transactions.forEach(txn => {
+    csvContent += `${txn.account_name},${txn.amount},${txn.description},${txn.transaction_id},${this.formatDate(txn.date)}\n`;
+  });
+  csvContent += '\n';
+  csvContent += 'Credit Transactions\n';
+  csvContent += 'Account Name,Amount,Description,Transaction ID,Date\n';
+  this.details.general_ledger_summary.credit_transactions.forEach(txn => {
+    csvContent += `${txn.account_name},${txn.amount},${txn.description},${txn.transaction_id},${this.formatDate(txn.date)}\n`;
+  });
+  csvContent += '\n';
 
-      // Accounts Summary
-      csvContent += 'Accounts Summary\n';
-      csvContent += 'Category,Value\n';
-      csvContent += `Accounts Payable,${this.details.balance_sheet.liabilities.current_liabilities.accounts_payable}\n`;
-      csvContent += `Accounts Receivable,${this.details.receivables.total_receivables}\n\n`;
-      csvContent += 'Accounts Receivable Details\n';
-      csvContent += 'Customer,Amount Owed\n';
-      if (this.details.receivables.receivable_details.length) {
-        this.details.receivables.receivable_details.forEach(receivable => {
-          csvContent += `${receivable.fullname},${receivable.wallet_balance}\n`;
-        });
-      } else {
-        csvContent += 'No receivable details available\n';
-      }
-      csvContent += '\n';
+  // Accounts Summary
+  csvContent += 'Accounts Summary\n';
+  csvContent += 'Category,Value\n';
+  csvContent += `Accounts Payable,${this.details.balance_sheet.liabilities.current_liabilities.accounts_payable}\n`;
+  csvContent += `Accounts Receivable,${this.details.receivables.total_receivables}\n\n`;
+  csvContent += 'Accounts Receivable Details\n';
+  csvContent += 'Customer,Amount Owed\n';
+  if (this.details.receivables.receivable_details.length) {
+    this.details.receivables.receivable_details.forEach(receivable => {
+      csvContent += `${receivable.fullname},${receivable.wallet_balance}\n`;
+    });
+  } else {
+    csvContent += 'No receivable details available\n';
+  }
+  csvContent += '\n';
 
-      // Customer Report
-      csvContent += 'Customer Report\n';
-      csvContent += 'Metric,Value\n';
-      csvContent += `Total Customers,${this.details.receivables.customer_count}\n\n`;
+  // Customer Report
+  csvContent += 'Customer Report\n';
+  csvContent += 'Metric,Value\n';
+  csvContent += `Total Customers,${this.details.receivables.customer_count}\n\n`;
 
-      // Logistics Report
-      csvContent += 'Logistics Report\n';
-      csvContent += 'Metric,Value\n';
-      csvContent += `Logistics Revenue,${this.details.logistics_break_down.revenue}\n`;
-      csvContent += `Logistics Expenditure,${this.details.logistics_break_down.expenditure}\n\n`;
-      csvContent += 'Logistics Transactions\n';
-      csvContent += 'Account Name,Transaction Type,Amount,Description,Date\n';
-      this.logisticsDetails.forEach(txn => {
-        csvContent += `${txn.account_name},${txn.transaction_type},${txn.amount},${txn.description},${this.formatDate(txn.created_at)}\n`;
-      });
-      csvContent += '\n';
+  // Logistics Report
+  csvContent += 'Logistics Report\n';
+  csvContent += 'Metric,Value\n';
+  csvContent += `Logistics Revenue,${this.details.logistics_break_down.revenue}\n`;
+  csvContent += `Logistics Expenditure,${this.details.logistics_break_down.expenditure}\n\n`;
+  csvContent += 'Logistics Transactions\n';
+  csvContent += 'Account Name,Transaction Type,Amount,Description,Date\n';
+  this.logisticsDetails.forEach(txn => {
+    csvContent += `${txn.account_name},${txn.transaction_type},${txn.amount},${txn.description},${this.formatDate(txn.created_at)}\n`;
+  });
+  csvContent += '\n';
 
-      // Sales vs Marketing Expenditure
-      csvContent += 'Sales vs Marketing Expenditure\n';
-      csvContent += 'Metric,Value\n';
-      csvContent += `Sales Expenditure,${this.details.sales_vs_marketing_expenditure.sales_expenditure}\n`;
-      csvContent += `Marketing Expenditure,${this.details.sales_vs_marketing_expenditure.marketing_expenditure}\n\n`;
+  // Sales vs Marketing Expenditure
+  csvContent += 'Sales vs Marketing Expenditure\n';
+  csvContent += 'Metric,Value\n';
+  csvContent += `Sales Expenditure,${this.details.sales_vs_marketing_expenditure.sales_expenditure}\n`;
+  csvContent += `Marketing Expenditure,${this.details.sales_vs_marketing_expenditure.marketing_expenditure}\n\n`;
 
-      // Balance Sheet
-      csvContent += 'Balance Sheet\n';
-      csvContent += 'Category,Item,Value\n';
-      csvContent += `Assets,Cash,${this.details.balance_sheet.assets.current_assets.cash}\n`;
-      csvContent += `Assets,Bank,${this.details.balance_sheet.assets.current_assets.bank}\n`;
-      csvContent += `Assets,Accounts Receivable,${this.details.balance_sheet.assets.current_assets.accounts_receivable}\n`;
-      csvContent += `Assets,Inventory,${this.details.balance_sheet.assets.current_assets.inventory}\n`;
-      csvContent += `Assets,Prepaid Inventory,${this.details.balance_sheet.assets.current_assets.prepaid_inventory}\n`;
-      csvContent += `Assets,Prepaid Expense,${this.details.balance_sheet.assets.current_assets.prepaid_expense}\n`;
-      csvContent += `Assets,Property Plant Equipment,${this.details.balance_sheet.assets.non_current_assets.property_plant_equipment}\n`;
-      csvContent += `Assets,Long Term Investments,${this.details.balance_sheet.assets.non_current_assets.long_term_investments}\n`;
-      csvContent += `Assets,Intangible Assets,${this.details.balance_sheet.assets.non_current_assets.intangible_assets}\n`;
-      csvContent += `Liabilities,Accounts Payable,${this.details.balance_sheet.liabilities.current_liabilities.accounts_payable}\n`;
-      csvContent += `Liabilities,Prepaid Sales,${this.details.balance_sheet.liabilities.current_liabilities.prepaid_sales}\n`;
-      csvContent += `Liabilities,Long Term Loans,${this.details.balance_sheet.liabilities.non_current_liabilities.long_term_loans}\n`;
-      csvContent += `Liabilities,Deferred Tax Liability,${this.details.balance_sheet.liabilities.non_current_liabilities.deferred_tax_liability}\n`;
-      csvContent += `Equity,Owner Investment,${this.details.balance_sheet.equity.owner_investment}\n`;
-      csvContent += `Equity,Retained Earnings,${this.details.balance_sheet.equity.retained_earnings}\n`;
-      csvContent += `Equity,Dividends,${this.details.balance_sheet.equity.dividends}\n\n`;
+  // Balance Sheet
+  csvContent += 'Balance Sheet\n';
+  csvContent += 'Category,Item,Value\n';
+  csvContent += `Assets,Cash,${this.details.balance_sheet.assets.current_assets.cash}\n`;
+  csvContent += `Assets,Bank,${this.details.balance_sheet.assets.current_assets.bank}\n`;
+  csvContent += `Assets,Accounts Receivable,${this.details.balance_sheet.assets.current_assets.accounts_receivable}\n`;
+  csvContent += `Assets,Inventory,${this.details.balance_sheet.assets.current_assets.inventory}\n`;
+  csvContent += `Assets,Prepaid Inventory,${this.details.balance_sheet.assets.current_assets.prepaid_inventory}\n`;
+  csvContent += `Assets,Prepaid Expense,${this.details.balance_sheet.assets.current_assets.prepaid_expense}\n`;
+  csvContent += `Assets,Property Plant Equipment,${this.details.balance_sheet.assets.non_current_assets.property_plant_equipment}\n`;
+  csvContent += `Assets,Long Term Investments,${this.details.balance_sheet.assets.non_current_assets.long_term_investments}\n`;
+  csvContent += `Assets,Intangible Assets,${this.details.balance_sheet.assets.non_current_assets.intangible_assets}\n`;
+  csvContent += `Liabilities,Accounts Payable,${this.details.balance_sheet.liabilities.current_liabilities.accounts_payable}\n`;
+  csvContent += `Liabilities,Prepaid Sales,${this.details.balance_sheet.liabilities.current_liabilities.prepaid_sales}\n`;
+  csvContent += `Liabilities,Long Term Loans,${this.details.balance_sheet.liabilities.non_current_liabilities.long_term_loans}\n`;
+  csvContent += `Liabilities,Deferred Tax Liability,${this.details.balance_sheet.liabilities.non_current_liabilities.deferred_tax_liability}\n`;
+  csvContent += `Equity,Owner Investment,${this.details.balance_sheet.equity.owner_investment}\n`;
+  csvContent += `Equity,Retained Earnings,${this.details.balance_sheet.equity.retained_earnings}\n`;
+  csvContent += `Equity,Dividends,${this.details.balance_sheet.equity.dividends}\n\n`;
 
-      // Budget vs Actual
-      csvContent += 'Budget vs Actual\n';
-      csvContent += 'Metric,Budgeted,Actual,Variance\n';
-      csvContent += `Revenue,${this.details.budget_vs_actual.budgeted_revenue},${this.details.budget_vs_actual.actual_revenue},${this.details.budget_vs_actual.revenue_variance}\n`;
-      csvContent += `Expenditure,${this.details.budget_vs_actual.budgeted_expenditure},${this.details.budget_vs_actual.actual_expenditure},${this.details.budget_vs_actual.expenditure_variance}\n`;
+  // Budget vs Actual
+  csvContent += 'Budget vs Actual\n';
+  csvContent += 'Metric,Budgeted,Actual,Variance\n';
+  csvContent += `Revenue,${this.details.budget_vs_actual.budgeted_revenue},${this.details.budget_vs_actual.actual_revenue},${this.details.budget_vs_actual.revenue_variance}\n`;
+  csvContent += `Expenditure,${this.details.budget_vs_actual.budgeted_expenditure},${this.details.budget_vs_actual.actual_expenditure},${this.details.budget_vs_actual.expenditure_variance}\n`;
 
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a');
-      const url = URL.createObjectURL(blob);
-      link.setAttribute('href', url);
-      link.setAttribute('download', `financial_report_${moment(this.details.summary.start_date).format('YYYYMMDD')}.csv`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    },
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  link.setAttribute('href', url);
+  link.setAttribute('download', `financial_report_${moment(this.details.summary.start_date).format('YYYYMMDD')}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+},
     downloadPDF() {
       if (!this.details) return;
 
