@@ -18,7 +18,7 @@
         </li>
         <li class="col-2 col-md-1 ml-2 mt-4 pb-0">
           <label for="flexSwitchCheckChecked" class="text-light">
-            <span class=" d-md-block"><i class="fa fa-barcode"></i> Barcode</span>
+            <small><span class=" d-md-block"><i class="fa fa-barcode"></i> Code</span></small>
           </label>
           <input class="form-check-input ml-2 mt-1" type="checkbox" role="switch" id="flexSwitchCheckChecked" 
                 @click="barcodeMode = !barcodeMode" :checked="barcodeMode">
