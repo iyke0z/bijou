@@ -60,10 +60,18 @@
     <template slot="navbar-menu">
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link" title="sign out" href="#" @click.prevent="logout">
+          
+          <a class="nav-link text-info mt-1" title="sign out" href="https://documenter.getpostman.com/view/13318427/2sB2izCsY1" target="_blank" @click.prevent="logout">
+            <i class="fa fa-code text-info" aria-hidden="true"></i>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-danger mt-1" title="sign out" href="#" @click.prevent="logout">
             <i class="fa fa-power-off text-danger" aria-hidden="true"></i>
           </a>
         </li>
+        
+        
       </ul>
     </template>
   </navbar>

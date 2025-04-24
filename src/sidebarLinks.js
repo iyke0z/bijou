@@ -171,7 +171,9 @@ const menuItems = [
         { name: 'Settings', path: '/business/settings', title: 'Adjust general business settings' },
         { name: 'Billing', path: '/business/billing', title: 'Manage your billing and payment plan' }
       ]
-    }
+    },
+   
+    
 ];
 
 const filterMenu = (menuItems, access = []) => {

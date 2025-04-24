@@ -552,16 +552,16 @@ import helpers from '@/javascript/helpers'
 
       try {
        Expenditure.upload_documents(formData).then(res => {
-          this.uploadedDocuments = res.data.documents || [];
-          Swal.fire({
-            position: 'top-end',
-            icon: 'success',
-            title: res.data.message,
-            customClass: 'Swal-wide',
-            showConfirmButton: false,
-            timer: 3000
-          });
-          this.resetForm();
+          // this.uploadedDocuments = res.data.documents || [];
+          // Swal.fire({
+          //   position: 'top-end',
+          //   icon: 'success',
+          //   title: res.data.message,
+          //   customClass: 'Swal-wide',
+          //   showConfirmButton: false,
+          //   timer: 3000
+          // });
+          // this.resetForm();
         });
 
        

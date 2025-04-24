@@ -76,7 +76,7 @@
                   <td>{{ dateTime(transaction.created_at) }}</td>
                   <td>{{ transaction.table_description }}</td>
                   <td>
-                    <button @click.prevent="openModal(transaction)" v-if="transaction.status != 'completed'" class="btn btn-black btn-sm">
+                    <button @click.prevent="openModal(transaction)" v-if="transaction.status != 'completed' && transaction.table_description == 'new sale'" class="btn btn-black btn-sm">
                       <i class="fa fa-wrench"></i>
                     </button>
                     <button @click.prevent="details(transaction.id)" class="btn btn-info btn-sm">
