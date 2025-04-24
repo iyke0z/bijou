@@ -58,6 +58,9 @@ jobs:
             folder: "business_sites/crestgrandeur"
           - subdomain: "lola"
             folder: "business_sites/lola"
+          - subdomain: "mammanativekichen"
+            folder: "business_sites/mammanativekichen"
+            
             
 
       fail-fast: false  # Continue if one matrix job fails
@@ -100,6 +103,9 @@ jobs:
               ;;
             "lola")
               API_URL="https://api.lola.ngmkt.site"
+              ;;
+            "mammanativekichen")
+              API_URL="https://api.mammanativekichen.ngmkt.site"
               ;;
             *)
               echo "Unknown subdomain!"
