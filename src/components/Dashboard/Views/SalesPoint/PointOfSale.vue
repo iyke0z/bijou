@@ -362,7 +362,8 @@ import { f } from 'html2pdf.js'
           address: null,
           phone: null,
           email: null,
-          wallet_balance: 0
+          wallet_balance: 0,
+          customer_type:'walk_in'
         },
         modals: {
           classic: false,
