@@ -12,9 +12,9 @@
     
     <div class="nav col-12 bg-info" style="height:70px">
       <li class="navBrand mt-0 d-none d-md-block" style="cursor: pointer;">
-          <a @click.prevent="goHome"> <i class="fa fa-home"></i> {{shopName}} - </a>
+        <small class="text-light mt-0"> <a @click.prevent="goHome"> <i class="fa fa-home"></i> {{shopName}} - </a>
           <a @click.prevent="goHome"> {{business_name}}</a>
-          <div><small class="text-light mt-0"> <i class="fa fa-user"></i> Welcome {{user?.fullname}}</small></div>
+          <div><i class="fa fa-user"></i> Welcome {{user?.fullname}}</div></small>
         </li>
         <li class="col-2 col-md-1 ml-2 mt-4 pb-0">
           <label for="flexSwitchCheckChecked" class="text-light">
