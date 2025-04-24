@@ -59,19 +59,13 @@
 
     <template slot="navbar-menu">
       <ul class="navbar-nav">
-        <li class="nav-item">
           
           <a class="nav-link text-info mt-1" title="Api Dcoumentation" href="https://documenter.getpostman.com/view/13318427/2sB2izCsY1" target="_blank">
-            <i class="fa fa-code text-info" aria-hidden="true"></i>
+            <i class="fa fa-code text-info" aria-hidden="true"></i> <span class="pt-3">Api Docs</span>
           </a>
-        </li>
-        <li class="nav-item">
           <a class="nav-link text-danger mt-1" title="sign out" href="#" @click.prevent="logout">
-            <i class="fa fa-power-off text-danger" aria-hidden="true"></i>
+            <i class="fa fa-power-off text-danger" aria-hidden="true"></i><span class="pt-3">Logout</span>
           </a>
-        </li>
-        
-        
       </ul>
     </template>
   </navbar>
