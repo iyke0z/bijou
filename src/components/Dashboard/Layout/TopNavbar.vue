@@ -62,7 +62,7 @@
         <li class="nav-item">
           
           <a class="nav-link text-info mt-1" title="Api Dcoumentation" href="https://documenter.getpostman.com/view/13318427/2sB2izCsY1" target="_blank" @click.prevent="logout">
-            <i class="fa fa-code text-info" aria-hidden="true"></i>Api
+            <i class="fa fa-code text-info" aria-hidden="true"></i>
           </a>
         </li>
         <li class="nav-item">
