@@ -1,3 +1,4 @@
+```vue
 <template>
   <div class="container-fluid">
     <span class="loader" v-if="loading"></span>
@@ -90,26 +91,44 @@
         <h4>{{ formatPeriod(details.summary.start_date, details.summary.end_date) }}</h4>
         <p>{{ details.summary.overview }}</p>
         <p><strong>Branch:</strong> {{ details.summary.Branch }}</p>
-        <div class="row">
-          <div class="col-md-4">
-            <p><strong>Total Revenue:</strong> {{ details.summary.key_metrics.total_revenue | formatCurrency }}</p>
-          </div>
-          <div class="col-md-4">
-            <p><strong>Total Expenditure:</strong> {{ details.summary.key_metrics.total_expenditure | formatCurrency }}</p>
-          </div>
-          <div class="col-md-4">
-            <p><strong>Net Profit:</strong> {{ details.summary.key_metrics.net_profit | formatCurrency }}</p>
-          </div>
-        </div>
+        <table class="table table-striped table-bordered">
+          <tbody>
+            <tr>
+              <td><strong>Total Revenue</strong></td>
+              <td>{{ details.summary.key_metrics.total_revenue | formatCurrency }}</td>
+            </tr>
+            <tr>
+              <td><strong>Total Expenditure</strong></td>
+              <td>{{ details.summary.key_metrics.total_expenditure | formatCurrency }}</td>
+            </tr>
+            <tr>
+              <td><strong>Net Profit</strong></td>
+              <td>{{ details.summary.key_metrics.net_profit | formatCurrency }}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
       <div class="card-body">
         <!-- Revenue Details -->
         <h5 class="mt-4">Revenue Details</h5>
         <div class="row">
           <div class="col-md-6">
-            <p><strong>Total Revenue:</strong> {{ details.revenue.total_revenue | formatCurrency }}</p>
-            <p><strong>Average Sales per Customer:</strong> {{ details.revenue.kpi.average_sales_per_customer | formatCurrency }}</p>
-            <p><strong>Customer Acquisition Cost:</strong> {{ details.revenue.kpi.customer_acquisition_cost | formatCurrency }}</p>
+            <table class="table table-striped table-bordered">
+              <tbody>
+                <tr>
+                  <td><strong>Total Revenue</strong></td>
+                  <td>{{ details.revenue.total_revenue | formatCurrency }}</td>
+                </tr>
+                <tr>
+                  <td><strong>Average Sales per Customer</strong></td>
+                  <td>{{ details.revenue.kpi.average_sales_per_customer | formatCurrency }}</td>
+                </tr>
+                <tr>
+                  <td><strong>Customer Acquisition Cost</strong></td>
+                  <td>{{ details.revenue.kpi.customer_acquisition_cost | formatCurrency }}</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
           <div class="col-md-6">
             <h6>Sales by Product</h6>
@@ -161,7 +180,7 @@
 
         <!-- Sales Details -->
         <h5 class="mt-4">Sales Details</h5>
-        <table class="table table-striped">
+        <table class="table table-striped table-bordered">
           <thead>
             <tr>
               <th>Product ID</th>
@@ -181,58 +200,96 @@
               <td>{{ sale.previous_stock - sale.qty }}</td>
               <td>{{ (sale.price * sale.qty) | formatCurrency }}</td>
             </tr>
-            <tr v-if="!details.revenue.sales_by_product.sales_by_product.length">
-              <td colspan="3">No sales data available</td>
+            <tr v-if="!details.revenue.sales_details.length">
+              <td colspan="6">No sales data available</td>
             </tr>
           </tbody>
         </table>
 
-        <!-- Profit & Loss Statement -->
-        <h5 class="mt-4">Profit & Loss Statement</h5>
-        <div class="row">
-          <div class="col-md-4">
-            <p><strong>Revenue:</strong> {{ details.profit_loss_statement.revenue | formatCurrency }}</p>
-            <p><strong>Other Income:</strong> {{ details.profit_loss_statement.other_income | formatCurrency }}</p>
-            <p><strong>Cost of Goods Sold:</strong> {{ details.profit_loss_statement.cost_of_goods_sold | formatCurrency }}</p>
-            <p><strong>Gross Profit:</strong> {{ details.profit_loss_statement.gross_profit | formatCurrency }}</p>
-            <p><strong>Gross Profit Margin:</strong> {{ ((details.profit_loss_statement.gross_profit / (details.profit_loss_statement.revenue || 1)) * 100).toFixed(2) }}%</p>
-          </div>
-          <div class="col-md-4">
-            <p><strong>Operating Expenses:</strong> {{ details.profit_loss_statement.operating_expenses | formatCurrency }}</p>
-            <ul>
-              <li>Marketing Expense: {{ (details.expenditure.expenditure_details?.marketing_expense || 0) | formatCurrency }}</li>
-              <li>Salaries: {{ (details.expenditure.expenditure_details?.salaries || 0) | formatCurrency }}</li>
-              <li>Utilities: {{ (details.expenditure.expenditure_details?.utilities || 0) | formatCurrency }}</li>
-              <li>Logistics Expense: {{ details.logistics_break_down.expenditure | formatCurrency }}</li>
-            </ul>
-            <p><strong>Depreciation:</strong> {{ details.profit_loss_statement.depreciation | formatCurrency }}</p>
-            <p><strong>Amortization:</strong> {{ details.profit_loss_statement.amortization | formatCurrency }}</p>
-            <p><strong>Operating Profit:</strong> {{ details.profit_loss_statement.operating_profit | formatCurrency }}</p>
-          </div>
-          <div class="col-md-4">
-            <p><strong>Tax Expense:</strong> {{ details.profit_loss_statement.tax_expense | formatCurrency }}</p>
-            <p><strong>Net Profit:</strong> {{ details.profit_loss_statement.net_profit | formatCurrency }}</p>
-            <p><strong>Net Profit Margin:</strong> {{ ((details.profit_loss_statement.net_profit / (details.profit_loss_statement.revenue || 1)) * 100).toFixed(2) }}%</p>
-          </div>
-        </div>
+        <!-- Stock and Profit & Loss Analysis -->
+        <h5 class="mt-4">Stock and Profit & Loss Analysis</h5>
+        <table class="table table-striped table-bordered">
+          <thead>
+            <tr>
+              <th>Product Name</th>
+              <th>Purchased</th>
+              <th>Sold</th>
+              <th>Stock Left</th>
+              <th>Cost Price (₦)</th>
+              <th>Sales Price (₦)</th>
+              <th>Gross Profit (₦)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="stock in details.stock_analysis" :key="stock.product_name">
+              <td>{{ stock.product_name }}</td>
+              <td>{{ stock.purchased }}</td>
+              <td>{{ stock.sold }}</td>
+              <td>{{ stock.stock_left }}</td>
+              <td>{{ stock.cost_price | formatCurrency }}</td>
+              <td>{{ stock.sales_price | formatCurrency }}</td>
+              <td>{{ stock.gross_profit | formatCurrency }}</td>
+            </tr>
+            <tr>
+              <td colspan="7"><strong>Profit & Loss Summary</strong></td>
+            </tr>
+            <tr>
+              <td>Revenue</td>
+              <td colspan="6">{{ details.profit_loss_statement.revenue | formatCurrency }}</td>
+            </tr>
+            <tr>
+              <td>Cost of Goods Sold</td>
+              <td colspan="6">{{ details.profit_loss_statement.cost_of_goods_sold | formatCurrency }}</td>
+            </tr>
+            <tr>
+              <td>Gross Profit</td>
+              <td colspan="6">{{ details.profit_loss_statement.gross_profit | formatCurrency }}</td>
+            </tr>
+            <tr>
+              <td>Gross Profit Margin</td>
+              <td colspan="6">{{ ((details.profit_loss_statement.gross_profit / (details.profit_loss_statement.revenue || 1)) * 100).toFixed(2) }}%</td>
+            </tr>
+            <tr>
+              <td>Operating Expenses</td>
+              <td colspan="6">{{ details.profit_loss_statement.operating_expenses | formatCurrency }}</td>
+            </tr>
+            <tr>
+              <td>Operating Profit</td>
+              <td colspan="6">{{ details.profit_loss_statement.operating_profit | formatCurrency }}</td>
+            </tr>
+            <tr>
+              <td>Net Profit</td>
+              <td colspan="6">{{ details.profit_loss_statement.net_profit | formatCurrency }}</td>
+            </tr>
+            <tr>
+              <td>Net Profit Margin</td>
+              <td colspan="6">{{ ((details.profit_loss_statement.net_profit / (details.profit_loss_statement.revenue || 1)) * 100).toFixed(2) }}%</td>
+            </tr>
+          </tbody>
+        </table>
 
         <!-- Expenditure Summary -->
         <h5 class="mt-4">Expenditure Summary</h5>
-        <div class="row">
-          <div class="col-md-4">
-            <p><strong>Total Expenditure:</strong> {{ details.expenditure.total_expenditure | formatCurrency }}</p>
-          </div>
-          <div class="col-md-4">
-            <p><strong>Cost of Goods Sold:</strong> {{ details.expenditure.cost_of_goods_sold | formatCurrency }}</p>
-          </div>
-          <div class="col-md-4">
-            <p><strong>Operating Expenses:</strong> {{ details.expenditure.operating_expenses | formatCurrency }}</p>
-          </div>
-        </div>
+        <table class="table table-striped table-bordered">
+          <tbody>
+            <tr>
+              <td><strong>Total Expenditure</strong></td>
+              <td>{{ details.expenditure.total_expenditure | formatCurrency }}</td>
+            </tr>
+            <tr>
+              <td><strong>Cost of Goods Sold</strong></td>
+              <td>{{ details.expenditure.cost_of_goods_sold | formatCurrency }}</td>
+            </tr>
+            <tr>
+              <td><strong>Operating Expenses</strong></td>
+              <td>{{ details.expenditure.operating_expenses | formatCurrency }}</td>
+            </tr>
+          </tbody>
+        </table>
 
         <!-- Expenditure Details -->
         <h5 class="mt-4">Expenditure Details</h5>
-        <table class="table table-striped" v-if="details.expenditure.expenditure_details.length">
+        <table class="table table-striped table-bordered" v-if="details.expenditure.expenditure_details.length">
           <thead>
             <tr>
               <th>ID</th>
@@ -258,7 +315,7 @@
 
         <!-- Purchase Details -->
         <h5 class="mt-4">Purchase Details</h5>
-        <table class="table table-striped">
+        <table class="table table-striped table-bordered">
           <thead>
             <tr>
               <th>Purchase ID</th>
@@ -282,38 +339,49 @@
               <td>{{ purchase.payment_status | capitalize }}</td>
               <td>{{ purchase.part_payment_amount | formatCurrency }}</td>
             </tr>
+            <tr v-if="!details.expenditure.purchase_details.length">
+              <td colspan="8">No purchase details available</td>
+            </tr>
           </tbody>
         </table>
 
         <!-- Stock Movement -->
         <h5 class="mt-4">Stock Movement</h5>
-        <div class="row">
-          <div class="col-md-4">
-            <p><strong>Stock Sold:</strong> {{ details.stock_movement.stock_sold | formatCurrency }}</p>
-          </div>
-          <div class="col-md-4">
-            <p><strong>Stock Adjustments:</strong> {{ details.stock_movement.stock_adjustments | formatCurrency }}</p>
-          </div>
-          <div class="col-md-4">
-            <p><strong>Negative Stock:</strong> {{ details.stock_movement.negative_stock | formatCurrency }}</p>
-          </div>
-        </div>
+        <table class="table table-striped table-bordered">
+          <tbody>
+            <tr>
+              <td><strong>Stock Sold</strong></td>
+              <td>{{ details.stock_movement.stock_sold | formatCurrency }}</td>
+            </tr>
+            <tr>
+              <td><strong>Stock Adjustments</strong></td>
+              <td>{{ details.stock_movement.stock_adjustments | formatCurrency }}</td>
+            </tr>
+            <tr>
+              <td><strong>Negative Stock</strong></td>
+              <td>{{ details.stock_movement.negative_stock | formatCurrency }}</td>
+            </tr>
+          </tbody>
+        </table>
 
         <!-- Cash Flow -->
         <h5 class="mt-4">Cash Flow</h5>
-        <div class="row">
-          <div class="col-md-6">
-            <p><strong>Cash Inflow:</strong> {{ details.cash_flow.cash_inflow | formatCurrency }}</p>
-            <p><strong>Cash Outflow:</strong> {{ details.cash_flow.cash_outflow | formatCurrency }}</p>
-          </div>
-          <div class="col-md-6">
-            <canvas id="cashFlowChart" height="150"></canvas>
-          </div>
-        </div>
+        <table class="table table-striped table-bordered">
+          <tbody>
+            <tr>
+              <td><strong>Cash Inflow</strong></td>
+              <td>{{ details.cash_flow.cash_inflow | formatCurrency }}</td>
+            </tr>
+            <tr>
+              <td><strong>Cash Outflow</strong></td>
+              <td>{{ details.cash_flow.cash_outflow | formatCurrency }}</td>
+            </tr>
+          </tbody>
+        </table>
 
         <!-- Ledger Details -->
         <h5 class="mt-4">Ledger Details</h5>
-        <table class="table table-striped">
+        <table class="table table-striped table-bordered">
           <thead>
             <tr>
               <th>ID</th>
@@ -333,19 +401,28 @@
               <td>{{ ledger.amount | formatCurrency }}</td>
               <td>{{ formatDate(ledger.created_at) }}</td>
             </tr>
+            <tr v-if="!details.ledger_details.length">
+              <td colspan="6">No ledger details available</td>
+            </tr>
           </tbody>
         </table>
 
         <!-- General Ledger Summary -->
         <h5 class="mt-4">General Ledger Summary</h5>
-        <div class="row">
-          <div class="col-md-6">
-            <p><strong>Total Debit:</strong> {{ details.general_ledger_summary.total_debit | formatCurrency }}</p>
-            <p><strong>Total Credit:</strong> {{ details.general_ledger_summary.total_credit | formatCurrency }}</p>
-          </div>
-        </div>
+        <table class="table table-striped table-bordered">
+          <tbody>
+            <tr>
+              <td><strong>Total Debit</strong></td>
+              <td>{{ details.general_ledger_summary.total_debit | formatCurrency }}</td>
+            </tr>
+            <tr>
+              <td><strong>Total Credit</strong></td>
+              <td>{{ details.general_ledger_summary.total_credit | formatCurrency }}</td>
+            </tr>
+          </tbody>
+        </table>
         <h6>Debit Transactions</h6>
-        <table class="table table-striped">
+        <table class="table table-striped table-bordered">
           <thead>
             <tr>
               <th>Account Name</th>
@@ -363,10 +440,13 @@
               <td>{{ txn.transaction_id }}</td>
               <td>{{ formatDate(txn.date) }}</td>
             </tr>
+            <tr v-if="!details.general_ledger_summary.debit_transactions.length">
+              <td colspan="5">No debit transactions available</td>
+            </tr>
           </tbody>
         </table>
         <h6>Credit Transactions</h6>
-        <table class="table table-striped">
+        <table class="table table-striped table-bordered">
           <thead>
             <tr>
               <th>Account Name</th>
@@ -384,127 +464,192 @@
               <td>{{ txn.transaction_id }}</td>
               <td>{{ formatDate(txn.date) }}</td>
             </tr>
+            <tr v-if="!details.general_ledger_summary.credit_transactions.length">
+              <td colspan="5">No credit transactions available</td>
+            </tr>
           </tbody>
         </table>
 
         <!-- Accounts Summary -->
         <h5 class="mt-4">Accounts Summary</h5>
-        <div class="row">
-          <div class="col-md-6">
-            <h6>Accounts Payable</h6>
-            <p><strong>Total:</strong> {{ details.balance_sheet.liabilities.current_liabilities.accounts_payable | formatCurrency }}</p>
-          </div>
-          <div class="col-md-6">
-            <h6>Accounts Receivable</h6>
-            <p><strong>Total:</strong> {{ details.receivables.total_receivables | formatCurrency }}</p>
-            <table class="table table-striped" v-if="details.receivables.receivable_details.length">
-              <thead>
-                <tr>
-                  <th>Customer</th>
-                  <th>Amount Owed</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="receivable in details.receivables.receivable_details" :key="receivable.fullname">
-                  <td>{{ receivable.fullname }}</td>
-                  <td>{{ receivable.wallet_balance | formatCurrency }}</td>
-                </tr>
-              </tbody>
-            </table>
-            <p v-else>No receivable details available.</p>
-          </div>
-        </div>
+        <table class="table table-striped table-bordered">
+          <tbody>
+            <tr>
+              <td><strong>Accounts Payable</strong></td>
+              <td>{{ details.balance_sheet.liabilities.current_liabilities.accounts_payable | formatCurrency }}</td>
+            </tr>
+            <tr>
+              <td><strong>Accounts Receivable</strong></td>
+              <td>{{ details.receivables.total_receivables | formatCurrency }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <h6>Accounts Receivable Details</h6>
+        <table class="table table-striped table-bordered" v-if="details.receivables.receivable_details.length">
+          <thead>
+            <tr>
+              <th>Customer</th>
+              <th>Amount Owed</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="receivable in details.receivables.receivable_details" :key="receivable.fullname">
+              <td>{{ receivable.fullname }}</td>
+              <td>{{ receivable.wallet_balance | formatCurrency }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <p v-else>No receivable details available.</p>
 
         <!-- Customer Report -->
         <h5 class="mt-4">Customer Report</h5>
-        <p><strong>Total Customers:</strong> {{ details.receivables.customer_count || 0 }}</p>
+        <table class="table table-striped table-bordered">
+          <tbody>
+            <tr>
+              <td><strong>Total Customers</strong></td>
+              <td>{{ details.receivables.customer_count || 0 }}</td>
+            </tr>
+          </tbody>
+        </table>
 
         <!-- Logistics Report -->
         <h5 class="mt-4">Logistics Report</h5>
-        <div class="row">
-          <div class="col-md-6">
-            <p><strong>Logistics Revenue:</strong> {{ details.logistics_break_down.revenue | formatCurrency }}</p>
-            <p><strong>Logistics Expenditure:</strong> {{ details.logistics_break_down.expenditure | formatCurrency }}</p>
-          </div>
-          <div class="col-md-6">
-            <h6>Logistics Transactions</h6>
-            <table class="table table-striped" v-if="logisticsDetails.length">
-              <thead>
-                <tr>
-                  <th>Account Name</th>
-                  <th>Transaction Type</th>
-                  <th>Amount</th>
-                  <th>Description</th>
-                  <th>Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="txn in logisticsDetails" :key="txn.id">
-                  <td>{{ txn.account_name | capitalize }}</td>
-                  <td>{{ txn.transaction_type | capitalize }}</td>
-                  <td>{{ txn.amount | formatCurrency }}</td>
-                  <td>{{ txn.description }}</td>
-                  <td>{{ formatDate(txn.created_at) }}</td>
-                </tr>
-              </tbody>
-            </table>
-            <p v-else>No logistics transactions available.</p>
-          </div>
-        </div>
+        <table class="table table-striped table-bordered">
+          <tbody>
+            <tr>
+              <td><strong>Logistics Revenue</strong></td>
+              <td>{{ details.logistics_break_down.revenue | formatCurrency }}</td>
+            </tr>
+            <tr>
+              <td><strong>Logistics Expenditure</strong></td>
+              <td>{{ details.logistics_break_down.expenditure | formatCurrency }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <h6>Logistics Transactions</h6>
+        <table class="table table-striped table-bordered" v-if="logisticsDetails.length">
+          <thead>
+            <tr>
+              <th>Account Name</th>
+              <th>Transaction Type</th>
+              <th>Amount</th>
+              <th>Description</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="txn in logisticsDetails" :key="txn.id">
+              <td>{{ txn.account_name | capitalize }}</td>
+              <td>{{ txn.transaction_type | capitalize }}</td>
+              <td>{{ txn.amount | formatCurrency }}</td>
+              <td>{{ txn.description }}</td>
+              <td>{{ formatDate(txn.created_at) }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <p v-else>No logistics transactions available.</p>
 
         <!-- Sales vs Marketing Expenditure -->
         <h5 class="mt-4">Sales vs Marketing Expenditure</h5>
-        <div class="row">
-          <div class="col-md-6">
-            <p><strong>Sales Expenditure:</strong> {{ details.sales_vs_marketing_expenditure.sales_expenditure | formatCurrency }}</p>
-            <p><strong>Marketing Expenditure:</strong> {{ details.sales_vs_marketing_expenditure.marketing_expenditure | formatCurrency }}</p>
-          </div>
-        </div>
+        <table class="table table-striped table-bordered">
+          <tbody>
+            <tr>
+              <td><strong>Sales Expenditure</strong></td>
+              <td>{{ details.sales_vs_marketing_expenditure.sales_expenditure | formatCurrency }}</td>
+            </tr>
+            <tr>
+              <td><strong>Marketing Expenditure</strong></td>
+              <td>{{ details.sales_vs_marketing_expenditure.marketing_expenditure | formatCurrency }}</td>
+            </tr>
+          </tbody>
+        </table>
 
         <!-- Balance Sheet -->
         <h5 class="mt-4">Balance Sheet</h5>
-        <div class="row">
-          <div class="col-md-4">
-            <h6>Assets</h6>
-            <h6>Current Assets</h6>
-            <ul>
-              <li>Cash: {{ details.balance_sheet.assets.current_assets.cash | formatCurrency }}</li>
-              <li>Bank: {{ details.balance_sheet.assets.current_assets.bank | formatCurrency }}</li>
-              <li>Accounts Receivable: {{ details.balance_sheet.assets.current_assets.accounts_receivable | formatCurrency }}</li>
-              <li>Inventory: {{ details.balance_sheet.assets.current_assets.inventory | formatCurrency }}</li>
-              <li>Prepaid Inventory: {{ details.balance_sheet.assets.current_assets.prepaid_inventory | formatCurrency }}</li>
-              <li>Prepaid Expense: {{ details.balance_sheet.assets.current_assets.prepaid_expense | formatCurrency }}</li>
-            </ul>
-            <h6>Non-Current Assets</h6>
-            <ul>
-              <li>Property, Plant, Equipment: {{ details.balance_sheet.assets.non_current_assets.property_plant_equipment | formatCurrency }}</li>
-              <li>Long-Term Investments: {{ details.balance_sheet.assets.non_current_assets.long_term_investments | formatCurrency }}</li>
-              <li>Intangible Assets: {{ details.balance_sheet.assets.non_current_assets.intangible_assets | formatCurrency }}</li>
-            </ul>
-          </div>
-          <div class="col-md-4">
-            <h6>Liabilities</h6>
-            <h6>Current Liabilities</h6>
-            <ul>
-              <li>Accounts Payable: {{ details.balance_sheet.liabilities.current_liabilities.accounts_payable | formatCurrency }}</li>
-              <li>Prepaid Sales: {{ details.balance_sheet.liabilities.current_liabilities.prepaid_sales | formatCurrency }}</li>
-              <li>Customer Wallets: {{ details.balance_sheet.liabilities.current_liabilities.customer_deposits | formatCurrency }}</li>
-            </ul>
-            <h6>Non-Current Liabilities</h6>
-            <ul>
-              <li>Long-Term Loans: {{ details.balance_sheet.liabilities.non_current_liabilities.long_term_loans | formatCurrency }}</li>
-              <li>Deferred Tax Liability: {{ details.balance_sheet.liabilities.non_current_liabilities.deferred_tax_liability | formatCurrency }}</li>
-            </ul>
-          </div>
-          <div class="col-md-4">
-            <h6>Equity</h6>
-            <ul>
-              <li>Owner Investment: {{ details.balance_sheet.equity.owner_investment | formatCurrency }}</li>
-              <li>Retained Earnings: {{ details.balance_sheet.equity.retained_earnings | formatCurrency }}</li>
-              <li>Dividends: {{ details.balance_sheet.equity.dividends | formatCurrency }}</li>
-            </ul>
-          </div>
-        </div>
+        <table class="table table-striped table-bordered">
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>Item</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td rowspan="6">Assets</td>
+              <td>Cash</td>
+              <td>{{ details.balance_sheet.assets.current_assets.cash | formatCurrency }}</td>
+            </tr>
+            <tr>
+              <td>Bank</td>
+              <td>{{ details.balance_sheet.assets.current_assets.bank | formatCurrency }}</td>
+            </tr>
+            <tr>
+              <td>Accounts Receivable</td>
+              <td>{{ details.balance_sheet.assets.current_assets.accounts_receivable | formatCurrency }}</td>
+            </tr>
+            <tr>
+              <td>Inventory</td>
+              <td>{{ details.balance_sheet.assets.current_assets.inventory | formatCurrency }}</td>
+            </tr>
+            <tr>
+              <td>Prepaid Inventory</td>
+              <td>{{ details.balance_sheet.assets.current_assets.prepaid_inventory | formatCurrency }}</td>
+            </tr>
+            <tr>
+              <td>Prepaid Expense</td>
+              <td>{{ details.balance_sheet.assets.current_assets.prepaid_expense | formatCurrency }}</td>
+            </tr>
+            <tr>
+              <td rowspan="3">Non-Current Assets</td>
+              <td>Property, Plant, Equipment</td>
+              <td>{{ details.balance_sheet.assets.non_current_assets.property_plant_equipment | formatCurrency }}</td>
+            </tr>
+            <tr>
+              <td>Long-Term Investments</td>
+              <td>{{ details.balance_sheet.assets.non_current_assets.long_term_investments | formatCurrency }}</td>
+            </tr>
+            <tr>
+              <td>Intangible Assets</td>
+              <td>{{ details.balance_sheet.assets.non_current_assets.intangible_assets | formatCurrency }}</td>
+            </tr>
+            <tr>
+              <td rowspan="3">Liabilities</td>
+              <td>Accounts Payable</td>
+              <td>{{ details.balance_sheet.liabilities.current_liabilities.accounts_payable | formatCurrency }}</td>
+            </tr>
+            <tr>
+              <td>Prepaid Sales</td>
+              <td>{{ details.balance_sheet.liabilities.current_liabilities.prepaid_sales | formatCurrency }}</td>
+            </tr>
+            <tr>
+              <td>Customer Deposits</td>
+              <td>{{ details.balance_sheet.liabilities.current_liabilities.customer_deposits | formatCurrency }}</td>
+            </tr>
+            <tr>
+              <td rowspan="2">Non-Current Liabilities</td>
+              <td>Long-Term Loans</td>
+              <td>{{ details.balance_sheet.liabilities.non_current_liabilities.long_term_loans | formatCurrency }}</td>
+            </tr>
+            <tr>
+              <td>Deferred Tax Liability</td>
+              <td>{{ details.balance_sheet.liabilities.non_current_liabilities.deferred_tax_liability | formatCurrency }}</td>
+            </tr>
+            <tr>
+              <td rowspan="3">Equity</td>
+              <td>Owner Investment</td>
+              <td>{{ details.balance_sheet.equity.owner_investment | formatCurrency }}</td>
+            </tr>
+            <tr>
+              <td>Retained Earnings</td>
+              <td>{{ details.balance_sheet.equity.retained_earnings | formatCurrency }}</td>
+            </tr>
+            <tr>
+              <td>Dividends</td>
+              <td>{{ details.balance_sheet.equity.dividends | formatCurrency }}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -892,216 +1037,204 @@ export default {
       return Object.keys(amountsByDate).sort().map(date => amountsByDate[date] || 0);
     },
     downloadReport() {
-  if (!this.details) return;
+      if (!this.details) return;
 
-  let csvContent = 'Financial Report\n';
-  csvContent += `Period,${this.formatPeriod(this.details.summary.start_date, this.details.summary.end_date)}\n`;
-  csvContent += `Branch,${this.details.summary.Branch}\n`;
-  csvContent += `Overview,${this.details.summary.overview}\n\n`;
+      let csvContent = 'Financial Report\n';
+      csvContent += `Period,${this.formatPeriod(this.details.summary.start_date, this.details.summary.end_date)}\n`;
+      csvContent += `Branch,${this.details.summary.Branch}\n`;
+      csvContent += `Overview,${this.details.summary.overview}\n\n`;
 
-  // Key Metrics
-  csvContent += 'Key Metrics\n';
-  csvContent += 'Metric,Value\n';
-  csvContent += `Total Revenue,${this.details.summary.key_metrics.total_revenue}\n`;
-  csvContent += `Total Expenditure,${this.details.summary.key_metrics.total_expenditure}\n`;
-  csvContent += `Net Profit,${this.details.summary.key_metrics.net_profit}\n`;
-  csvContent += `Gross Profit,${this.details.summary.key_metrics.gross_profit}\n`;
-  csvContent += `EBIT,${this.details.summary.key_metrics.ebit}\n`;
-  csvContent += `ROI,${this.details.summary.key_metrics.roi}\n`;
-  csvContent += `Profit Margin,${this.details.summary.key_metrics.profit_margin}\n\n`;
+      // Summary
+      csvContent += 'Summary\n';
+      csvContent += 'Metric,Value\n';
+      csvContent += `Total Revenue,${this.details.summary.key_metrics.total_revenue}\n`;
+      csvContent += `Total Expenditure,${this.details.summary.key_metrics.total_expenditure}\n`;
+      csvContent += `Net Profit,${this.details.summary.key_metrics.net_profit}\n\n`;
 
-  // Revenue Details
-  csvContent += 'Revenue Details\n';
-  csvContent += 'Metric,Value\n';
-  csvContent += `Total Revenue,${this.details.revenue.total_revenue}\n`;
-  csvContent += `Average Sales per Customer,${this.details.revenue.kpi.average_sales_per_customer}\n`;
-  csvContent += `Customer Acquisition Cost,${this.details.revenue.kpi.customer_acquisition_cost}\n`;
-  csvContent += 'Sales by Product\n';
-  csvContent += 'Product Name,Total Amount\n';
-  this.details.revenue.sales_by_product.sales_by_product.forEach(sale => {
-    csvContent += `${sale.product_name},${sale.total_amount}\n`;
-  });
-  csvContent += '\n';
+      // Revenue Details
+      csvContent += 'Revenue Details\n';
+      csvContent += 'Metric,Value\n';
+      csvContent += `Total Revenue,${this.details.revenue.total_revenue}\n`;
+      csvContent += `Average Sales per Customer,${this.details.revenue.kpi.average_sales_per_customer}\n`;
+      csvContent += `Customer Acquisition Cost,${this.details.revenue.kpi.customer_acquisition_cost}\n`;
+      csvContent += 'Sales by Product\n';
+      csvContent += 'Product Name,Total Amount\n';
+      this.details.revenue.sales_by_product.sales_by_product.forEach(sale => {
+        csvContent += `${sale.product_name},${sale.total_amount}\n`;
+      });
+      csvContent += '\n';
 
-  // Sales Details (Updated)
-  csvContent += 'Sales Details\n';
-  csvContent += 'Product ID,Product,Quantity,Previous Stock,Current Stock,Total Amount\n';
-  if (this.details.revenue.sales_details.length) {
-    this.details.revenue.sales_details.forEach(sale => {
-      const currentStock = sale.previous_stock - sale.qty;
-      const totalAmount = sale.price * sale.qty;
-      csvContent += `${sale.product_id},${sale.product.name},${sale.qty},${sale.previous_stock},${currentStock},${totalAmount}\n`;
-    });
-  } else {
-    csvContent += 'No sales details available\n';
-  }
-  csvContent += '\n';
+      // Sales Details
+      csvContent += 'Sales Details\n';
+      csvContent += 'Product ID,Product,Quantity,Previous Stock,Current Stock,Total Amount\n';
+      if (this.details.revenue.sales_details.length) {
+        this.details.revenue.sales_details.forEach(sale => {
+          const currentStock = sale.previous_stock - sale.qty;
+          const totalAmount = sale.price * sale.qty;
+          csvContent += `${sale.product_id},${sale.product.name},${sale.qty},${sale.previous_stock},${currentStock},${totalAmount}\n`;
+        });
+      } else {
+        csvContent += 'No sales details available\n';
+      }
+      csvContent += '\n';
 
-  // Profit & Loss Statement
-  csvContent += 'Profit & Loss Statement\n';
-  csvContent += 'Metric,Value\n';
-  csvContent += `Revenue,${this.details.profit_loss_statement.revenue}\n`;
-  csvContent += `Other Income,${this.details.profit_loss_statement.other_income}\n`;
-  csvContent += `Cost of Goods Sold,${this.details.profit_loss_statement.cost_of_goods_sold}\n`;
-  csvContent += `Gross Profit,${this.details.profit_loss_statement.gross_profit}\n`;
-  csvContent += `Gross Profit Margin,${((this.details.profit_loss_statement.gross_profit / (this.details.profit_loss_statement.revenue || 1)) * 100).toFixed(2)}%\n`;
-  csvContent += `Operating Expenses,${this.details.profit_loss_statement.operating_expenses}\n`;
-  csvContent += `Marketing Expense,${this.details.expenditure.expenditure_details?.marketing_expense || 0}\n`;
-  csvContent += `Salaries,${this.details.expenditure.expenditure_details?.salaries || 0}\n`;
-  csvContent += `Utilities,${this.details.expenditure.expenditure_details?.utilities || 0}\n`;
-  csvContent += `Logistics Expense,${this.details.logistics_break_down.expenditure}\n`;
-  csvContent += `Depreciation,${this.details.profit_loss_statement.depreciation}\n`;
-  csvContent += `Amortization,${this.details.profit_loss_statement.amortization}\n`;
-  csvContent += `Operating Profit,${this.details.profit_loss_statement.operating_profit}\n`;
-  csvContent += `Tax Expense,${this.details.profit_loss_statement.tax_expense}\n`;
-  csvContent += `Net Profit,${this.details.profit_loss_statement.net_profit}\n`;
-  csvContent += `Net Profit Margin,${((this.details.profit_loss_statement.net_profit / (this.details.profit_loss_statement.revenue || 1)) * 100).toFixed(2)}%\n\n`;
+      // Stock and Profit & Loss Analysis
+      csvContent += 'Stock and Profit & Loss Analysis\n';
+      csvContent += 'Product Name,Purchased,Sold,Stock Left,Cost Price,Sales Price,Gross Profit\n';
+      this.details.stock_analysis.forEach(stock => {
+        csvContent += `${stock.product_name},${stock.purchased},${stock.sold},${stock.stock_left},${stock.cost_price},${stock.sales_price},${stock.gross_profit}\n`;
+      });
+      csvContent += 'Profit & Loss Summary\n';
+      csvContent += 'Metric,Value\n';
+      csvContent += `Revenue,${this.details.profit_loss_statement.revenue}\n`;
+      csvContent += `Cost of Goods Sold,${this.details.profit_loss_statement.cost_of_goods_sold}\n`;
+      csvContent += `Gross Profit,${this.details.profit_loss_statement.gross_profit}\n`;
+      csvContent += `Gross Profit Margin,${((this.details.profit_loss_statement.gross_profit / (this.details.profit_loss_statement.revenue || 1)) * 100).toFixed(2)}%\n`;
+      csvContent += `Operating Expenses,${this.details.profit_loss_statement.operating_expenses}\n`;
+      csvContent += `Operating Profit,${this.details.profit_loss_statement.operating_profit}\n`;
+      csvContent += `Net Profit,${this.details.profit_loss_statement.net_profit}\n`;
+      csvContent += `Net Profit Margin,${((this.details.profit_loss_statement.net_profit / (this.details.profit_loss_statement.revenue || 1)) * 100).toFixed(2)}%\n\n`;
 
-  // Expenditure Summary
-  csvContent += 'Expenditure Summary\n';
-  csvContent += 'Metric,Value\n';
-  csvContent += `Total Expenditure,${this.details.expenditure.total_expenditure}\n`;
-  csvContent += `Cost of Goods Sold,${this.details.expenditure.cost_of_goods_sold}\n`;
-  csvContent += `Operating Expenses,${this.details.expenditure.operating_expenses}\n\n`;
+      // Expenditure Summary
+      csvContent += 'Expenditure Summary\n';
+      csvContent += 'Metric,Value\n';
+      csvContent += `Total Expenditure,${this.details.expenditure.total_expenditure}\n`;
+      csvContent += `Cost of Goods Sold,${this.details.expenditure.cost_of_goods_sold}\n`;
+      csvContent += `Operating Expenses,${this.details.expenditure.operating_expenses}\n\n`;
 
-  // Expenditure Details
-  csvContent += 'Expenditure Details\n';
-  csvContent += 'ID,Type,Amount,Payment Method,Payment Status,Date\n';
-  if (this.details.expenditure.expenditure_details.length) {
-    this.details.expenditure.expenditure_details.forEach(exp => {
-      csvContent += `${exp.id},${exp.type.name},${exp.amount},${exp.payment_method},${exp.payment_status},${this.formatDate(exp.created_at)}\n`;
-    });
-  } else {
-    csvContent += 'No expenditure details available\n';
-  }
-  csvContent += '\n';
+      // Expenditure Details
+      csvContent += 'Expenditure Details\n';
+      csvContent += 'ID,Type,Amount,Payment Method,Payment Status,Date\n';
+      if (this.details.expenditure.expenditure_details.length) {
+        this.details.expenditure.expenditure_details.forEach(exp => {
+          csvContent += `${exp.id},${exp.type.name},${exp.amount},${exp.payment_method},${exp.payment_status},${this.formatDate(exp.created_at)}\n`;
+        });
+      } else {
+        csvContent += 'No expenditure details available\n';
+      }
+      csvContent += '\n';
 
-  // Purchase Details (Updated)
-  csvContent += 'Purchase Details\n';
-  csvContent += 'Purchase ID,Product,Quantity,Previous Stock,Current Stock,Cost,Payment Status,Total Balance\n';
-  if (this.details.expenditure.purchase_details.length) {
-    this.details.expenditure.purchase_details.forEach(purchase => {
-      const currentStock = purchase.qty + purchase.previous_stock;
-      csvContent += `${purchase.purchase_id},${purchase.product.name},${purchase.qty},${purchase.previous_stock},${currentStock},${purchase.cost},${purchase.payment_status},${purchase.part_payment_amount}\n`;
-    });
-  } else {
-    csvContent += 'No purchase details available\n';
-  }
-  csvContent += '\n';
+      // Purchase Details
+      csvContent += 'Purchase Details\n';
+      csvContent += 'Purchase ID,Product,Quantity,Previous Stock,Current Stock,Cost,Payment Status,Total Balance\n';
+      if (this.details.expenditure.purchase_details.length) {
+        this.details.expenditure.purchase_details.forEach(purchase => {
+          const currentStock = purchase.qty + purchase.previous_stock;
+          csvContent += `${purchase.purchase_id},${purchase.product.name},${purchase.qty},${purchase.previous_stock},${currentStock},${purchase.cost},${purchase.payment_status},${purchase.part_payment_amount}\n`;
+        });
+      } else {
+        csvContent += 'No purchase details available\n';
+      }
+      csvContent += '\n';
 
-  // Stock Movement
-  csvContent += 'Stock Movement\n';
-  csvContent += 'Metric,Value\n';
-  csvContent += `Stock Sold,${this.details.stock_movement.stock_sold}\n`;
-  csvContent += `Stock Adjustments,${this.details.stock_movement.stock_adjustments}\n`;
-  csvContent += `Negative Stock,${this.details.stock_movement.negative_stock}\n\n`;
+      // Stock Movement
+      csvContent += 'Stock Movement\n';
+      csvContent += 'Metric,Value\n';
+      csvContent += `Stock Sold,${this.details.stock_movement.stock_sold}\n`;
+      csvContent += `Stock Adjustments,${this.details.stock_movement.stock_adjustments}\n`;
+      csvContent += `Negative Stock,${this.details.stock_movement.negative_stock}\n\n`;
 
-  // Cash Flow
-  csvContent += 'Cash Flow\n';
-  csvContent += 'Metric,Value\n';
-  csvContent += `Cash Inflow,${this.details.cash_flow.cash_inflow}\n`;
-  csvContent += `Cash Outflow,${this.details.cash_flow.cash_outflow}\n\n`;
+      // Cash Flow
+      csvContent += 'Cash Flow\n';
+      csvContent += 'Metric,Value\n';
+      csvContent += `Cash Inflow,${this.details.cash_flow.cash_inflow}\n`;
+      csvContent += `Cash Outflow,${this.details.cash_flow.cash_outflow}\n\n`;
 
-  // Ledger Details
-  csvContent += 'Ledger Details\n';
-  csvContent += 'ID,Account Name,Transaction Type,Description,Amount,Date\n';
-  this.details.ledger_details.forEach(ledger => {
-    csvContent += `${ledger.id},${ledger.account_name},${ledger.transaction_type},${ledger.description},${ledger.amount},${this.formatDate(ledger.created_at)}\n`;
-  });
-  csvContent += '\n';
+      // Ledger Details
+      csvContent += 'Ledger Details\n';
+      csvContent += 'ID,Account Name,Transaction Type,Description,Amount,Date\n';
+      this.details.ledger_details.forEach(ledger => {
+        csvContent += `${ledger.id},${ledger.account_name},${ledger.transaction_type},${ledger.description},${ledger.amount},${this.formatDate(ledger.created_at)}\n`;
+      });
+      csvContent += '\n';
 
-  // General Ledger Summary
-  csvContent += 'General Ledger Summary\n';
-  csvContent += 'Metric,Value\n';
-  csvContent += `Total Debit,${this.details.general_ledger_summary.total_debit}\n`;
-  csvContent += `Total Credit,${this.details.general_ledger_summary.total_credit}\n\n`;
-  csvContent += 'Debit Transactions\n';
-  csvContent += 'Account Name,Amount,Description,Transaction ID,Date\n';
-  this.details.general_ledger_summary.debit_transactions.forEach(txn => {
-    csvContent += `${txn.account_name},${txn.amount},${txn.description},${txn.transaction_id},${this.formatDate(txn.date)}\n`;
-  });
-  csvContent += '\n';
-  csvContent += 'Credit Transactions\n';
-  csvContent += 'Account Name,Amount,Description,Transaction ID,Date\n';
-  this.details.general_ledger_summary.credit_transactions.forEach(txn => {
-    csvContent += `${txn.account_name},${txn.amount},${txn.description},${txn.transaction_id},${this.formatDate(txn.date)}\n`;
-  });
-  csvContent += '\n';
+      // General Ledger Summary
+      csvContent += 'General Ledger Summary\n';
+      csvContent += 'Metric,Value\n';
+      csvContent += `Total Debit,${this.details.general_ledger_summary.total_debit}\n`;
+      csvContent += `Total Credit,${this.details.general_ledger_summary.total_credit}\n\n`;
+      csvContent += 'Debit Transactions\n';
+      csvContent += 'Account Name,Amount,Description,Transaction ID,Date\n';
+      this.details.general_ledger_summary.debit_transactions.forEach(txn => {
+        csvContent += `${txn.account_name},${txn.amount},${txn.description},${txn.transaction_id},${this.formatDate(txn.date)}\n`;
+      });
+      csvContent += '\n';
+      csvContent += 'Credit Transactions\n';
+      csvContent += 'Account Name,Amount,Description,Transaction ID,Date\n';
+      this.details.general_ledger_summary.credit_transactions.forEach(txn => {
+        csvContent += `${txn.account_name},${txn.amount},${txn.description},${txn.transaction_id},${this.formatDate(txn.date)}\n`;
+      });
+      csvContent += '\n';
 
-  // Accounts Summary
-  csvContent += 'Accounts Summary\n';
-  csvContent += 'Category,Value\n';
-  csvContent += `Accounts Payable,${this.details.balance_sheet.liabilities.current_liabilities.accounts_payable}\n`;
-  csvContent += `Accounts Receivable,${this.details.receivables.total_receivables}\n\n`;
-  csvContent += 'Accounts Receivable Details\n';
-  csvContent += 'Customer,Amount Owed\n';
-  if (this.details.receivables.receivable_details.length) {
-    this.details.receivables.receivable_details.forEach(receivable => {
-      csvContent += `${receivable.fullname},${receivable.wallet_balance}\n`;
-    });
-  } else {
-    csvContent += 'No receivable details available\n';
-  }
-  csvContent += '\n';
+      // Accounts Summary
+      csvContent += 'Accounts Summary\n';
+      csvContent += 'Metric,Value\n';
+      csvContent += `Accounts Payable,${this.details.balance_sheet.liabilities.current_liabilities.accounts_payable}\n`;
+      csvContent += `Accounts Receivable,${this.details.receivables.total_receivables}\n\n`;
+      csvContent += 'Accounts Receivable Details\n';
+      csvContent += 'Customer,Amount Owed\n';
+      if (this.details.receivables.receivable_details.length) {
+        this.details.receivables.receivable_details.forEach(receivable => {
+          csvContent += `${receivable.fullname},${receivable.wallet_balance}\n`;
+        });
+      } else {
+        csvContent += 'No receivable details available\n';
+      }
+      csvContent += '\n';
 
-  // Customer Report
-  csvContent += 'Customer Report\n';
-  csvContent += 'Metric,Value\n';
-  csvContent += `Total Customers,${this.details.receivables.customer_count}\n\n`;
+      // Customer Report
+      csvContent += 'Customer Report\n';
+      csvContent += 'Metric,Value\n';
+      csvContent += `Total Customers,${this.details.receivables.customer_count}\n\n`;
 
-  // Logistics Report
-  csvContent += 'Logistics Report\n';
-  csvContent += 'Metric,Value\n';
-  csvContent += `Logistics Revenue,${this.details.logistics_break_down.revenue}\n`;
-  csvContent += `Logistics Expenditure,${this.details.logistics_break_down.expenditure}\n\n`;
-  csvContent += 'Logistics Transactions\n';
-  csvContent += 'Account Name,Transaction Type,Amount,Description,Date\n';
-  this.logisticsDetails.forEach(txn => {
-    csvContent += `${txn.account_name},${txn.transaction_type},${txn.amount},${txn.description},${this.formatDate(txn.created_at)}\n`;
-  });
-  csvContent += '\n';
+      // Logistics Report
+      csvContent += 'Logistics Report\n';
+      csvContent += 'Metric,Value\n';
+      csvContent += `Logistics Revenue,${this.details.logistics_break_down.revenue}\n`;
+      csvContent += `Logistics Expenditure,${this.details.logistics_break_down.expenditure}\n\n`;
+      csvContent += 'Logistics Transactions\n';
+      csvContent += 'Account Name,Transaction Type,Amount,Description,Date\n';
+      this.logisticsDetails.forEach(txn => {
+        csvContent += `${txn.account_name},${txn.transaction_type},${txn.amount},${txn.description},${this.formatDate(txn.created_at)}\n`;
+      });
+      csvContent += '\n';
 
-  // Sales vs Marketing Expenditure
-  csvContent += 'Sales vs Marketing Expenditure\n';
-  csvContent += 'Metric,Value\n';
-  csvContent += `Sales Expenditure,${this.details.sales_vs_marketing_expenditure.sales_expenditure}\n`;
-  csvContent += `Marketing Expenditure,${this.details.sales_vs_marketing_expenditure.marketing_expenditure}\n\n`;
+      // Sales vs Marketing Expenditure
+      csvContent += 'Sales vs Marketing Expenditure\n';
+      csvContent += 'Metric,Value\n';
+      csvContent += `Sales Expenditure,${this.details.sales_vs_marketing_expenditure.sales_expenditure}\n`;
+      csvContent += `Marketing Expenditure,${this.details.sales_vs_marketing_expenditure.marketing_expenditure}\n\n`;
 
-  // Balance Sheet
-  csvContent += 'Balance Sheet\n';
-  csvContent += 'Category,Item,Value\n';
-  csvContent += `Assets,Cash,${this.details.balance_sheet.assets.current_assets.cash}\n`;
-  csvContent += `Assets,Bank,${this.details.balance_sheet.assets.current_assets.bank}\n`;
-  csvContent += `Assets,Accounts Receivable,${this.details.balance_sheet.assets.current_assets.accounts_receivable}\n`;
-  csvContent += `Assets,Inventory,${this.details.balance_sheet.assets.current_assets.inventory}\n`;
-  csvContent += `Assets,Prepaid Inventory,${this.details.balance_sheet.assets.current_assets.prepaid_inventory}\n`;
-  csvContent += `Assets,Prepaid Expense,${this.details.balance_sheet.assets.current_assets.prepaid_expense}\n`;
-  csvContent += `Assets,Property Plant Equipment,${this.details.balance_sheet.assets.non_current_assets.property_plant_equipment}\n`;
-  csvContent += `Assets,Long Term Investments,${this.details.balance_sheet.assets.non_current_assets.long_term_investments}\n`;
-  csvContent += `Assets,Intangible Assets,${this.details.balance_sheet.assets.non_current_assets.intangible_assets}\n`;
-  csvContent += `Liabilities,Accounts Payable,${this.details.balance_sheet.liabilities.current_liabilities.accounts_payable}\n`;
-  csvContent += `Liabilities,Prepaid Sales,${this.details.balance_sheet.liabilities.current_liabilities.prepaid_sales}\n`;
-  csvContent += `Liabilities,Long Term Loans,${this.details.balance_sheet.liabilities.non_current_liabilities.long_term_loans}\n`;
-  csvContent += `Liabilities,Deferred Tax Liability,${this.details.balance_sheet.liabilities.non_current_liabilities.deferred_tax_liability}\n`;
-  csvContent += `Equity,Owner Investment,${this.details.balance_sheet.equity.owner_investment}\n`;
-  csvContent += `Equity,Retained Earnings,${this.details.balance_sheet.equity.retained_earnings}\n`;
-  csvContent += `Equity,Dividends,${this.details.balance_sheet.equity.dividends}\n\n`;
+      // Balance Sheet
+      csvContent += 'Balance Sheet\n';
+      csvContent += 'Category,Item,Value\n';
+      csvContent += `Assets,Cash,${this.details.balance_sheet.assets.current_assets.cash}\n`;
+      csvContent += `Assets,Bank,${this.details.balance_sheet.assets.current_assets.bank}\n`;
+      csvContent += `Assets,Accounts Receivable,${this.details.balance_sheet.assets.current_assets.accounts_receivable}\n`;
+      csvContent += `Assets,Inventory,${this.details.balance_sheet.assets.current_assets.inventory}\n`;
+      csvContent += `Assets,Prepaid Inventory,${this.details.balance_sheet.assets.current_assets.prepaid_inventory}\n`;
+      csvContent += `Assets,Prepaid Expense,${this.details.balance_sheet.assets.current_assets.prepaid_expense}\n`;
+      csvContent += `Assets,Property Plant Equipment,${this.details.balance_sheet.assets.non_current_assets.property_plant_equipment}\n`;
+      csvContent += `Assets,Long Term Investments,${this.details.balance_sheet.assets.non_current_assets.long_term_investments}\n`;
+      csvContent += `Assets,Intangible Assets,${this.details.balance_sheet.assets.non_current_assets.intangible_assets}\n`;
+      csvContent += `Liabilities,Accounts Payable,${this.details.balance_sheet.liabilities.current_liabilities.accounts_payable}\n`;
+      csvContent += `Liabilities,Prepaid Sales,${this.details.balance_sheet.liabilities.current_liabilities.prepaid_sales}\n`;
+      csvContent += `Liabilities,Customer Deposits,${this.details.balance_sheet.liabilities.current_liabilities.customer_deposits}\n`;
+      csvContent += `Liabilities,Long Term Loans,${this.details.balance_sheet.liabilities.non_current_liabilities.long_term_loans}\n`;
+      csvContent += `Liabilities,Deferred Tax Liability,${this.details.balance_sheet.liabilities.non_current_liabilities.deferred_tax_liability}\n`;
+      csvContent += `Equity,Owner Investment,${this.details.balance_sheet.equity.owner_investment}\n`;
+      csvContent += `Equity,Retained Earnings,${this.details.balance_sheet.equity.retained_earnings}\n`;
+      csvContent += `Equity,Dividends,${this.details.balance_sheet.equity.dividends}\n`;
 
-  // Budget vs Actual
-  csvContent += 'Budget vs Actual\n';
-  csvContent += 'Metric,Budgeted,Actual,Variance\n';
-  csvContent += `Revenue,${this.details.budget_vs_actual.budgeted_revenue},${this.details.budget_vs_actual.actual_revenue},${this.details.budget_vs_actual.revenue_variance}\n`;
-  csvContent += `Expenditure,${this.details.budget_vs_actual.budgeted_expenditure},${this.details.budget_vs_actual.actual_expenditure},${this.details.budget_vs_actual.expenditure_variance}\n`;
-
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const link = document.createElement('a');
-  const url = URL.createObjectURL(blob);
-  link.setAttribute('href', url);
-  link.setAttribute('download', `financial_report_${moment(this.details.summary.start_date).format('YYYYMMDD')}.csv`);
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-},
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `financial_report_${moment(this.details.summary.start_date).format('YYYYMMDD')}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    },
     downloadPDF() {
       if (!this.details) return;
 
@@ -1217,3 +1350,4 @@ h6 {
   text-decoration: underline;
 }
 </style>
+```
