@@ -60,6 +60,8 @@ jobs:
             folder: "business_sites/lola"
           - subdomain: "mammanativekichen"
             folder: "business_sites/mammanativekichen"
+          - subdomain: "alec"
+            folder: "business_sites/alec"
             
             
 
@@ -106,6 +108,9 @@ jobs:
               ;;
             "mammanativekichen")
               API_URL="https://api.mammanativekichen.ngmkt.site"
+              ;;
+            "alec")
+              API_URL="https://api.alec.ngmkt.site"
               ;;
             *)
               echo "Unknown subdomain!"
