@@ -27,7 +27,7 @@
             </div>
             <div>
               <label for="">Show on website</label>
-              <select name="" id="" class="form-control" v-model="rows.products[index].sho_on_website" required>
+              <select name="" id="" class="form-control" v-model="rows.products[index].show_on_website" required>
                 <option :value="true">Yes</option>
                 <option :value="false">No</option>
               </select>
@@ -72,7 +72,8 @@
               category_id:null,
               stock:0,
               price:null,
-              code:null
+              code:null,
+              show_on_website:null
             })
       },
       deleteRow(index){
