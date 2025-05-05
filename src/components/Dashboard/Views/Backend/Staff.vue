@@ -171,7 +171,6 @@
         },
   
         getChecked(shopId) {
-          console.log(!this.selectedUser?.shop_access)
           if (!this.selectedUser?.shop_access) return false;
   
           return this.selectedUser.shop_access.some(shop => shop.shop_id === shopId);

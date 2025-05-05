@@ -56,6 +56,10 @@
       <div>
         <label>Owner Equity</label>
         <input type="number" step="any" min="0" class="form-control col-8" placeholder="Owner Equity" v-model="details.owner_equity" required>
+      </div> <br>
+      <div>
+        <label>Shipping Fee</label>
+        <input type="number" step="any" min="0" class="form-control col-8"  v-model="details.logistics_fee" required>
       </div>
       <br>
 
@@ -83,6 +87,7 @@ export default {
         is_negative_stock: 0,
         motto: '',
         owner_equity: '',
+        logistics_fee: '',
         times: {
           start_time: '',
           closing_time: ''

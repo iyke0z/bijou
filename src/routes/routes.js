@@ -57,6 +57,15 @@ import ProductDistribution from '@/components/Dashboard/Views/Products/ProductDi
 import Logistics from '@/components/Dashboard/Views/Report/Logistics.vue'
 import Backend from '@/components/Dashboard/Views/Backend.vue'
 import Budget from '@/components/Dashboard/Views/Budget/Budget.vue'
+import HeroBanner from '@/components/Dashboard/Views/website/HeroBanner.vue'
+import About from '@/components/Dashboard/Views/website/About.vue'
+import Contact from '@/components/Dashboard/Views/website/Contact.vue'
+import ReturnPolicy from '@/components/Dashboard/Views/website/ReturnPolicy.vue'
+import ThemeSettings from '@/components/Dashboard/Views/website/ThemeSettings.vue'
+import PaymentConfig from '@/components/Dashboard/Views/website/PaymentConfig.vue'
+import Faq from '@/components/Dashboard/Views/website/FAQ.vue'
+import FooterAdmin from '@/components/Dashboard/Views/website/FooterAdmin.vue'
+import NavBarAdmin from '@/components/Dashboard/Views/website/NavBarAdmin.vue'
 
 
 let loginPage = {
@@ -685,6 +694,70 @@ let settings = {
     }]
 }
 
+let website = {
+    path: '/website',
+    name: 'website',
+    component: DashboardLayout,
+    beforeEnter: (to, from, next) => {
+        User.auth().then((result) => {
+            if (result) {
+                // if (result.data.role_id == 1) {
+                    next()
+                // } else {
+                //     return next({ name: 'dashboard' })
+                // }
+            } else {
+                return next({ name: 'Login' })
+            }
+        }).catch((err) => {
+            return next({ name: 'Login' })
+        })
+    },
+    children: [
+        {
+            path: 'herobanner',
+            name: 'manage',
+            component: HeroBanner
+        },
+        {
+            path: 'about',
+            name: 'manage',
+            component: About
+        },
+        {
+            path: 'contact',
+            name: 'manage',
+            component: Contact
+        },
+        {
+            path: 'return-policy',
+            name: 'manage',
+            component: ReturnPolicy
+        },
+        {
+            path: 'themesettings',
+            name: 'manage',
+            component: ThemeSettings
+        },
+        {
+            path: 'payment-config',
+            name: 'manage',
+            component: PaymentConfig
+        },
+        {
+            path: 'faq',
+            name: 'manage',
+            component: Faq
+        },
+        {
+            path: 'website-settings',
+            name: 'manage',
+            component: NavBarAdmin
+        }
+       
+    ]
+}
+
 let backend = {
     path: '/backend',
     name: 'backend',
@@ -755,6 +828,7 @@ const routes = [
     receipt,
     kitchen,
     waiter,
+    website,
     bar,
     goodsRecivedNote,
     reporprint,

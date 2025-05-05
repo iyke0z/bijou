@@ -133,7 +133,6 @@ import Swal from 'sweetalert2';
       try {
         loading.value = true
         const {status, data} = await RolesPriviledge.create_role([name.value])
-        console.log(status)
 
         if(status == 200 || status === 201){
          roles.value = data

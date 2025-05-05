@@ -30,6 +30,11 @@ export default {
     },
     update_plan(form, id){
         return Api.put('/purchase/update-plan/'+id+'?shop_id='+localStorage.getItem('shopId'), form)
-        
+    },
+    delete_image(id) {
+        return Api.post('/product/delete/image/' + id+'?shop_id='+localStorage.getItem('shopId'))
+    },
+    update_website_details(form, id) {
+        return Api.post('/product/update-detail/' + id+'?shop_id='+localStorage.getItem('shopId'), form)
     }
 }

@@ -13,39 +13,6 @@ jobs:
     strategy:
       matrix:
         include:
-          # - subdomain: "edzain"
-          #   folder: "business_sites/edzain"
-          # - subdomain: "bingoml"
-          #   folder: "business_sites/bingoml"
-          # - subdomain: "aromaperk"
-          #   folder: "business_sites/aromaperk"
-          # - subdomain: "phlorah"
-          #   folder: "business_sites/phlorah"
-          # - subdomain: "fitandfeet"
-          #   folder: "business_sites/fitandfeet"
-          # - subdomain: "totech"
-          #   folder: "business_sites/totech"
-          # - subdomain: "chosenconcept"
-          #   folder: "business_sites/chosenconcept"
-          # - subdomain: "amasemporium"
-          #   folder: "business_sites/amasemporium"
-          # - subdomain: "jomarsgroups"
-          #   folder: "business_sites/jomarsgroups"
-          # - subdomain: "royalrelish"
-          #   folder: "business_sites/royalrelish"
-          # - subdomain: "osasumwenbyfd"
-          #   folder: "business_sites/osasumwenbyfd"
-          # - subdomain: "hairarena"
-          #   folder: "business_sites/hairarena"
-          # - subdomain: "standardchoice"
-          #   folder: "business_sites/standardchoice"
-          # - subdomain: "standardchoice"
-          # - subdomain: "ugbommaintefarms"
-          #   folder: "business_sites/ugbommaintefarms"
-          # - subdomain: "dreambarbers"
-          #   folder: "business_sites/dreambarbers"
-          # - subdomain: "jtsforte"
-          #   folder: "business_sites/jtsforte"
           - subdomain: "24hrs"
             folder: "business_sites/24hrs"
           - subdomain: "flexglobalprime"
@@ -62,8 +29,6 @@ jobs:
             folder: "business_sites/mammanativekichen"
           - subdomain: "alec"
             folder: "business_sites/alec"
-            
-            
 
       fail-fast: false  # Continue if one matrix job fails
 
@@ -77,17 +42,59 @@ jobs:
           git fetch --unshallow
           git fetch origin ${{ github.ref }}  # Fetch the specific branch (in case it's shallow)
 
+      - name: Update .env File
+        run: |
+          echo "Updating .env for subdomain: ${{ matrix.subdomain }}"
+          if [ ! -f .env ]; then
+            echo "Error: .env file not found!"
+            exit 1
+          fi
+          case "${{ matrix.subdomain }}" in
+            "24hrs")
+              API_URL="https://api.24hrs.ngmkt.site"
+              ;;
+            "flexglobalprime")
+              API_URL="https://api.flexglobalprime.ngmkt.site"
+              ;;
+            "munchiesevents")
+              API_URL="https://api.munchiesevents.ngmkt.site"
+              ;;
+            "dami")
+              API_URL="https://api.dami.ngmkt.site"
+              ;;
+            "crestgrandeur")
+              API_URL="https://api.crestgrandeur.ngmkt.site"
+              ;;
+            "lola")
+              API_URL="https://api.lola.ngmkt.site"
+              ;;
+            "mammanativekichen")
+              API_URL="https://api.mammanativekichen.ngmkt.site"
+              ;;
+            "alec")
+              API_URL="https://api.alec.ngmkt.site"
+              ;;
+            *)
+              echo "Unknown subdomain!"
+              exit 1
+              ;;
+          esac
+          # Replace URLs in .env file
+          sed -i 's|VUE_APP_API_BASE_URL="http://localhost:9009/api/v1"|VUE_APP_API_BASE_URL="'$API_URL'/api/v1"|' .env
+          sed -i 's|VUE_APP_STORAGE_PATH="http://localhost:9009/images/product"|VUE_APP_STORAGE_PATH="'$API_URL'/images/product"|' .env
+          sed -i 's|VUE_APP_STORAGE="http://localhost:9009/storage"|VUE_APP_STORAGE="'$API_URL'/storage"|' .env
+          echo "Updated .env:"
+          cat .env
+
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '14.18.1'
 
-      # Step 4: Replace baseURL in Api.js
       - name: Replace baseURL in Api.js
         run: |
           echo "Updating API URL for subdomain: ${{ matrix.subdomain }}"
           case "${{ matrix.subdomain }}" in
-
             "24hrs")
               API_URL="https://api.24hrs.ngmkt.site"
               ;;
@@ -120,15 +127,12 @@ jobs:
           # Replace the base URL in Api.js file
           sed -i "s|http://localhost:9009/api/v1|$API_URL/api/v1|" ./src/javascript/Api/Api.js
 
-      # Step 5: Install dependencies
       - name: Install Dependencies
         run: npm install
 
-      # Step 6: Build the Vue.js app
       - name: Build Application
         run: npm run build
 
-      # Step 7: Upload Built Files via SCP
       - name: Upload Built Files via SCP
         uses: appleboy/scp-action@v0.1.5
         with:
@@ -139,7 +143,6 @@ jobs:
           source: dist  # Local directory to upload
           target: ${{ secrets.FTP_PATH }}/${{ matrix.folder }}/frontend/  # Remote directory based on subdomain
 
-      # Step 8: Run Post-Deployment Commands
       - name: Run Post-Deployment Commands
         uses: appleboy/ssh-action@v0.1.6
         with:

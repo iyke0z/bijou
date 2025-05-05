@@ -18,7 +18,7 @@
           <th>Actions</th>
         </tr>
       </thead>
-      <tbody :key="tableKey">
+      <tbody>
         <tr v-for="(category, index) in all_categories" :key="category.id">
           <td>{{index+1}}</td>
           <td>{{category.name}}</td>
@@ -156,7 +156,6 @@ import helpers from '@/javascript/helpers'
             timer: 3000
           })
           this.allcategories()
-        this.loading = false
 
         }).catch((err) => {
           Swal.fire({
@@ -167,9 +166,9 @@ import helpers from '@/javascript/helpers'
               showConfirmButton: false,
               timer: 3000
             })
-        this.loading = false
-
-        });
+            
+          });
+          this.loading = false
       },
       submit(){
         this.loading = true
@@ -184,9 +183,7 @@ import helpers from '@/javascript/helpers'
           })
           this.rows.category = [{name:null}]
           this.allcategories()
-          this.loading = false
         }).catch((err) => {
-          this.loading = false
          Swal.fire({
               position: 'top-end',
               icon: 'error',
@@ -196,6 +193,8 @@ import helpers from '@/javascript/helpers'
               timer: 3000
             })
         });
+        this.loading = false
+
       },
       update(){
         this.loading = true
@@ -212,10 +211,8 @@ import helpers from '@/javascript/helpers'
           this.updateMode = false
           this.form = {name:null}
           this.modals.classic = false
-          this.loading = false
 
         }).catch((err) => {
-        this.loading = false
          Swal.fire({
               position: 'top-end',
               icon: 'error',
@@ -225,16 +222,17 @@ import helpers from '@/javascript/helpers'
               timer: 3000
             })
         });
+        this.loading = false
+
       },
       allcategories(){
         this.loading = true
         Category.categories().then((result) => {
             this.all_categories = result.data.data
-            this.loading = false
             this.datatable()
         }).catch(()=>{
-          this.loading = false
         })
+        this.loading = false
       },
       new_row(){
         this.rows.category.push({name:null})

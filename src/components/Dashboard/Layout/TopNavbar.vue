@@ -18,7 +18,7 @@
             v-if="expiry_response[0] === 'expired'"
             class="text-danger px-2 py-2 d-inline-block expired-notification"
             @mouseover="showTooltip('Expired! Click to subscribe')" 
-          >
+          > 
             Subscription Expired
             <small class="text-black">Click to subscribe</small>
           </span>

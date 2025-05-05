@@ -26,6 +26,13 @@
               <input type="text" placeholder="barcode" class="form-control" v-model="rows.products[index].code">
             </div>
             <div>
+              <label for="">Show on website</label>
+              <select name="" id="" class="form-control" v-model="rows.products[index].sho_on_website" required>
+                <option :value="true">Yes</option>
+                <option :value="false">No</option>
+              </select>
+            </div>
+            <div>
               <button class="btn btn-info mr-2 mt-4" @click.prevent="addRow">+ Add More</button>
               <button class="btn btn-danger mt-4" v-if="index > 0" @click="deleteRow(index)">x Remove Item</button>
             </div>
@@ -46,6 +53,7 @@
             category_id:null,
             stock:0,
             price:null,
+            show_on_website:true,
             code:null
           }]},
           loading: false,

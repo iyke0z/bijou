@@ -172,6 +172,24 @@ const menuItems = [
         { name: 'Billing', path: '/business/billing', title: 'Manage your billing and payment plan' }
       ]
     },
+    {
+      name: 'Manage Website Content',
+      icon: 'fa fa-internet-explorer',
+      perimssionRequired: false,
+      permissions: ['can_manage_backend'],
+      collapsed: true,
+      title: 'Adjust website content',  // Added parent title
+      children: [
+        { name: 'Hero Banner', path: '/website/herobanner', title: 'Home page image banner' },
+        { name: 'About', path: '/website/about', title: 'Learn more about your business' },
+        { name: 'Contact', path: '/website/contact', title: 'Provide your business contact details' },
+        { name: 'Return Policy', path: '/website/return-policy', title: 'Set rules for product returns and refunds' },
+        { name: 'Theme Settings', path: '/website/themesettings', title: 'Define your shipping methods and delivery details' },
+        { name: 'Payment Config', path: '/website/payment-config', title: 'Define your shipping methods and delivery details' },
+        { name: 'FAQ', path: '/website/faq', title: 'Answer common customer questions' },
+        { name: 'Website Settings', path: '/website/website-settings', title: 'Manage Website Brand Settings' },
+      ]
+    },
    
     
 ];

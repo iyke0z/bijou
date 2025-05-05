@@ -33,7 +33,6 @@ export default {
         return letter.charAt(0).toUpperCase() + letter.slice(1)
     },
     delete_row(id) {
-        console.log(id)
         document.getElementById("myTable").deleteRow(0);
     }
 

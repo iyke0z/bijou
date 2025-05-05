@@ -66,7 +66,6 @@
           this.value.push(val)
           this.val = this.value.toString()
           this.val = this.val.replace(/,/g,'')
-          console.log(this.total)
           this.result = +this.val - this.total
           this.result = Math.ceil(this.result)
         }
