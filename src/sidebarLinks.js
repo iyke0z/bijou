@@ -18,7 +18,7 @@ const menuItems = [
       title: 'Access the sales point interface to process transactions',
     },
     {
-      name: 'Products',
+      name: 'Products & Services',
       icon: 'fa fa-product-hunt',
       perimssionRequired: true,
       permissions: ['can_manage_products', 'can_manage_categories'],
