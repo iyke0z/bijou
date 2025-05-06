@@ -4,7 +4,7 @@
       
       <h3>Return Policy</h3> <br/>
       <div v-if="returnPolicy && !loading">
-        <p><strong>Description:</strong> {{ returnPolicy.description }}</p>
+        <p><strong>Description:</strong> {{ returnPolicy?.description }}</p>
         <p-button type="info" size="lg" icon @click.native="openModal('classic', 'Update Return Policy', 'update')">
           Update
         </p-button>
