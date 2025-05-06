@@ -84,6 +84,9 @@ jobs:
             "edzain")
               API_URL="https://api.edzain.ngmkt.site"
               ;;
+            "eloka")
+              API_URL="https://api.eloka.ngmkt.site"
+              ;;
             *)
               echo "Unknown subdomain!"
               exit 1
@@ -134,6 +137,9 @@ jobs:
               ;;
             "edzain")
               API_URL="https://api.edzain.ngmkt.site"
+              ;;
+            "eloka")
+              API_URL="https://api.eloka.ngmkt.site"
               ;;
             *)
               echo "Unknown subdomain!"
