@@ -33,6 +33,8 @@ jobs:
             folder: "business_sites/churchboymerch"
           - subdomain: "edzain"
             folder: "business_sites/edzain"
+          - subdomain: "eloka"
+            folder: "business_sites/eloka"
 
       fail-fast: false  # Continue if one matrix job fails
 
