@@ -29,6 +29,10 @@ jobs:
             folder: "business_sites/mammanativekichen"
           - subdomain: "alec"
             folder: "business_sites/alec"
+          - subdomain: "churchboymerch"
+            folder: "business_sites/churchboymerch"
+          - subdomain: "edzain"
+            folder: "business_sites/edzain"
 
       fail-fast: false  # Continue if one matrix job fails
 
@@ -74,6 +78,12 @@ jobs:
             "alec")
               API_URL="https://api.alec.ngmkt.site"
               ;;
+            "churchboymerch")
+              API_URL="https://api.churchboymerch.ngmkt.site"
+              ;;
+            "edzain")
+              API_URL="https://api.edzain.ngmkt.site"
+              ;;
             *)
               echo "Unknown subdomain!"
               exit 1
@@ -118,6 +128,12 @@ jobs:
               ;;
             "alec")
               API_URL="https://api.alec.ngmkt.site"
+              ;;
+            "churchboymerch")
+              API_URL="https://api.churchboymerch.ngmkt.site"
+              ;;
+            "edzain")
+              API_URL="https://api.edzain.ngmkt.site"
               ;;
             *)
               echo "Unknown subdomain!"
