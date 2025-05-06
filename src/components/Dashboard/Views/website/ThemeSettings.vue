@@ -4,8 +4,8 @@
       
       <h3>Theme Settings</h3> <br/>
       <div v-if="themeSettings && !loading">
-        <p><strong>Primary Color:</strong> {{ themeSettings.primaryColor }}</p>
-        <p><strong>Secondary Color:</strong> {{ themeSettings.secondaryColor }}</p>
+        <p><strong>Primary Color:</strong> {{ themeSettings?.primaryColor }}</p>
+        <p><strong>Secondary Color:</strong> {{ themeSettings?.secondaryColor }}</p>
         <p-button type="info" size="lg" icon @click.native="openModal('classic', 'Update Theme Settings', 'update')">
           Update
         </p-button>

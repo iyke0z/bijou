@@ -18,13 +18,13 @@
         </thead>
         <tbody :key="tableKey">
           <tr>
-            <td>{{ contact.email }}</td>
-            <td>{{ contact.phone }}</td>
-            <td>{{ contact.address }}</td>
+            <td>{{ contact?.email }}</td>
+            <td>{{ contact?.phone }}</td>
+            <td>{{ contact?.address }}</td>
             <td>
               <img
-                v-if="contact.image"
-                :src="url+`/${contact.image}`"
+                v-if="contact?.image"
+                :src="url+`/${contact?.image}`"
                 alt="Contact Image"
                 width="50"
                 class="img-thumbnail"

@@ -19,11 +19,11 @@
           </thead>
           <tbody>
             <tr v-for="link in socialLinks" :key="link.id">
-              <td>{{ link.label }}</td>
-              <td>{{ link.path }}</td>
-              <td>{{ link.icon || 'N/A' }}</td>
-              <td>{{ link.order }}</td>
-              <td>{{ link.is_active ? 'Yes' : 'No' }}</td>
+              <td>{{ link?.label }}</td>
+              <td>{{ link?.path }}</td>
+              <td>{{ link?.icon || 'N/A' }}</td>
+              <td>{{ link?.order }}</td>
+              <td>{{ link?.is_active ? 'Yes' : 'No' }}</td>
               <td>
                 <p-button
                   class="mr-2"

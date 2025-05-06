@@ -19,8 +19,8 @@
         <tbody>
           <tr v-for="(banner, index) in all_banners" :key="banner.id">
             <td>{{ index + 1 }}</td>
-            <td>{{ banner.title }}</td>
-            <td>{{ banner.description }}</td>
+            <td>{{ banner?.title }}</td>
+            <td>{{ banner?.description }}</td>
             <td>
               <img
                 :src="url+`/hero_banners/${banner.image}`"

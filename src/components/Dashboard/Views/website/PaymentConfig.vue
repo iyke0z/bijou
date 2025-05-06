@@ -4,8 +4,8 @@
       
       <h3>Payment Config</h3> <br/>
       <div v-if="paymentConfig && !loading">
-        <p><strong>Paystack Key:</strong> {{ paymentConfig.paystackKey }}</p>
-        <p><strong>Flutterwave Key:</strong> {{ paymentConfig.flutterwaveKey || 'Not set' }}</p>
+        <p><strong>Paystack Key:</strong> {{ paymentConfig?.paystackKey }}</p>
+        <p><strong>Flutterwave Key:</strong> {{ paymentConfig?.flutterwaveKey || 'Not set' }}</p>
         <p-button type="info" size="lg" icon @click.native="openModal('classic', 'Update Payment Config', 'update')">
           Update
         </p-button>

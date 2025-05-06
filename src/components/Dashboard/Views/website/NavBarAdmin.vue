@@ -15,8 +15,8 @@
           </thead>
           <tbody>
             <tr v-for="link in socialLinks" :key="link.id">
-              <td>{{ link.label }}</td>
-              <td>{{ link.path }}</td>
+              <td>{{ link?.label }}</td>
+              <td>{{ link?.path }}</td>
             </tr>
           </tbody>
         </table>

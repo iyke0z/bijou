@@ -18,8 +18,8 @@
         <tbody :key="tableKey">
           <tr v-for="(faq, index) in all_faqs" :key="faq.id">
             <td>{{index+1}}</td>
-            <td>{{faq.question}}</td>
-            <td>{{faq.answer}}</td>
+            <td>{{faq?.question}}</td>
+            <td>{{faq?.answer}}</td>
             <td>
               <p-button class="mr-2" title="update" type="info" size="sm" icon @click.native="openModal('classic', 'Update FAQ', 'update', faq)">
                 <i class="fa fa-edit"></i>

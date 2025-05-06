@@ -4,9 +4,9 @@
     
     <h3>About</h3><br>
     <div v-if="about && !loading">
-      <p><strong>Title:</strong> {{ about.story.title }}</p>
-      <p><strong>Description:</strong> {{ about.story.description }}</p>
-      <p><strong>Values Title:</strong> {{ about.values.title }}</p>
+      <p><strong>Title:</strong> {{ about?.story?.title }}</p>
+      <p><strong>Description:</strong> {{ about?.story?.description }}</p>
+      <p><strong>Values Title:</strong> {{ about?.values?.title }}</p>
       <table class="table table-striped" v-if="about.values.items.length">
         <thead>
           <tr>
