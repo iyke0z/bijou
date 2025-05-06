@@ -7,7 +7,7 @@
       <p><strong>Title:</strong> {{ about?.story?.title }}</p>
       <p><strong>Description:</strong> {{ about?.story?.description }}</p>
       <p><strong>Values Title:</strong> {{ about?.values?.title }}</p>
-      <table class="table table-striped" v-if="about.values.items.length">
+      <table class="table table-striped" v-if="about?.values?.items?.length">
         <thead>
           <tr>
             <th>Name</th>
@@ -17,8 +17,8 @@
         </thead>
         <tbody>
           <tr v-for="item in about.values.items" :key="item.id">
-            <td>{{ item.name }}</td>
-            <td>{{ item.description }}</td>
+            <td>{{ item?.name }}</td>
+            <td>{{ item?.description }}</td>
             <td>
               <p-button
                 class="mr-2"
