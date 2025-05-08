@@ -35,6 +35,8 @@ jobs:
             folder: "business_sites/edzain"
           - subdomain: "eloka"
             folder: "business_sites/eloka"
+          - subdomain: "business"
+            folder: "business_sites/business"
 
       fail-fast: false  # Continue if one matrix job fails
 
@@ -89,6 +91,9 @@ jobs:
             "eloka")
               API_URL="https://api.eloka.ngmkt.site"
               ;;
+            "business")
+              API_URL="https://api.business.ngmkt.site"
+              ;;
             *)
               echo "Unknown subdomain!"
               exit 1
@@ -142,6 +147,9 @@ jobs:
               ;;
             "eloka")
               API_URL="https://api.eloka.ngmkt.site"
+              ;;
+            "business")
+              API_URL="https://api.business.ngmkt.site"
               ;;
             *)
               echo "Unknown subdomain!"
