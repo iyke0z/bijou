@@ -26,9 +26,9 @@
         </span>
       </a>
       <!-- <small> -->
-        <a href="#" style="text-decoration: none;" class="text-white" v-if="role == 1"  data-toggle="collapse" :aria-expanded="!isClosed">
+        <!-- <a href="#" style="text-decoration: none;" class="text-white" v-if="role == 1"  data-toggle="collapse" :aria-expanded="!isClosed">
           <i class="fa fa-bank"></i>: &#8358; {{balance.toLocaleString()}} 
-        </a>
+        </a> -->
       <!-- </small> -->
       
         
