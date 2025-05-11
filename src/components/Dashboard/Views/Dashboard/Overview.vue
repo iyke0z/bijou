@@ -62,11 +62,7 @@
         <p class="text-2xl font-bold text-red-600 mt-2">
           {{
             (
-              details.profit_loss_statement.cost_of_goods_sold +
-              details.profit_loss_statement.operating_expenses +
-              details.profit_loss_statement.depreciation +
-              details.profit_loss_statement.amortization +
-              details.profit_loss_statement.tax_expense
+              details.key_metrics.total_expenditure
             ).toLocaleString('en-NG', { style: 'currency', currency: 'NGN' })
           }}
         </p>
