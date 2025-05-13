@@ -37,6 +37,9 @@ jobs:
             folder: "business_sites/eloka"
           - subdomain: "business"
             folder: "business_sites/business"
+          - subdomain: "blizzeffectltd"
+            folder: "business_sites/blizzeffectltd"
+            
 
       fail-fast: false  # Continue if one matrix job fails
 
@@ -94,6 +97,10 @@ jobs:
             "business")
               API_URL="https://api.business.ngmkt.site"
               ;;
+              "blizzeffectltd")
+              API_URL="https://api.blizzeffectltd.ngmkt.site"
+              ;;
+              
             *)
               echo "Unknown subdomain!"
               exit 1
@@ -150,6 +157,9 @@ jobs:
               ;;
             "business")
               API_URL="https://api.business.ngmkt.site"
+              ;;
+            "blizzeffectltd")
+              API_URL="https://api.blizzeffectltd.ngmkt.site"
               ;;
             *)
               echo "Unknown subdomain!"
